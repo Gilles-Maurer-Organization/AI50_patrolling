@@ -187,7 +187,7 @@ def increment_time_data(time_data):
 
 def main():
 
-    data = open_file('map2.csv')
+    data = open_file('map1.csv')
     data = [[int(item) for item in row] for row in data]
 
     last_update_time = pygame.time.get_ticks()  # Obtenir le temps écoulé en millisecondes depuis le lancement du programme
