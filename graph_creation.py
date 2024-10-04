@@ -111,11 +111,17 @@ class GraphCreation:
                 self.canvas.itemconfig(clicked_node, fill="green")
 
         else : 
-            
+            lines_to_remove = []
             for line, nodes in self.edge_list.items():
                 node1, node2 = nodes
+                node1 = self.nodes_coordinates_dict[node1]
+                node2 = self.nodes_coordinates_dict[node2]
                 if self.is_point_near_line(x, y, node1[0], node1[1], node2[0], node2[1], 3):
-                    self.remove_edge(line)
+                    lines_to_remove.append(line)
+
+            for line in lines_to_remove:
+                self.remove_edge(line)
+                
         
         return
 
