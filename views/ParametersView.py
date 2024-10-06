@@ -1,5 +1,3 @@
-import pygame
-
 class ParametersView:
     def __init__(self, screen) -> None:
         self.screen = screen

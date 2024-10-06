@@ -34,7 +34,9 @@ while running:
     
     # Une fois l'événement géré, on met à jour la vue à l'aide du controller
     graph_controller.update()
-    view.draw(graph)
+
+    view.draw()
+    
     # TODO : Créer des boutons appropriés pour save le graphe
     keys = pygame.key.get_pressed()
     # Si la touche S est enfoncée, on vérifie si ça a déjà été save
@@ -49,5 +51,5 @@ while running:
         graph_controller.load_graph(1)
 
     pygame.display.flip()
-
+    
 pygame.quit()

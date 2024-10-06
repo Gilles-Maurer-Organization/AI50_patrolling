@@ -56,6 +56,7 @@ class NodeController:
         if self.dragging_node is not None:
             # On modifie les coordonnées du noeud que l'on déplace en fonction des coordonnées de la souris
             self.dragging_node.x, self.dragging_node.y = pos
+            
 
     def select_node(self, pos) -> None:
         '''

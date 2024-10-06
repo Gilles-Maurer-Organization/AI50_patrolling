@@ -35,3 +35,4 @@ class GraphView:
             start_node = edge[0]
             end_node = edge[1]
             pygame.draw.line(self.screen, Colors.BLACK.value, (start_node.x, start_node.y), (end_node.x, end_node.y), 3)
+        
