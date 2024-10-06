@@ -3,13 +3,13 @@ from models.Graph import Graph
 from constants.Colors import Colors
 
 class GraphView:
-    def __init__(self, screen, background_image):
+    def __init__(self, screen, background_image) -> None:
         # Stockage de l'écran (possédant les propriétés de largeur et hauteur)
         self.screen = screen
         # De même pour l'image de fond
         self.background_image = background_image
 
-    def draw_graph(self, graph: Graph, selected_node=None, dragging_node=None):
+    def draw_graph(self, graph: Graph, selected_node=None, dragging_node=None) -> None:
         '''
         Cette méthode dessine l'interface utilisateur sur laquelle l'utilisateur conçoit son graphe.
 

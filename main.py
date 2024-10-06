@@ -1,30 +1,21 @@
 import pygame
 from models.Graph import Graph
 from views.GraphView import GraphView
+from views.View import View
 from controllers.GraphController import GraphController
 from controllers.CSVController import CSVController
 
 # Initialisation de Pygame
 pygame.init()
 
-# Dimensions de la fenêtre (1/2 de 1920 par 1080)
-WIDTH, HEIGHT = 960, 540
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-
-# Chargement de l'image d'arrière plan
-# TODO : Chargement dynamique, cf. Arnaud
-background_image = pygame.image.load("image1.jpg")
-# Mise à jour des dimensions de l'image d'arrière plan par rapport à la taille de la fenêtre de graph
-background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
-
 # Initialisation du modèle de graph
 graph = Graph()
 
-# Initialisation de la vue de graph
-graph_view = GraphView(screen, background_image)
+# TODO : déplacer la référence background_image, elle n'a pas de lien direct avec la vue générale mais seulement avec la GraphView
+view = View()
 
 # Initialisation du controller de graph
-graph_controller = GraphController(graph, graph_view)
+graph_controller = GraphController(graph, view.get_graphView())
 edges_matrix, nodes_list = graph.compute_matrix()
 
 # Initialisation du controller de CSV
@@ -43,7 +34,7 @@ while running:
     
     # Une fois l'événement géré, on met à jour la vue à l'aide du controller
     graph_controller.update()
-    
+    view.draw(graph)
     # TODO : Créer des boutons appropriés pour save le graphe
     keys = pygame.key.get_pressed()
     # Si la touche S est enfoncée, on vérifie si ça a déjà été save

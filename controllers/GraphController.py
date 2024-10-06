@@ -20,7 +20,7 @@ class GraphController:
         load_graph(): Charge un graphe déjà existant sous format csv.
     '''
      
-    def __init__(self, graph: Graph, graph_view: GraphView):
+    def __init__(self, graph: Graph, graph_view: GraphView) -> None:
         # Stockage de l'instanciation du model de graph (nécessaire pour le lien entre vue et model)
         self.graph = graph
         # Il en va de même pour le stockage de l'instanciation du graph côté view
@@ -31,7 +31,7 @@ class GraphController:
         self.edge_controller = EdgeController(graph, self.node_controller)
         self.csv_controller = CSVController()
 
-    def handle_event(self, event):
+    def handle_event(self, event) -> None:
         '''
         Cette méthode gère les événements générés par la souris de l'utilisateur.
 
@@ -75,7 +75,7 @@ class GraphController:
             if event.buttons[0]:
                 self.node_controller.drag_node(pos)
 
-    def update(self):
+    def update(self) -> None:
         """
         Cette méthode met à jour l'affichage du graphe.
         
@@ -83,11 +83,11 @@ class GraphController:
         """
         self.graph_view.draw_graph(self.graph, self.node_controller.selected_node, self.node_controller.dragging_node)
 
-    def save_graph(self):
+    def save_graph(self) -> None:
         edges_matrix, nodes_list = self.graph.compute_matrix()
         self.csv_controller.save(edges_matrix, nodes_list)
 
-    def load_graph(self, num_file):
+    def load_graph(self, num_file) -> None:
         edges_matrix, nodes_list = self.csv_controller.load(num_file)
         if edges_matrix and nodes_list:
             self.graph.nodes = {i: coords for i, coords in enumerate(nodes_list)}

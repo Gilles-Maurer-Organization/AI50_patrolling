@@ -2,11 +2,11 @@ from models.Node import Node
 import math
 
 class Graph:
-    def __init__(self):
+    def __init__(self) -> None:
         self.nodes = []
         self.edges = []
 
-    def add_node(self, x: float, y: float):
+    def add_node(self, x: float, y: float) -> None:
         '''
         Cette méthode ajoute un nouveau noeud dans la liste de noeuds du graphe (côté Model).
 
@@ -16,7 +16,7 @@ class Graph:
         '''
         self.nodes.append(Node(x, y))
 
-    def add_edge(self, node1: Node, node2: Node):
+    def add_edge(self, node1: Node, node2: Node) -> None:
         '''
         Cette méthode ajoute un lien entre deux noeuds et stocke ce lien dans la liste de liens du graphe (côté Model).
 
@@ -26,7 +26,7 @@ class Graph:
         '''
         self.edges.append((node1, node2))
 
-    def distance(self, node1: Node, node2: Node):
+    def distance(self, node1: Node, node2: Node) -> float:
         '''
         Cette méthode calcule la distance entre deux noeuds.
 

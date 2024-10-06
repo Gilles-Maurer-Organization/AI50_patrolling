@@ -1,4 +1,5 @@
 import math
+from models.Node import Node
 
 class NodeController:
     '''
@@ -16,12 +17,12 @@ class NodeController:
         clear_selection(pos): Supprime la référence du noeud sélectionné.
         get_node_at_position(pos): Cherche la référence d'un noeud en comparant ses coordonnées avec des coordonnées (x, y) spécifiées par la souris de l'utilisateur.
     '''
-    def __init__(self, graph):
+    def __init__(self, graph) -> None:
         self.graph = graph
         self.dragging_node = None
         self.selected_node = None
 
-    def add_node(self, pos):
+    def add_node(self, pos) -> None:
         '''
         Cette méthode ajoute un nouveau noeud dans le graphe.
 
@@ -30,7 +31,7 @@ class NodeController:
         '''
         self.graph.add_node(pos[0], pos[1])
 
-    def start_drag(self, pos):
+    def start_drag(self, pos) -> None:
         '''
         Cette méthode initialise le déplacement d'un noeud en stockant sa référence.
 
@@ -39,13 +40,13 @@ class NodeController:
         '''
         self.dragging_node = self.get_node_at_position(pos)
 
-    def end_drag(self):
+    def end_drag(self) -> None:
         '''
         Cette méthode termine le déplacement d'un noeud en supprimant sa référence.
         '''
         self.dragging_node = None
 
-    def drag_node(self, pos):
+    def drag_node(self, pos) -> None:
         '''
         Cette méthode se charge du déplacement d'un noeud à l'aide de la position du curseur de la souris.
 
@@ -56,7 +57,7 @@ class NodeController:
             # On modifie les coordonnées du noeud que l'on déplace en fonction des coordonnées de la souris
             self.dragging_node.x, self.dragging_node.y = pos
 
-    def select_node(self, pos):
+    def select_node(self, pos) -> None:
         '''
         Cette méthode sélectionne un noeud grâce aux coordonnées (x, y) de la souris (s'il existe), destiné à créer des liens entre les noeuds.
 
@@ -70,13 +71,13 @@ class NodeController:
         else:
             self.selected_node = None
 
-    def clear_selection(self):
+    def clear_selection(self) -> None:
         '''
         Cette méthode désélectionne le noeud actuellement sélectionné. Elle est appelée lorsque l'utilisateur ne souhaite plus établir de lien entre deux noeuds.
         '''
         self.selected_node = None
 
-    def get_node_at_position(self, pos):
+    def get_node_at_position(self, pos) -> None|Node:
         '''
         Cette méthode retourne le noeud correspondant aux coordonnées du clic de l'utilisateur. Le nœud est identifié par ses coordonnées qui correspondent à celles du clic effectué.
         '''

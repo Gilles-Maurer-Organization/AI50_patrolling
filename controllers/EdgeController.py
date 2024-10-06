@@ -12,11 +12,11 @@ class EdgeController:
     Méthodes:
         create_link(pos): Crée un lien entre deux noeuds à partir d'une position de coordonnées (x, y) et le noeud précédemment sélectionné.
     '''
-    def __init__(self, graph: Graph, node_controller: NodeController):
+    def __init__(self, graph: Graph, node_controller: NodeController) -> None:
         self.graph = graph
         self.node_controller = node_controller
 
-    def create_link(self, pos):
+    def create_link(self, pos) -> None:
         """
         Cette méthode crée un lien entre deux noeuds, grâce à la récupération d'un noeud à partir d'un jeu de coordonnées (x,y) et l'ancien noeud précédemment sélectionné.
 

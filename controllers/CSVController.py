@@ -5,13 +5,13 @@ class CSVController:
 
     folder_path = os.path.join(Path(__file__).resolve().parent.parent, "csv_files")
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def count_files(self):
+    def count_files(self) -> int:
         return len(os.listdir(self.folder_path))
 
-    def save(self, edges_matrix, nodes_list):
+    def save(self, edges_matrix, nodes_list) -> None:
         
         file_path = os.path.join(self.folder_path, f"graph_{self.count_files() + 1}.csv")
         
@@ -21,12 +21,12 @@ class CSVController:
                 f.write(str(node) + ",")
             f.write("\n")
 
-            for i, row in enumerate(edges_matrix):
+            for row in enumerate(edges_matrix):
                 for cell in row:
                     f.write(str(cell) + ",")
                 f.write("\n")
 
-    def load(self, num_file):
+    def load(self, num_file) -> tuple[list, list[str]]:
         
         file_path = os.path.join(self.folder_path, f"graph_{num_file}.csv")
 
