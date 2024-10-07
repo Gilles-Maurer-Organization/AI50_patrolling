@@ -25,5 +25,8 @@ class View:
     def get_graphView(self) -> GraphView:
         return self.graph_view
     
+    def get_parametersView(self) -> ParametersView:
+        return self.parameters_view
+    
     def draw(self) -> None:
         self.parameters_view.draw_parameters()
