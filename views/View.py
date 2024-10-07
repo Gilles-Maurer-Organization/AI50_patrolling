@@ -6,7 +6,7 @@ class View:
     def __init__(self) -> None:
         # Dimensions de la fenêtre (1/2 de 1920 par 1080)
         WIDTH, HEIGHT = 960, 540
-        screen = pygame.display.set_mode((WIDTH + 300, HEIGHT))
+        screen = pygame.display.set_mode((WIDTH + 400, HEIGHT))
 
         # Chargement de l'image d'arrière plan
         # TODO : Chargement dynamique, cf. Arnaud
@@ -19,7 +19,7 @@ class View:
         self.graph_view = GraphView(screen.subsurface((0, 0, WIDTH, HEIGHT)), background_image)
 
         # Création de la vue paramètres
-        self.parameters_view = ParametersView(screen.subsurface((WIDTH, 0, 300, HEIGHT)))
+        self.parameters_view = ParametersView(screen.subsurface((WIDTH, 0, 400, HEIGHT)))
         
 
     def get_graphView(self) -> GraphView:

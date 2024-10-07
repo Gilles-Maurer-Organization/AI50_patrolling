@@ -20,7 +20,7 @@ edges_matrix, nodes_list = graph.compute_matrix()
 
 # Initialisation du controller de CSV
 csv_controller = CSVController()
-
+    
 running = True
 is_saved = False
 

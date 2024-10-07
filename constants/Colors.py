@@ -9,3 +9,5 @@ class Colors(Enum):
     NODE_COLOR = (0, 100, 255)
     SELECTED_NODE_COLOR = (255, 255, 0)
     DRAGGING_NODE_COLOR = (255, 0, 0)
+
+    BUTTON = (241, 241, 241)
