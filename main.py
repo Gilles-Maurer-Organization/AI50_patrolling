@@ -4,6 +4,7 @@ from views.GraphView import GraphView
 from views.View import View
 from controllers.GraphController import GraphController
 from controllers.CSVController import CSVController
+from controllers.TextBoxController import TextBoxController
 
 # Initialisation de Pygame
 pygame.init()
@@ -16,6 +17,7 @@ view = View()
 
 # Initialisation du controller de graph
 graph_controller = GraphController(graph, view.get_graphView())
+text_box_controller = TextBoxController(view.parameters_view)
 edges_matrix, nodes_list = graph.compute_matrix()
 
 # Initialisation du controller de CSV
@@ -29,8 +31,10 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        # On vérifie les événements de l'utilisateur dès qu'une action est réalisée tout au long du programme (pour le moment, voué à être modifié)
+        # On vérifie les événements de l'utilisateur dès qu'une action est réalisée tout au long du programme
+        # (pour le moment, voué à être modifié, il ne faut pas les vérifier tout au long de la vie du programme)
         graph_controller.handle_event(event)
+        text_box_controller.handle_event(event)
     
     # Une fois l'événement géré, on met à jour la vue à l'aide du controller
     graph_controller.update()
