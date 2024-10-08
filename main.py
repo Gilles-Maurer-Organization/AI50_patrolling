@@ -17,7 +17,7 @@ view = View()
 
 # Initialisation du controller de graph
 graph_controller = GraphController(graph, view.get_graphView())
-text_box_controller = TextBoxController(view.parameters_view)
+text_box_controller = TextBoxController(view.get_parametersView())
 edges_matrix, nodes_list = graph.compute_matrix()
 
 # Initialisation du controller de CSV
