@@ -52,12 +52,12 @@ def is_graph_eulerian(graph):
 
         #vérifie le cas "noeud isolé" (= non relié)
         if degree == 0:
-            print(f"le noeud {node} n'est pas connecté au graphe")
+           # print(f"le noeud {node} n'est pas connecté au graphe")
             return node
 
         # vérifie le cas "noeud cul de sac"
         if degree < 2:
-            print(f"Le nœud {node} est un cul de sac et va poser porblème s'il n'est pas relié à un autre noeud")
+           # print(f"Le nœud {node} est un cul de sac et va poser porblème s'il n'est pas relié à un autre noeud")
             return node
 
     #Recherche d'un nœud de départ ayant au moins une connexion pour lancer le DFS
