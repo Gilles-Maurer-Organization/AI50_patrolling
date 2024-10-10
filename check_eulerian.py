@@ -3,7 +3,7 @@ def algo_dfs(graph, node, visited, visit_count):
          Vérifie si le graphe est connexe
          
         args:
-            graph (Graph): matrice d'adjacence (via compute_matrix())
+            graph (Matrix): matrice d'adjacence (via compute_matrix())
             node (Int): le noeud de départ (le 1er de la matrice d'adjacence)
             visited (List) : l'état de chaqe noeud du graphe (visité ou non)
             visited_count (List): nombre de fois que chaque noeud a été visité
@@ -34,7 +34,7 @@ def is_graph_eulerian(graph):
         Vérifie si le graphe donné en paramètre est eulérien ou non
 
         args:
-            graph (Graph): matrice d'adjacence (via compute_matrix())
+            graph (Matrix): matrice d'adjacence (via compute_matrix())
 
         returns:
             - True s'il est eulérien
