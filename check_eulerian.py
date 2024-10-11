@@ -79,6 +79,7 @@ def is_graph_eulerian(graph):
     if False in visited:
         return False
 
+    # vérif du nb de visite sur chaque noeud useless ? -> à voir
     #réajuster le nombre de visites de chaque noeud (il est doublé ??)
     for node, count in visit_count.items():
         visit_count[node]//= 2
