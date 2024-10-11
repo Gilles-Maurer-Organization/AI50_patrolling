@@ -37,8 +37,8 @@ def is_graph_eulerian(graph):
             graph (Matrix): matrice d'adjacence (via compute_matrix())
 
         returns:
-            - True s'il est eulérien
-            - False sinon
+            - True, "ok" s'il est eulérien
+            - False , node (celle qui pose problème) sinon
     '''
 
     #matriced'adjacence
@@ -53,17 +53,17 @@ def is_graph_eulerian(graph):
         #vérifie le cas "noeud isolé" (= non relié)
         if degree == 0:
            # print(f"le noeud {node} n'est pas connecté au graphe")
-            return node
+            return False, node
 
         # vérifie le cas "noeud cul de sac"
         if degree < 2:
            # print(f"Le nœud {node} est un cul de sac et va poser porblème s'il n'est pas relié à un autre noeud")
-            return node
+            return False, node
 
         # Si un sommet a un degré impair, le graphe ne peut pas être eulérien
         if degree % 2 != 0:
             print(f"Le nœud {node} a un degré impair ({degree})")
-            return node
+            return False, node
 
     #Recherche d'un nœud de départ ayant au moins une connexion pour lancer le DFS
     start_node = next((i for i, row in enumerate(edges_matrix) if any(row)), None)
@@ -90,7 +90,7 @@ def is_graph_eulerian(graph):
     '''
     for node, count in visit_count.items():
         if count > 1 and node != 0:
-            return node
+            return False, node
 
     #si tout est bon, le grpahe est considéré comme eulérien
-    return True
+    return True, "ok"
