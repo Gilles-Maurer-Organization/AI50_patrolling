@@ -70,6 +70,7 @@ def is_graph_eulerian(graph):
     visited = [False] * len(edges_matrix)
     algo_dfs(graph,start_node, visited, visit_count)
 
+    #à voir encore ici
     if False in visited:
         return False
 
