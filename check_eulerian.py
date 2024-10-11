@@ -60,6 +60,11 @@ def is_graph_eulerian(graph):
            # print(f"Le nœud {node} est un cul de sac et va poser porblème s'il n'est pas relié à un autre noeud")
             return node
 
+        # Si un sommet a un degré impair, le graphe ne peut pas être eulérien
+        if degree % 2 != 0:
+            print(f"Le nœud {node} a un degré impair ({degree})")
+            return node
+
     #Recherche d'un nœud de départ ayant au moins une connexion pour lancer le DFS
     start_node = next((i for i, row in enumerate(edges_matrix) if any(row)), None)
 
