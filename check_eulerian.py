@@ -1,97 +1,71 @@
-def algo_dfs(graph, node, visited, visit_count):
+def algo_dfs(matrix, node, visited):
     '''
-         Vérifie si le graphe est connexe
-         
-        args:
-            graph (Matrix): matrice d'adjacence (via compute_matrix())
-            node (Int): le noeud de départ (le 1er de la matrice d'adjacence)
-            visited (List) : l'état de chaqe noeud du graphe (visité ou non)
-            visited_count (List): nombre de fois que chaque noeud a été visité
+    Parcours en profondeur (DFS) pour marquer tous les sommets atteignables comme visités.
+
+    args:
+        matrix (Matrix): matrice d'adjacence (via compute_matrix())
+        node (Int): le nœud de départ
+        visited (List): liste marquant l'état de visite de chaque nœud
     '''
 
-    # matrice d'adjacence
-    edges_matrix = graph[0]
-    # compte chaque visite sur le nœud
-    visit_count[node] += 1
-    # marque le nœud comme visité
+    # noeud actuel considéré comme "visité"
     visited[node] = True
 
-    for neighbor, connected in enumerate(edges_matrix[node]):
+    for neighbor, connected in enumerate(matrix[node]):
+        # si une connexion existe et que le voisin n'a pas encore été visité
+        if connected != 0 and not visited[neighbor]:
+            # appel récursif pour explorer le voisin
+            algo_dfs(matrix, neighbor, visited)
 
-        # si une connexion existe
-        if connected != 0:
-            # si le voisin n'a pas encore été visité dans ce chemin
-            if not visited[neighbor]:
-                #appel récursif
-                algo_dfs(graph, neighbor, visited,visit_count)
-            else:
-                # incrémente le nombre de visite pour le noeud
-                visit_count[neighbor] += 1
 
 def is_graph_eulerian(graph):
-
     '''
-        Vérifie si le graphe donné en paramètre est eulérien ou non
+    Vérifie si le graphe est eulérien ou semi-eulérien.
 
-        args:
-            graph (Matrix): matrice d'adjacence (via compute_matrix())
+    args:
+        graph (Matrix): matrice d'adjacence (via compute_matrix())
 
-        returns:
-            - True, "ok" s'il est eulérien
-            - False , node (celle qui pose problème) sinon
+    returns:
+        - "eulérien" si le graphe est un cycle eulérien
+        - "semi-eulérien" si le graphe est un chemin eulérien
+        - "pas eulérien" sinon
     '''
+    edges_matrix = graph[0]  # matrice d'adjacence
 
-    #matriced'adjacence
-    edges_matrix = graph[0]
+    odd_degree_nodes = 0  # compteur de nœuds de degré impair
 
-    #vérification de la conformité du graphe, si non conforme, il n'est pas eulérien
+    # on vérifie le degré de chaque sommet
     for node, row in enumerate(edges_matrix):
+        degree = sum(1 for weight in row if weight != 0) # calcul du degré
 
-        #on calcule le degré pour chaque noeud
-        degree = sum(1 for weight in row if weight != 0)
-
-        #vérifie le cas "noeud isolé" (= non relié)
         if degree == 0:
-           # print(f"le noeud {node} n'est pas connecté au graphe")
-            return False, node
+            continue  # on ignore les sommets isolés
 
-        # vérifie le cas "noeud cul de sac"
-        if degree < 2:
-           # print(f"Le nœud {node} est un cul de sac et va poser porblème s'il n'est pas relié à un autre noeud")
-            return False, node
-
-        # Si un sommet a un degré impair, le graphe ne peut pas être eulérien
         if degree % 2 != 0:
-            print(f"Le nœud {node} a un degré impair ({degree})")
-            return False, node
+            odd_degree_nodes += 1
 
-    #Recherche d'un nœud de départ ayant au moins une connexion pour lancer le DFS
+        if odd_degree_nodes > 2:
+            return "non eulérien"  # plus de deux nœuds de degré impair => pas eulérien
+
+    # on cherche un noeud de départ pour le DFS
     start_node = next((i for i, row in enumerate(edges_matrix) if any(row)), None)
+    if start_node is None:
+        return "eulérien"  # trivialement eulérien car aucun noeud n'est connecté
 
-    #Dictionnaire pour compter le nombre de visites pour chaque nœud
-    visit_count = {i: 0 for i in range(len(edges_matrix))}
+    # DFS pour vérifier la connexité (condition pour être eulérien ou semi-eulérien)
+    visited = [False] * len(edges_matrix) # répertorie les noeuds visités
+    algo_dfs(edges_matrix, start_node, visited)
 
-    #Initialisation de la liste des nœuds visités et lancement du DFS
-    visited = [False] * len(edges_matrix)
-    algo_dfs(graph,start_node, visited, visit_count)
+    # on vérifie que chaque sommet ayant au moins une arête a été visité
+    for node, row in enumerate(edges_matrix):
+        if any(row) and not visited[node]:  # Si le sommet est connecté mais pas visité
+            return "non eulérien"  # Le graphe n'est pas connexe, donc pas eulérien
 
-    #à voir encore ici
-    if False in visited:
-        return False
+    # on détermine si le graphe est eulérien ou semi-eulérien
+    if odd_degree_nodes == 0:
+        return "eulérien" # revient au point de départ (= circuit eulérien)
+    elif odd_degree_nodes == 2:
+        return "semi-eulérien" # ne revient pas au point de départ (=chemin eulérien)
+    else:
+        return "non eulérien"
 
-    # vérif du nb de visite sur chaque noeud useless ? -> à voir
-    #réajuster le nombre de visites de chaque noeud (il est doublé ??)
-    for node, count in visit_count.items():
-        visit_count[node]//= 2
-
-    '''
-    - on vérifie si le noeud a été visité + de 1 fois, s'il a été visité + de 1 fois, il n'est pas eulérien
-    - tout en excluant le noeud initial car, selon comment le graphe a été construit,il se peut que le DFS "visite" 
-    le noeud initial plusieurs fois même si le graphe est valide
-    '''
-    for node, count in visit_count.items():
-        if count > 1 and node != 0:
-            return False, node
-
-    #si tout est bon, le grpahe est considéré comme eulérien
-    return True, "ok"
