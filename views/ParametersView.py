@@ -1,30 +1,45 @@
-import pygame
 from constants.Colors import Colors
 from views.TextBoxView import TextBoxView
-from views.ButtonView import ButtonView
+from controllers.TextBoxController import TextBoxController
+
+from controllers.ButtonController import ButtonController
 
 class ParametersView:
-    def __init__(self, screen, button_controllers) -> None:
+    def __init__(self, screen, graph_controller) -> None:
         self.screen = screen
         self.background_color = Colors.WHITE.value
 
-        self.button_controllers = button_controllers
         self.text_box = TextBoxView(self.screen, 10, 60, 240, 40)
 
+        self.button_controller = ButtonController(self, graph_controller)
+        self.text_box_controller = TextBoxController(self)
 
     def draw_parameters(self) -> None:
         '''
-        Cette méthode dessine les paramètres de la vue de paramètres: bouttons, menus déroulants
+        Cette méthode dessine les paramètres de la vue de paramètres: bouttons, menus déroulants.
         '''
         self.screen.fill(self.background_color)
 
-        # Dessin des premiers boutons
-        for controller in self.button_controllers:
-            controller.view.draw()
+        self.button_controller.draw_buttons()
 
         # Dessin de la zone de texte
         self.text_box.draw()
 
-    def handle_events(self, event) -> None:
-        for controller in self.button_controllers:
-            controller.handle_event(event)
+    def handle_mouse_click(self, event) -> None:
+        '''
+        Cette méthode gère les interactions de clic de souris sur un bouton.
+        
+        Args:
+            event: L'événement Pygame contenant des informations sur le clic de souris.
+        '''
+        self.button_controller.handle_click(event)
+
+    
+    def handle_text_event(self, event) -> None:
+        '''
+        Cette méthode gère les événements réalisés sur une text box.
+        
+        Args:
+            event: L'événement Pygame contenant des informations concernant l'interaction de l'utilisateur avec le programme.
+        '''
+        self.text_box_controller.handle_event(event)

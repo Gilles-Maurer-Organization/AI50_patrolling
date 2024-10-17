@@ -1,10 +1,8 @@
 import pygame
 from models.Graph import Graph
-from views.GraphView import GraphView
 from views.View import View
 from controllers.GraphController import GraphController
 from controllers.CSVController import CSVController
-from controllers.TextBoxController import TextBoxController
 
 # Initialisation de Pygame
 pygame.init()
@@ -14,10 +12,13 @@ graph = Graph()
 
 # TODO : déplacer la référence background_image, elle n'a pas de lien direct avec la vue générale mais seulement avec la GraphView
 view = View()
+view.initialize_graph_view()
 
 # Initialisation du controller de graph
 graph_controller = GraphController(graph, view.get_graphView())
-text_box_controller = TextBoxController(view.get_parametersView())
+
+view.initialize_parameters_view(graph_controller)
+
 edges_matrix, nodes_list = graph.compute_matrix()
 
 # Initialisation du controller de CSV
@@ -34,25 +35,12 @@ while running:
         # On vérifie les événements de l'utilisateur dès qu'une action est réalisée tout au long du programme
         # (pour le moment, voué à être modifié, il ne faut pas les vérifier tout au long de la vie du programme)
         graph_controller.handle_event(event)
-        text_box_controller.handle_event(event)
+        
+        view.get_parametersView().handle_text_event(event)
+        view.get_parametersView().handle_mouse_click(event)
     
-    # Une fois l'événement géré, on met à jour la vue à l'aide du controller
-    graph_controller.update()
-
-    view.draw()
-    
-    # TODO : Créer des boutons appropriés pour save le graphe
-    keys = pygame.key.get_pressed()
-    # Si la touche S est enfoncée, on vérifie si ça a déjà été save
-    if keys[pygame.K_s] and not is_saved:
-        # S'il n'a pas encore été save, on sauvegarde le nouveau graphe
-        graph_controller.save_graph()
-        # On indique qu'il a été sauvegardé
-        is_saved = True
-
-    # Si la touche L est enfoncée, on charge un graphe déjà existant
-    if keys[pygame.K_l]:
-        graph_controller.load_graph(1)
+    # Une fois l'événement géré, on met à jour la vue
+    view.draw(graph_controller)
 
     pygame.display.flip()
     
