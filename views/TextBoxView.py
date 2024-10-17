@@ -9,7 +9,7 @@ class TextBoxView:
         self.width = width
         self.height = height
 
-        self.font = pygame.font.Font(None, 24)
+        self.font = pygame.font.SysFont("Arial", 16)
         self.text_box_rect = None
         self.text_box_content = None
 
@@ -22,12 +22,12 @@ class TextBoxView:
         '''
         text_box_surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
 
-        border_surface = pygame.Surface((self.width + 4, self.height + 4), pygame.SRCALPHA)
+        border_surface = pygame.Surface((self.width + 2, self.height + 2), pygame.SRCALPHA)
         border_surface.fill((0, 0, 0, 0))
 
-        pygame.draw.rect(border_surface, Colors.GRAY_TEXT.value, (0, 0, self.width + 4, self.height + 4), border_radius=10)
+        pygame.draw.rect(border_surface, Colors.BLACK.value, (0, 0, self.width + 2, self.height + 2), border_radius=10)
 
-        self.screen.blit(border_surface, (self.x - 2, self.y - 2))
+        self.screen.blit(border_surface, (self.x - 1, self.y - 1))
 
         pygame.draw.rect(text_box_surface, Colors.BUTTON.value, (0, 0, self.width, self.height), border_radius=10)
 
