@@ -9,7 +9,7 @@ class ParametersView:
         self.screen = screen
         self.background_color = Colors.WHITE.value
 
-        self.text_box = TextBoxView(self.screen, 10, 60, 240, 40)
+        self.text_box = TextBoxView(self.screen, 10, 60, 240, 40, logo_path='assets/number_agents.png')
 
         self.button_controller = ButtonController(self, graph_controller)
         self.text_box_controller = TextBoxController(self)

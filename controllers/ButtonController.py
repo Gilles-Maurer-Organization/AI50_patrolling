@@ -1,3 +1,5 @@
+from constants.Colors import Colors
+
 from models.Button import Button
 from views.ButtonView import ButtonView
 import pygame
@@ -16,8 +18,39 @@ class ButtonController:
         
         # Création des vues de chaque bouton
         self.button_views = [
-            ButtonView(parameters_view.screen, button.text, button.action, 10 + i * 130, 10, 120, 40)
-            for i, button in enumerate(self.buttons)
+            ButtonView(
+                parameters_view.screen,
+                self.buttons[0].text,
+                self.buttons[0].action,
+                10,
+                10,
+                90,
+                40,
+                logo_path = 'assets/save.png',
+                color = Colors.BUTTON
+            ),
+            ButtonView(
+                parameters_view.screen,
+                self.buttons[1].text,
+                self.buttons[1].action,
+                110,
+                10,
+                90,
+                40,
+                logo_path = 'assets/import.png',
+                color = Colors.BUTTON
+            ),
+            ButtonView(
+                parameters_view.screen,
+                self.buttons[2].text,
+                self.buttons[2].action,
+                210,
+                10,
+                90,
+                40,
+                logo_path = 'assets/clear.png',
+                color = Colors.BUTTON_RED
+            ),
         ]
 
     def draw_buttons(self) -> None:

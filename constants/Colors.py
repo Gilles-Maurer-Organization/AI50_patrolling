@@ -10,5 +10,8 @@ class Colors(Enum):
     SELECTED_NODE_COLOR = (255, 255, 0)
     DRAGGING_NODE_COLOR = (255, 0, 0)
 
+    # Relatif aux boutons
     BUTTON = (241, 241, 241)
+    BUTTON_GREEN = (155, 219, 162)
+    BUTTON_RED = (250, 184, 184)
     GRAY_TEXT = (200, 200, 200)
