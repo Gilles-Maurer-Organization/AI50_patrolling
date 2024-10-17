@@ -26,8 +26,7 @@ class ButtonController:
                 10,
                 90,
                 40,
-                logo_path = 'assets/save.png',
-                color = Colors.BUTTON
+                logo_path = 'assets/save.png'
             ),
             ButtonView(
                 parameters_view.screen,
@@ -37,8 +36,7 @@ class ButtonController:
                 10,
                 90,
                 40,
-                logo_path = 'assets/import.png',
-                color = Colors.BUTTON
+                logo_path = 'assets/import.png'
             ),
             ButtonView(
                 parameters_view.screen,
@@ -49,7 +47,8 @@ class ButtonController:
                 90,
                 40,
                 logo_path = 'assets/clear.png',
-                color = Colors.BUTTON_RED
+                color = Colors.BUTTON_RED,
+                hover_color=Colors.BUTTON_RED_HOVER
             ),
         ]
 
@@ -60,7 +59,7 @@ class ButtonController:
         for button_view in self.button_views:
             button_view.draw()
 
-    def handle_click(self, event) -> None:
+    def handle_mouse(self, event) -> None:
         '''
         Gère l'événement de clic sur les boutons.
 
@@ -73,8 +72,16 @@ class ButtonController:
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = (event.pos[0] - 960, event.pos[1])
             for button, button_view in zip(self.buttons, self.button_views):
-                if button_view.is_clicked(mouse_pos):
+                if button_view.is_hovered(mouse_pos):
                     button.action()
+        
+        if event.type == pygame.MOUSEMOTION:
+            mouse_pos = (event.pos[0] - 960, event.pos[1])
+            for button_view in self.button_views:
+                if button_view.is_hovered(mouse_pos):
+                    button_view.set_hovered()
+                else:
+                    button_view.set_normal()
 
     def save_action(self) -> None:
         '''

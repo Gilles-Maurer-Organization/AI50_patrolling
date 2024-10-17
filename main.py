@@ -37,7 +37,7 @@ while running:
         graph_controller.handle_event(event)
         
         view.get_parametersView().handle_text_event(event)
-        view.get_parametersView().handle_mouse_click(event)
+        view.get_parametersView().handle_button(event)
     
     # Une fois l'événement géré, on met à jour la vue
     view.draw(graph_controller)

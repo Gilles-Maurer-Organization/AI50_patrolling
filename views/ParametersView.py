@@ -25,14 +25,14 @@ class ParametersView:
         # Dessin de la zone de texte
         self.text_box.draw()
 
-    def handle_mouse_click(self, event) -> None:
+    def handle_button(self, event) -> None:
         '''
         Cette méthode gère les interactions de clic de souris sur un bouton.
         
         Args:
             event: L'événement Pygame contenant des informations sur le clic de souris.
         '''
-        self.button_controller.handle_click(event)
+        self.button_controller.handle_mouse(event)
 
     
     def handle_text_event(self, event) -> None:

@@ -2,7 +2,7 @@ import pygame
 from constants.Colors import Colors
 
 class ButtonView:
-    def __init__(self, screen, text: str, action, x, y, width, height, logo_path = None, color: Colors = Colors.BUTTON) -> None:
+    def __init__(self, screen, text: str, action, x, y, width, height, logo_path = None, color: Colors = Colors.BUTTON, hover_color: Colors = Colors.BUTTON_HOVER) -> None:
         self.screen = screen
         self.text = text
         self.action = action
@@ -11,6 +11,9 @@ class ButtonView:
         self.width = width
         self.height = height
         self.color = color
+
+        self.hover_color = hover_color
+        self.normal_color = color
 
         self.rect = pygame.Rect(x, y, width, height)
         self.font = pygame.font.SysFont("Arial", 16)
@@ -51,14 +54,26 @@ class ButtonView:
         self.screen.blit(button_surface, (self.rect.x, self.rect.y))
 
     
-    def is_clicked(self, mouse_pos) -> bool:
+    def is_hovered(self, mouse_pos) -> bool:
         '''
-        Vérifie si le bouton a été cliqué.
+        Vérifie si le bouton a été survolé.
 
         Cette méthode détermine si la position de la souris, passée en argument,
         se trouve à l'intérieur des limites du bouton. Elle retourne True si
-        le bouton est cliqué, sinon False.
+        le bouton est survolé, sinon False.
         '''
         return self.rect.collidepoint(mouse_pos)
+    
+    def set_hovered(self) -> None:
+        '''
+        Cette méthode change l'état du bouton en état survolé.
+        '''
+        self.color = self.hover_color
+
+    def set_normal(self) -> None:
+        '''
+        Cette méthode change l'état du bouton en état non survolé.
+        '''
+        self.color = self.normal_color
 
     

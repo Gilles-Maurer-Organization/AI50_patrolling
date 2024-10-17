@@ -12,6 +12,9 @@ class Colors(Enum):
 
     # Relatif aux boutons
     BUTTON = (241, 241, 241)
+    BUTTON_HOVER = (226, 226, 226)
     BUTTON_GREEN = (155, 219, 162)
+    BUTTON_GREEN_HOVER = (105, 201, 115)
     BUTTON_RED = (250, 184, 184)
+    BUTTON_RED_HOVER = (247, 141, 141)
     GRAY_TEXT = (200, 200, 200)
