@@ -18,14 +18,22 @@ class TextBoxController:
         # Si un clic est réalisé
         if event.type == pygame.MOUSEBUTTONDOWN:
             # On vérifie si ce dernier est sur la zone de texte
-            if self.is_click_in_text_box(event):
+            if self.is_hover_in_text_box(event):
                 self.text_box.active = True
+                self.parameters_view.get_text_box_view().set_clicked()
             else:
                 self.text_box.active = False
+                self.parameters_view.get_text_box_view().set_normal()
+
+        if event.type == pygame.MOUSEMOTION:
+            if self.text_box.active == False:
+                if self.is_hover_in_text_box(event):
+                    self.parameters_view.get_text_box_view().set_hovered()
+                else:
+                    self.parameters_view.get_text_box_view().set_normal()
 
         # Une fois la zone de texte active, on regarde si une touche a été pressée
         if event.type == pygame.KEYDOWN and self.text_box.active:
-
             # S'il s'agit de la première fois que la zone de texte est écrite et que la touche pressée est valide (un chiffre), on supprime le texte de base
             if self.text_box.first_input and event.unicode.isdigit():
                 self.text_box.reset()
@@ -38,13 +46,14 @@ class TextBoxController:
                 self.text_box.add_character(event.unicode)
             
         self.parameters_view.text_box.change_text(self.text_box.text_content)
+        self.parameters_view.get_text_box_view().set_text_completed(self.text_box.is_text_completed())
 
-    def is_click_in_text_box(self, event):
+    def is_hover_in_text_box(self, event):
         '''
-        Cette méthode vérifie si le clic de souris réalisé est situé dans les limites de la zone de texte.
+        Cette méthode vérifie si la souris est située dans les limites de la zone de texte.
 
         Args:
-            event: L'événement Pygame contenant des informations sur le clic de souris.
+            event: L'événement Pygame contenant des informations sur les coordonnées de la souris.
         '''
         # Ajout de l'offset 960 (largeur de la fenetre de graphe)
         # TODO: Modifier par une variable globale de largeur de la fenêtre

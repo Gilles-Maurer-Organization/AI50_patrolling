@@ -9,6 +9,17 @@ class TextBoxView:
         self.width = width
         self.height = height
 
+        self.color = Colors.BUTTON.value
+        self.normal_color = self.color
+        self.hover_color = Colors.BUTTON_HOVER.value
+        self.click_color = Colors.TEXT_BOX_CLICKED.value
+
+        self.text_color = Colors.TEXT_BOX_TEXT.value
+        self.text_color_uncompleted = Colors.TEXT_BOX_TEXT.value
+        self.text_color_completed = Colors.BLACK.value
+
+        self.stroke_color = Colors.GRAY_TEXT.value
+
         self.logo_path = logo_path
 
         self.font = pygame.font.SysFont("Arial", 16)
@@ -33,11 +44,11 @@ class TextBoxView:
         border_surface = pygame.Surface((self.width + 2, self.height + 2), pygame.SRCALPHA)
         border_surface.fill((0, 0, 0, 0))
 
-        pygame.draw.rect(border_surface, Colors.BLACK.value, (0, 0, self.width + 2, self.height + 2), border_radius=6)
+        pygame.draw.rect(border_surface, self.stroke_color, (0, 0, self.width + 2, self.height + 2), border_radius=6)
 
         self.screen.blit(border_surface, (self.x - 1, self.y - 1))
 
-        pygame.draw.rect(text_box_surface, Colors.BUTTON.value, (0, 0, self.width, self.height), border_radius=6)
+        pygame.draw.rect(text_box_surface, self.color, (0, 0, self.width, self.height), border_radius=6)
 
         if self.logo:
             logo_x = 10
@@ -45,7 +56,7 @@ class TextBoxView:
 
             text_box_surface.blit(self.logo, (logo_x, logo_y))
 
-        text = self.font.render(self.text_box_content, True, (0, 0, 0))
+        text = self.font.render(self.text_box_content, True, self.text_color)
         text_rect = text.get_rect(center=(self.width / 2 + (self.logo.get_width() if self.logo else 0) / 2, self.height / 2))
 
         text_box_surface.blit(text, text_rect)
@@ -63,3 +74,26 @@ class TextBoxView:
             new_text (string): le nouveau texte envoyé à la vue.
         '''
         self.text_box_content = new_text
+    
+    def set_hovered(self) -> None:
+        '''
+        Cette méthode change l'état de la textbox en état survolé.
+        '''
+        self.color = self.hover_color
+
+    def set_clicked(self) -> None:
+        '''
+        Cette méthode change l'état de la textbox en état cliqué.
+        '''
+        self.color = self.click_color
+        self.stroke_color = Colors.BLACK.value
+
+    def set_normal(self) -> None:
+        '''
+        Cette méthode change l'état de la textbox en état non survolé ou non cliqué.
+        '''
+        self.color = self.normal_color
+        self.stroke_color = Colors.GRAY_TEXT.value
+
+    def set_text_completed(self, is_completed: bool) -> None:
+        self.text_color = self.text_color_completed if is_completed else self.text_color_uncompleted

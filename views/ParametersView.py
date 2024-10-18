@@ -35,7 +35,7 @@ class ParametersView:
         self.button_controller.handle_mouse(event)
 
     
-    def handle_text_event(self, event) -> None:
+    def handle_text_box_event(self, event) -> None:
         '''
         Cette méthode gère les événements réalisés sur une text box.
         
@@ -43,3 +43,6 @@ class ParametersView:
             event: L'événement Pygame contenant des informations concernant l'interaction de l'utilisateur avec le programme.
         '''
         self.text_box_controller.handle_event(event)
+
+    def get_text_box_view(self) -> TextBoxView:
+        return self.text_box
