@@ -11,7 +11,7 @@ class ScrollingListController:
         self.scrolling_list_view = ScrollingListView(parameters_view.screen, 10, 110, 290, 40)
 
     def draw_scrolling_list(self) -> None:
-        self.scrolling_list_view.draw()
+        self.scrolling_list_view.draw(self.scrolling_list.algorithms)
 
     def is_scrolling_list_hovered(self, event):
         '''
@@ -28,24 +28,19 @@ class ScrollingListController:
         return False
 
     def handle_event(self, event) -> None:
-        # Si un clic est réalisé
         if event.type == pygame.MOUSEBUTTONDOWN:
-            # On vérifie si ce dernier est sur la zone de texte
             if self.is_scrolling_list_hovered(event):
-                self.scrolling_list.active = True
-                # On indique à la vue que la zone de texte a été cliquée
-                self.scrolling_list_view.set_clicked()
-            else:
-                self.scrolling_list.active = False
-                # On indique à la vue que la zone de texte n'est plus active
-                self.scrolling_list_view.set_normal()
+                self.scrolling_list_view.set_active(True)
+            elif self.scrolling_list_view.is_active:
+                selected_option = self.scrolling_list_view.is_option_clicked(event.pos)
+                if selected_option:
+                    self.scrolling_list_view.set_selected_option(selected_option)
+                    print(f"Algorithme sélectionné : {selected_option}")
+                else:
+                    self.scrolling_list_view.set_active(False)
 
         if event.type == pygame.MOUSEMOTION:
-            if self.scrolling_list.active == False:
-                if self.is_scrolling_list_hovered(event):
-                    # On indique à la vue que la zone de texte est survolée
-                    self.scrolling_list_view.set_hovered()
-                else:
-                    # On indique à la vue que la zone de texte n'est pas survolée
-                    # (réinitialisation en normal)
-                    self.scrolling_list_view.set_normal()
+            if self.scrolling_list_view.scrolling_list_rect.collidepoint(event.pos):
+                self.scrolling_list_view.set_hovered()
+            else:
+                self.scrolling_list_view.set_normal()

@@ -37,8 +37,10 @@ class View:
     def get_graphView(self) -> GraphView:
         return self.graph_view
     
-    def get_parameters_view(self) -> ParametersView:
-        return self.parameters_view
+    def handle_actions(self, event) -> None:
+        self.parameters_view.handle_text_box(event)
+        self.parameters_view.handle_button(event)
+        self.parameters_view.handle_scrolling_list(event)
 
     def draw(self, graph_controller) -> None:
         '''
