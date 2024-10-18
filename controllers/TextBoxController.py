@@ -54,7 +54,10 @@ class TextBoxController:
             
         self.text_box_view.change_text(self.text_box.text_content)
         # On indique à la vue si la zone de texte est complétée ou non pour modifier la couleur du texte
-        self.text_box_view.set_text_completed(self.text_box.is_text_completed())
+        self.text_box_view.set_text_completed(self.is_text_box_text_completed())
+
+    def is_text_box_text_completed(self) -> bool:
+        return self.text_box.default_text != self.text_box.text_content
 
     def is_text_box_hovered(self, event):
         '''

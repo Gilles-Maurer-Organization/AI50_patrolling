@@ -4,8 +4,6 @@ class TextBox:
         self.first_input = True
         self.text_content = default_text
         self.default_text = default_text
-        self.text_completed = False
-        self.text_uncompleted = True
 
     def reset(self):
         """
@@ -13,7 +11,6 @@ class TextBox:
         """
         self.text_content = self.default_text
         self.first_input = True
-        self.set_text_uncompleted()
 
     def add_character(self, char):
         """
@@ -23,7 +20,6 @@ class TextBox:
             self.text_content = ""
             self.first_input = False
         self.text_content += char
-        self.set_text_completed()
 
     def handle_backspace(self):
         """
@@ -33,7 +29,6 @@ class TextBox:
             self.remove_character()
             if self.is_empty():
                 self.reset()
-                self.set_text_uncompleted()
 
     def remove_character(self):
         """
@@ -52,23 +47,3 @@ class TextBox:
         Cette méthode retourne vrai dans le cas où le texte initial est identique au texte actuel
         '''
         return self.default_text == self.text_content
-
-    def set_text_completed(self) -> None:
-        '''
-        Cette méthode indique le texte de la zone de texte comme complété par l'utilisateur.
-        '''
-        self.text_completed = True
-        self.text_uncompleted = False
-
-    def set_text_uncompleted(self) -> None:
-        '''
-        Cette méthode indique le texte de la zone de texte comme vide.
-        '''
-        self.text_completed = False
-        self.text_uncompleted = True
-
-    def is_text_completed(self) -> bool:
-        '''
-        Cette méthode retourne si oui ou non le texte de la zone de texte est complété.
-        '''
-        return self.text_completed
