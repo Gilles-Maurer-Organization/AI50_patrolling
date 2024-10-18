@@ -1,5 +1,6 @@
 from constants.Colors import Colors
 import pygame
+from constants.Config import GRAPH_WINDOW_WIDTH
 
 class ScrollingListView:
     def __init__(self, screen, x, y, width, height) -> None:
@@ -88,7 +89,7 @@ class ScrollingListView:
         '''
 
         # TODO: récupérer la largeur de offset sur une variable globale
-        mouse_pos = (event.pos[0] - 960, event.pos[1])
+        mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
         for rect, option in zip(self.options_rects, algorithms):
             if rect.collidepoint(mouse_pos):
                 return option

@@ -1,6 +1,8 @@
 import math
 from models.Node import Node
 
+from constants.Config import NODE_RADIUS
+
 class NodeController:
     '''
     Classe représentant un controlleur qui se charge des opérations sur les noeuds.
@@ -30,6 +32,29 @@ class NodeController:
             pos (tuple de float): Coordonnées du clic de la souris
         '''
         self.graph.add_node(pos[0], pos[1])
+    
+    def delete_node(self, pos) -> None:
+        '''
+        Cette méthode supprime le noeud sélectionné par l'utilisateur ainsi que
+        les liaisons (edges) liés au noeud en question.
+
+        Args:
+            pos (tuple de float): Les coordonnées du clic de la souris
+        '''
+        # On récupère le nœud à la position donnée
+        node = self.get_node_at_position(pos)
+        # On vérifie que le noeud existe
+        if node is not None:  
+            # On cherche toutes les arêtes connectées au noeud
+            edges_to_remove = [edge for edge in self.graph.edges if edge[0] == node or edge[1] == node]
+            
+            # On supprime les arêtes connectées
+            for edge in edges_to_remove:
+                self.graph.edges.remove(edge)
+
+            # On supprime le nœud
+            self.graph.nodes.remove(node)
+
 
     def start_drag(self, pos) -> None:
         '''
@@ -83,7 +108,6 @@ class NodeController:
         Cette méthode retourne le noeud correspondant aux coordonnées du clic de l'utilisateur. Le nœud est identifié par ses coordonnées qui correspondent à celles du clic effectué.
         '''
         for node in self.graph.nodes:
-            # TODO : modifier 10 par la largeur du noeud (ajouter un lien donc avec le Model noeud & ajouter une épaisseur de noeud directement dans le model)
-            if math.sqrt((node.x - pos[0]) ** 2 + (node.y - pos[1]) ** 2) < 10:
+            if math.sqrt((node.x - pos[0]) ** 2 + (node.y - pos[1]) ** 2) < NODE_RADIUS:
                 return node
         return None

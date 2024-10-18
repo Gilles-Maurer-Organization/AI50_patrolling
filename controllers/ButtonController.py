@@ -1,4 +1,5 @@
 from constants.Colors import Colors
+from constants.Config import GRAPH_WINDOW_WIDTH
 
 from models.Button import Button
 from views.ButtonView import ButtonView
@@ -82,13 +83,13 @@ class ButtonController:
             event: L'événement Pygame contenant des informations sur le clic de souris.
         '''
         if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = (event.pos[0] - 960, event.pos[1])
+            mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
             for button, button_view in zip(self.buttons, self.button_views):
                 if button_view.is_hovered(mouse_pos):
                     button.action()
         
         if event.type == pygame.MOUSEMOTION:
-            mouse_pos = (event.pos[0] - 960, event.pos[1])
+            mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
             for button_view in self.button_views:
                 if button_view.is_hovered(mouse_pos):
                     button_view.set_hovered()

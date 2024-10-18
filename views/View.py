@@ -1,14 +1,14 @@
 import pygame
 
+from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, PARAMETERS_WINDOW_WIDTH
 
 from views.GraphView import GraphView
 from views.ParametersView import ParametersView
 
 class View:
     def __init__(self) -> None:
-        # Dimensions de la fenêtre (1/2 de 1920 par 1080)
-        self.WIDTH, self.HEIGHT = 960, 540
-        self.screen = pygame.display.set_mode((self.WIDTH + 310, self.HEIGHT))
+        self.WIDTH, self.HEIGHT = GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT
+        self.screen = pygame.display.set_mode((self.WIDTH + PARAMETERS_WINDOW_WIDTH, self.HEIGHT))
 
     def initialize_graph_view(self) -> None:
         '''
@@ -32,7 +32,7 @@ class View:
             graph_controller: Une référence du contrôleur du graphe afin de réaliser des opérations de sauvegarde, import, nettoyage, etc entre les deux vues.
         '''
         # Création de la vue paramètres
-        self.parameters_view = ParametersView(self.screen.subsurface((self.WIDTH, 0, 310, self.HEIGHT)), graph_controller)
+        self.parameters_view = ParametersView(self.screen.subsurface((self.WIDTH, 0, PARAMETERS_WINDOW_WIDTH, self.HEIGHT)), graph_controller)
 
     def get_graphView(self) -> GraphView:
         return self.graph_view

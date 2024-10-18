@@ -1,3 +1,5 @@
+from constants.Config import GRAPH_WINDOW_WIDTH
+
 from views.ScrollingListView import ScrollingListView
 
 from models.ScrollingList import ScrollingList
@@ -29,9 +31,7 @@ class ScrollingListController:
         Args:
             event: L'événement Pygame contenant des informations sur les coordonnées de la souris.
         '''
-        # Ajout de l'offset 960 (largeur de la fenetre de graphe)
-        # TODO: Modifier par une variable globale de largeur de la fenêtre
-        mouse_pos = (event.pos[0] - 960, event.pos[1])
+        mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
         if self.scrolling_list_view.scrolling_list_rect:
             return self.scrolling_list_view.scrolling_list_rect.collidepoint(mouse_pos)
         return False
