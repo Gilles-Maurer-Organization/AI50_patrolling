@@ -92,3 +92,7 @@ class GraphController:
         if edges_matrix and nodes_list:
             self.graph.nodes = {i: coords for i, coords in enumerate(nodes_list)}
 
+    def clear_graph(self) -> None:
+        self.graph.nodes.clear()
+        self.graph.edges.clear()
+

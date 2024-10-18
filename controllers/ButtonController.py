@@ -113,6 +113,7 @@ class ButtonController:
         '''
         Cette méthode nettoie l'intégralité de la vue du graphe lorsque le bouton Clear est cliqué.
         '''
+        self.graph_controller.clear_graph()
         print("Clear action triggered")
 
     def start_action(self) -> None:
