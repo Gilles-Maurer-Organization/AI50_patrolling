@@ -54,12 +54,21 @@ class TextBox:
         return self.default_text == self.text_content
 
     def set_text_completed(self) -> None:
+        '''
+        Cette méthode indique le texte de la zone de texte comme complété par l'utilisateur.
+        '''
         self.text_completed = True
         self.text_uncompleted = False
 
     def set_text_uncompleted(self) -> None:
+        '''
+        Cette méthode indique le texte de la zone de texte comme vide.
+        '''
         self.text_completed = False
         self.text_uncompleted = True
 
     def is_text_completed(self) -> bool:
+        '''
+        Cette méthode retourne si oui ou non le texte de la zone de texte est complété.
+        '''
         return self.text_completed

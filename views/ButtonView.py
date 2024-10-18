@@ -2,7 +2,7 @@ import pygame
 from constants.Colors import Colors
 
 class ButtonView:
-    def __init__(self, screen, text: str, action, x, y, width, height, logo_path = None, color: Colors = Colors.BUTTON, hover_color: Colors = Colors.BUTTON_HOVER) -> None:
+    def __init__(self, screen, text: str, action, x, y, width, height, icon_path = None, color: Colors = Colors.BUTTON, hover_color: Colors = Colors.BUTTON_HOVER) -> None:
         self.screen = screen
         self.text = text
         self.action = action
@@ -18,8 +18,8 @@ class ButtonView:
         self.rect = pygame.Rect(x, y, width, height)
         self.font = pygame.font.SysFont("Arial", 16)
 
-        if logo_path:
-            self.logo = pygame.image.load(logo_path)
+        if icon_path:
+            self.logo = pygame.image.load(icon_path)
             self.logo = pygame.transform.scale(self.logo, (20, 20))
         else:
             self.logo = None

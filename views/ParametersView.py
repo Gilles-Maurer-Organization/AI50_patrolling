@@ -1,18 +1,19 @@
 from constants.Colors import Colors
-from views.TextBoxView import TextBoxView
-from controllers.TextBoxController import TextBoxController
 
+from views.TextBoxView import TextBoxView
+
+from controllers.TextBoxController import TextBoxController
 from controllers.ButtonController import ButtonController
+from controllers.ScrollingListController import ScrollingListController
 
 class ParametersView:
     def __init__(self, screen, graph_controller) -> None:
         self.screen = screen
         self.background_color = Colors.WHITE.value
 
-        self.text_box = TextBoxView(self.screen, 10, 60, 240, 40, logo_path='assets/number_agents.png')
-
         self.button_controller = ButtonController(self, graph_controller)
         self.text_box_controller = TextBoxController(self)
+        self.scrolling_list_controller = ScrollingListController(self)
 
     def draw_parameters(self) -> None:
         '''
@@ -20,10 +21,14 @@ class ParametersView:
         '''
         self.screen.fill(self.background_color)
 
+        # Dessin de l'intégralité des boutons
         self.button_controller.draw_buttons()
 
         # Dessin de la zone de texte
-        self.text_box.draw()
+        self.text_box_controller.draw_text_box()
+
+        # Dessin de la liste déroulante
+        self.scrolling_list_controller.draw_scrolling_list()
 
     def handle_button(self, event) -> None:
         '''
@@ -32,10 +37,9 @@ class ParametersView:
         Args:
             event: L'événement Pygame contenant des informations sur le clic de souris.
         '''
-        self.button_controller.handle_mouse(event)
+        self.button_controller.handle_event(event)
 
-    
-    def handle_text_box_event(self, event) -> None:
+    def handle_text_box(self, event) -> None:
         '''
         Cette méthode gère les événements réalisés sur une text box.
         
@@ -44,5 +48,12 @@ class ParametersView:
         '''
         self.text_box_controller.handle_event(event)
 
-    def get_text_box_view(self) -> TextBoxView:
-        return self.text_box
+
+    def handle_scrolling_list(self, event) -> None:
+        '''
+        Cette méthode gère les événements réalisés sur une text box.
+        
+        Args:
+            event: L'événement Pygame contenant des informations concernant l'interaction de l'utilisateur avec le programme.
+        '''
+        self.scrolling_list_controller.handle_event(event)

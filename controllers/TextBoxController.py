@@ -1,10 +1,12 @@
 import pygame
 from models.TextBox import TextBox
+from views.TextBoxView import TextBoxView
 
 class TextBoxController:
     def __init__(self, parameters_view):
         self.parameters_view = parameters_view
 
+        self.text_box_view = TextBoxView(parameters_view.screen, 10, 60, 190, 40, icon_path='assets/number_agents.png')
         self.text_box = TextBox(default_text="Number of Agents")
 
     def handle_event(self, event):
@@ -18,19 +20,24 @@ class TextBoxController:
         # Si un clic est réalisé
         if event.type == pygame.MOUSEBUTTONDOWN:
             # On vérifie si ce dernier est sur la zone de texte
-            if self.is_hover_in_text_box(event):
+            if self.is_text_box_hovered(event):
                 self.text_box.active = True
-                self.parameters_view.get_text_box_view().set_clicked()
+                # On indique à la vue que la zone de texte a été cliquée
+                self.text_box_view.set_clicked()
             else:
                 self.text_box.active = False
-                self.parameters_view.get_text_box_view().set_normal()
+                # On indique à la vue que la zone de texte n'est plus active
+                self.text_box_view.set_normal()
 
         if event.type == pygame.MOUSEMOTION:
             if self.text_box.active == False:
-                if self.is_hover_in_text_box(event):
-                    self.parameters_view.get_text_box_view().set_hovered()
+                if self.is_text_box_hovered(event):
+                    # On indique à la vue que la zone de texte est survolée
+                    self.text_box_view.set_hovered()
                 else:
-                    self.parameters_view.get_text_box_view().set_normal()
+                    # On indique à la vue que la zone de texte n'est pas survolée
+                    # (réinitialisation en normal)
+                    self.text_box_view.set_normal()
 
         # Une fois la zone de texte active, on regarde si une touche a été pressée
         if event.type == pygame.KEYDOWN and self.text_box.active:
@@ -45,10 +52,11 @@ class TextBoxController:
             elif event.unicode.isdigit():
                 self.text_box.add_character(event.unicode)
             
-        self.parameters_view.text_box.change_text(self.text_box.text_content)
-        self.parameters_view.get_text_box_view().set_text_completed(self.text_box.is_text_completed())
+        self.text_box_view.change_text(self.text_box.text_content)
+        # On indique à la vue si la zone de texte est complétée ou non pour modifier la couleur du texte
+        self.text_box_view.set_text_completed(self.text_box.is_text_completed())
 
-    def is_hover_in_text_box(self, event):
+    def is_text_box_hovered(self, event):
         '''
         Cette méthode vérifie si la souris est située dans les limites de la zone de texte.
 
@@ -58,6 +66,9 @@ class TextBoxController:
         # Ajout de l'offset 960 (largeur de la fenetre de graphe)
         # TODO: Modifier par une variable globale de largeur de la fenêtre
         mouse_pos = (event.pos[0] - 960, event.pos[1])
-        if self.parameters_view.text_box.text_box_rect:
-            return self.parameters_view.text_box.text_box_rect.collidepoint(mouse_pos)
+        if self.text_box_view.text_box_rect:
+            return self.text_box_view.text_box_rect.collidepoint(mouse_pos)
         return False
+
+    def draw_text_box(self) -> None:
+        self.text_box_view.draw()

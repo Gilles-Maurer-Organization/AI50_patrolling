@@ -7,14 +7,14 @@ from controllers.CSVController import CSVController
 # Initialisation de Pygame
 pygame.init()
 
-# Initialisation du modèle de graph
+# Initialisation du modèle de graphe
 graph = Graph()
 
 # TODO : déplacer la référence background_image, elle n'a pas de lien direct avec la vue générale mais seulement avec la GraphView
 view = View()
 view.initialize_graph_view()
 
-# Initialisation du controller de graph
+# Initialisation du controller de graphe
 graph_controller = GraphController(graph, view.get_graphView())
 
 view.initialize_parameters_view(graph_controller)
@@ -36,8 +36,9 @@ while running:
         # (pour le moment, voué à être modifié, il ne faut pas les vérifier tout au long de la vie du programme)
         graph_controller.handle_event(event)
         
-        view.get_parametersView().handle_text_box_event(event)
-        view.get_parametersView().handle_button(event)
+        view.get_parameters_view().handle_text_box(event)
+        view.get_parameters_view().handle_button(event)
+        view.get_parameters_view().handle_scrolling_list(event)
     
     # Une fois l'événement géré, on met à jour la vue
     view.draw(graph_controller)

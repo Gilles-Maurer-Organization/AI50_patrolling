@@ -2,7 +2,7 @@ import pygame
 from constants.Colors import Colors
 
 class TextBoxView:
-    def __init__(self, screen, x, y, width, height, logo_path = None) -> None:
+    def __init__(self, screen, x, y, width, height, icon_path = None) -> None:
         self.screen = screen
         self.x = x
         self.y = y
@@ -10,27 +10,20 @@ class TextBoxView:
         self.height = height
 
         self.color = Colors.BUTTON.value
-        self.normal_color = self.color
-        self.hover_color = Colors.BUTTON_HOVER.value
-        self.click_color = Colors.TEXT_BOX_CLICKED.value
-
         self.text_color = Colors.TEXT_BOX_TEXT.value
-        self.text_color_uncompleted = Colors.TEXT_BOX_TEXT.value
-        self.text_color_completed = Colors.BLACK.value
-
         self.stroke_color = Colors.GRAY_TEXT.value
 
-        self.logo_path = logo_path
+        self.icon_path = icon_path
 
         self.font = pygame.font.SysFont("Arial", 16)
         self.text_box_rect = None
         self.text_box_content = None
 
-        if logo_path:
-            self.logo = pygame.image.load(logo_path)
-            self.logo = pygame.transform.scale(self.logo, (20, 20))
+        if icon_path:
+            self.icon = pygame.image.load(icon_path)
+            self.icon = pygame.transform.scale(self.icon, (20, 20))
         else:
-            self.logo = None
+            self.icon = None
 
     def draw(self) -> None:
         '''
@@ -50,14 +43,14 @@ class TextBoxView:
 
         pygame.draw.rect(text_box_surface, self.color, (0, 0, self.width, self.height), border_radius=6)
 
-        if self.logo:
+        if self.icon:
             logo_x = 10
-            logo_y = (self.height - self.logo.get_height()) // 2
+            logo_y = (self.height - self.icon.get_height()) // 2
 
-            text_box_surface.blit(self.logo, (logo_x, logo_y))
+            text_box_surface.blit(self.icon, (logo_x, logo_y))
 
         text = self.font.render(self.text_box_content, True, self.text_color)
-        text_rect = text.get_rect(center=(self.width / 2 + (self.logo.get_width() if self.logo else 0) / 2, self.height / 2))
+        text_rect = text.get_rect(center=(self.width / 2 + (self.icon.get_width() if self.icon else 0) / 2, self.height / 2))
 
         text_box_surface.blit(text, text_rect)
 
@@ -79,21 +72,21 @@ class TextBoxView:
         '''
         Cette méthode change l'état de la textbox en état survolé.
         '''
-        self.color = self.hover_color
+        self.color = Colors.BUTTON_HOVER.value
 
     def set_clicked(self) -> None:
         '''
         Cette méthode change l'état de la textbox en état cliqué.
         '''
-        self.color = self.click_color
+        self.color = Colors.TEXT_BOX_CLICKED.value
         self.stroke_color = Colors.BLACK.value
 
     def set_normal(self) -> None:
         '''
         Cette méthode change l'état de la textbox en état non survolé ou non cliqué.
         '''
-        self.color = self.normal_color
+        self.color = Colors.BUTTON.value
         self.stroke_color = Colors.GRAY_TEXT.value
 
     def set_text_completed(self, is_completed: bool) -> None:
-        self.text_color = self.text_color_completed if is_completed else self.text_color_uncompleted
+        self.text_color = Colors.BLACK.value if is_completed else Colors.TEXT_BOX_TEXT.value

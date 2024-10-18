@@ -13,7 +13,8 @@ class ButtonController:
         self.buttons = [
             Button("Save", self.save_action),
             Button("Import", self.import_action),
-            Button("Clear", self.clear_action)
+            Button("Clear", self.clear_action),
+            Button("Start simulation", self.start_action)
         ]
         
         # Création des vues de chaque bouton
@@ -26,7 +27,7 @@ class ButtonController:
                 10,
                 90,
                 40,
-                logo_path = 'assets/save.png'
+                icon_path = 'assets/save.png'
             ),
             ButtonView(
                 parameters_view.screen,
@@ -36,7 +37,7 @@ class ButtonController:
                 10,
                 90,
                 40,
-                logo_path = 'assets/import.png'
+                icon_path = 'assets/import.png'
             ),
             ButtonView(
                 parameters_view.screen,
@@ -46,9 +47,20 @@ class ButtonController:
                 10,
                 90,
                 40,
-                logo_path = 'assets/clear.png',
+                icon_path = 'assets/clear.png',
                 color = Colors.BUTTON_RED,
                 hover_color=Colors.BUTTON_RED_HOVER
+            ),
+            ButtonView(
+                parameters_view.screen,
+                self.buttons[3].text,
+                self.buttons[3].action,
+                160,
+                490,
+                140,
+                40,
+                color = Colors.BUTTON_GREEN,
+                hover_color=Colors.BUTTON_GREEN_HOVER
             ),
         ]
 
@@ -59,7 +71,7 @@ class ButtonController:
         for button_view in self.button_views:
             button_view.draw()
 
-    def handle_mouse(self, event) -> None:
+    def handle_event(self, event) -> None:
         '''
         Gère l'événement de clic sur les boutons.
 
@@ -102,3 +114,9 @@ class ButtonController:
         Cette méthode nettoie l'intégralité de la vue du graphe lorsque le bouton Clear est cliqué.
         '''
         print("Clear action triggered")
+
+    def start_action(self) -> None:
+        '''
+        Cette méthode lance le programme selon l'algorithme sélectionné.
+        '''
+        print("Starting algorithm")
