@@ -14,37 +14,51 @@ class ScrollingListView:
 
         self.font = pygame.font.SysFont("Arial", 16)
         self.scrolling_list_rect = pygame.Rect(self.x, self.y, self.width, self.height)
-        self.scrolling_list_content = None
 
         self.icon_path = 'assets/scrolling_icon.png'
 
         self.icon = pygame.image.load(self.icon_path)
         self.icon = pygame.transform.scale(self.icon, (20, 20))
+        self.flipped_icon = pygame.transform.flip(self.icon, False, True)
 
         self.is_active = False
-        self.selected_option = None
         self.options_rects = []
 
-    def draw(self, algorithms: list[str]) -> None:
-            self.draw_list_header()
+    def draw(self, algorithms: list[str], selected_algorithm = None, has_an_algorithm_selected: bool = False) -> None:
+        '''
+        Cette méthode dessine les caractéristiques de la liste déroulante : header et options de la liste déroulante
+        dans le cas où celle-ci est active (déroulée).
+        '''
+        if has_an_algorithm_selected:
+            self.change_header_text_color()
+        self.draw_list_header(selected_algorithm)
 
-            if self.is_active:
-                self.draw_options(algorithms)
+        if self.is_active:
+            self.draw_options(algorithms)
     
-    def draw_list_header(self):
+    def draw_list_header(self, selected_algorithm = None):
+        '''
+        Cette méthode dessine le header de la liste déroulante.
+
+        Args:
+            selected_algorithm (string): L'algorithme sélectionné dans la liste déroulante, peut être Null.
+        '''
         pygame.draw.rect(self.screen, self.color, self.scrolling_list_rect, border_radius=6)
-        text = self.font.render(self.selected_option if self.selected_option else 'Select algorithm', True, self.text_color)
+        text = self.font.render(selected_algorithm if selected_algorithm else 'Select algorithm', True, self.text_color)
 
-        logo_x = self.width - self.icon.get_width() - 10
-        logo_y = (self.height - self.icon.get_height()) // 2
-        self.screen.blit(self.icon, (self.x + logo_x, self.y + logo_y))
+        # Si la liste déroulante est déroulée, on réalise un miroir sur horizontal pour inverser le sens de la flèche
+        icon_to_draw = self.flipped_icon if self.is_active else self.icon
 
-        text_rect = text.get_rect(center=(self.x + self.width / 2 - self.icon.get_width() / 2, self.y + self.height / 2))
+        icon_x = self.width - icon_to_draw.get_width() - 10
+        icon_y = (self.height - icon_to_draw.get_height()) // 2
+        self.screen.blit(icon_to_draw, (self.x + icon_x, self.y + icon_y))
+
+        text_rect = text.get_rect(center=(self.x + self.width / 2 - icon_to_draw.get_width() / 2, self.y + self.height / 2))
         self.screen.blit(text, text_rect)
 
     def draw_options(self, algorithms: list[str]) -> None:
         '''
-        Affiche les options de la liste déroulante sous la tête de liste.
+        Cette méthode affiche les options de la liste déroulante sous la tête de liste.
         '''
         option_height = 40
         self.options_rects = []
@@ -52,33 +66,50 @@ class ScrollingListView:
         for i, option in enumerate(algorithms):
             option_rect = pygame.Rect(self.x, self.y + (i + 1) * option_height, self.width, option_height)
             self.options_rects.append(option_rect)
-            pygame.draw.rect(self.screen, Colors.BUTTON.value, option_rect, border_radius=6)
-            text = self.font.render(option, True, Colors.TEXT_BOX_TEXT.value)
+            pygame.draw.rect(self.screen, Colors.LIGHT_GRAY.value, option_rect)
+            text = self.font.render(option, True, Colors.BLACK.value)
             text_rect = text.get_rect(center=(option_rect.x + option_rect.width / 2, option_rect.y + option_rect.height / 2))
             self.screen.blit(text, text_rect)
 
-    def is_option_clicked(self, event_pos) -> str:
+    def change_header_text_color(self) -> None:
         '''
-        Vérifie si une option a été cliquée et renvoie le texte de l'option.
+        Cette méthode change la couleur du texte du header de la liste déroulante.
+        Elle est utilisée lorsqu'un algorithme est sélectionné par l'utilisateur.
         '''
-        for rect, option in zip(self.options_rects, self.scrolling_list_content):
-            if rect.collidepoint(event_pos):
+        self.text_color = Colors.BLACK.value
+
+    def is_option_clicked(self, event, algorithms: list[str]) -> str:
+        '''
+        Cette méthode vérifie si une option a été cliquée et renvoie le texte de l'option.
+
+        Args:
+            event: L'événement Pygame contenant des informations sur les coordonnées de la souris.
+            algorithms (list[str]) : la liste des algorithmes disponibles stockés côté modèle.
+        '''
+
+        # TODO: récupérer la largeur de offset sur une variable globale
+        mouse_pos = (event.pos[0] - 960, event.pos[1])
+        for rect, option in zip(self.options_rects, algorithms):
+            if rect.collidepoint(mouse_pos):
                 return option
         return None
 
     def set_active(self, is_active: bool) -> None:
         '''
-        Active ou désactive l'état déroulant de la liste.
+        Cette méthode active ou désactive l'état déroulant de la liste.
+
+        Args:
+            is_active (bool): L'état de la liste déroulante, active (déroulée) ou non.
         '''
         self.is_active = is_active
-        self.color = Colors.BUTTON_HOVER.value if is_active else Colors.BUTTON.value
+        self.color = Colors.TEXT_BOX_CLICKED.value if is_active else Colors.BUTTON.value
 
     def set_selected_option(self, option: str) -> None:
         '''
-        Définit l'option sélectionnée dans la liste déroulante.
+        Cette méthode définit l'option sélectionnée dans la liste déroulante.
         '''
         self.selected_option = option
-        self.is_active = False 
+        self.is_active = False
 
     def set_hovered(self) -> None:
         '''
