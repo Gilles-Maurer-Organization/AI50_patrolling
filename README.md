@@ -1,2 +1,2 @@
 # AI50_patrolling
-Projet for AI50
+AI50 Project
