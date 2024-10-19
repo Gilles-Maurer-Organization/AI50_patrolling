@@ -10,7 +10,7 @@ pygame.init()
 # Initialisation du modèle de graphe
 graph = Graph()
 
-# TODO : déplacer la référence background_image, elle n'a pas de lien direct avec la vue générale mais seulement avec la GraphView
+# TODO : déplacer la référence background_image, elle n'a pas de l ien direct avec la vue générale mais seulement avec la GraphView
 view = View()
 view.initialize_graph_view()
 
