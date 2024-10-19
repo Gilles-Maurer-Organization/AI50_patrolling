@@ -2,6 +2,8 @@ import pygame
 from models.TextBox import TextBox
 from views.TextBoxView import TextBoxView
 
+from constants.Config import GRAPH_WINDOW_WIDTH
+
 class TextBoxController:
     def __init__(self, parameters_view):
         self.parameters_view = parameters_view
@@ -54,7 +56,10 @@ class TextBoxController:
             
         self.text_box_view.change_text(self.text_box.text_content)
         # On indique à la vue si la zone de texte est complétée ou non pour modifier la couleur du texte
-        self.text_box_view.set_text_completed(self.text_box.is_text_completed())
+        self.text_box_view.set_text_completed(self.is_text_box_text_completed())
+
+    def is_text_box_text_completed(self) -> bool:
+        return self.text_box.default_text != self.text_box.text_content
 
     def is_text_box_hovered(self, event):
         '''
@@ -63,9 +68,7 @@ class TextBoxController:
         Args:
             event: L'événement Pygame contenant des informations sur les coordonnées de la souris.
         '''
-        # Ajout de l'offset 960 (largeur de la fenetre de graphe)
-        # TODO: Modifier par une variable globale de largeur de la fenêtre
-        mouse_pos = (event.pos[0] - 960, event.pos[1])
+        mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
         if self.text_box_view.text_box_rect:
             return self.text_box_view.text_box_rect.collidepoint(mouse_pos)
         return False

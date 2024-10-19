@@ -36,9 +36,7 @@ while running:
         # (pour le moment, voué à être modifié, il ne faut pas les vérifier tout au long de la vie du programme)
         graph_controller.handle_event(event)
         
-        view.get_parameters_view().handle_text_box(event)
-        view.get_parameters_view().handle_button(event)
-        view.get_parameters_view().handle_scrolling_list(event)
+        view.handle_actions(event)
     
     # Une fois l'événement géré, on met à jour la vue
     view.draw(graph_controller)

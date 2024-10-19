@@ -5,6 +5,8 @@ from controllers.NodeController import NodeController
 from controllers.EdgeController import EdgeController
 from controllers.CSVController import CSVController
 
+from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, NODE_RADIUS
+
 class GraphController:
     '''
     Classe représentant un controlleur qui se charge des opérations du graphe entier.
@@ -45,20 +47,23 @@ class GraphController:
         # Récupération de la position de la souris
         pos = pygame.mouse.get_pos()
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN :
             # TODO : récupérer le noeud directement grâce à la méthode get_node_at_position() de la classe NodeController
             # plutot que de le faire à chaque fois dans start_drag, add_node, etc
-
-            # S'il s'agit du clic gauche :
-            if event.button == 1:
-                # On clear l'éventuelle sélection de création de lien
-                self.node_controller.clear_selection()
-                # On initialise le potentiel déplacement du noeud grâce au controller Node
-                self.node_controller.start_drag(pos)
-                # Si le clic est réalisé sur une position où aucun noeud n'est présent,
-                if self.node_controller.get_node_at_position(pos) is None:
-                    # On en crée un nouveau
-                    self.node_controller.add_node(pos)
+            if event.button == 1: 
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]:
+                    self.node_controller.delete_node(pos)
+                else:
+                    # On clear l'éventuelle sélection de création de lien
+                    self.node_controller.clear_selection()
+                    # On initialise le potentiel déplacement du noeud grâce au controller Node
+                    self.node_controller.start_drag(pos)
+                    # Si le clic est réalisé sur une position où aucun noeud n'est présent,
+                    if self.node_controller.get_node_at_position(pos) is None:
+                        # On en crée un nouveau
+                        if pos[0] < GRAPH_WINDOW_WIDTH - NODE_RADIUS and pos[1] < GRAPH_WINDOW_HEIGHT - NODE_RADIUS:
+                            self.node_controller.add_node(pos)
 
             # S'il s'agit du clic droit :
             elif event.button == 3:
@@ -71,9 +76,11 @@ class GraphController:
             if event.button == 1:
                 self.node_controller.end_drag()
 
+        # On vérifie que le déplacement (drag) du bouton ne dépasse pas les limites de la fenêtre du graphe
         if event.type == pygame.MOUSEMOTION:
             if event.buttons[0]:
-                self.node_controller.drag_node(pos)
+                if pos[0] < GRAPH_WINDOW_WIDTH  - NODE_RADIUS and pos[1] < GRAPH_WINDOW_HEIGHT - NODE_RADIUS and pos[0] > NODE_RADIUS and pos[1] > NODE_RADIUS:
+                    self.node_controller.drag_node(pos)
 
     def update(self) -> None:
         """
@@ -91,4 +98,8 @@ class GraphController:
         edges_matrix, nodes_list = self.csv_controller.load(num_file)
         if edges_matrix and nodes_list:
             self.graph.nodes = {i: coords for i, coords in enumerate(nodes_list)}
+
+    def clear_graph(self) -> None:
+        self.graph.nodes.clear()
+        self.graph.edges.clear()
 

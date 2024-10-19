@@ -19,10 +19,10 @@ class ButtonView:
         self.font = pygame.font.SysFont("Arial", 16)
 
         if icon_path:
-            self.logo = pygame.image.load(icon_path)
-            self.logo = pygame.transform.scale(self.logo, (20, 20))
+            self.icon = pygame.image.load(icon_path)
+            self.icon = pygame.transform.scale(self.icon, (20, 20))
         else:
-            self.logo = None
+            self.icon = None
 
     def draw(self) -> None:
         '''
@@ -39,15 +39,15 @@ class ButtonView:
 
         pygame.draw.rect(button_surface, self.color.value, (0, 0, self.width, self.height), border_radius=6)
 
-        # On dessine le logo s'il existe
-        if self.logo:
-            logo_x = 10
-            logo_y = (self.height - self.logo.get_height()) // 2
+        # On dessine le icon s'il existe
+        if self.icon:
+            icon_x = 10
+            icon_y = (self.height - self.icon.get_height()) // 2
 
-            button_surface.blit(self.logo, (logo_x, logo_y))
+            button_surface.blit(self.icon, (icon_x, icon_y))
 
         text = self.font.render(self.text, True, (0, 0, 0))
-        text_rect = text.get_rect(center=(self.width / 2 + (self.logo.get_width() if self.logo else 0) / 2, self.height / 2))
+        text_rect = text.get_rect(center=(self.width / 2 + (self.icon.get_width() if self.icon else 0) / 2, self.height / 2))
 
         button_surface.blit(text, text_rect)
 

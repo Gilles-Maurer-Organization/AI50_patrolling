@@ -1,6 +1,7 @@
 import pygame
 from models.Graph import Graph
 from constants.Colors import Colors
+from constants.Config import NODE_RADIUS
 
 class GraphView:
     def __init__(self, screen, background_image) -> None:
@@ -28,11 +29,11 @@ class GraphView:
                 color = Colors.DRAGGING_NODE_COLOR.value
             else:
                 color = Colors.NODE_COLOR.value
-            pygame.draw.circle(self.screen, color, (node.x, node.y), 10)
+            pygame.draw.circle(self.screen, color, (node.x, node.y), NODE_RADIUS)
 
         # Dessin des edges
         for edge in graph.edges:
             start_node = edge[0]
             end_node = edge[1]
-            pygame.draw.line(self.screen, Colors.BLACK.value, (start_node.x, start_node.y), (end_node.x, end_node.y), 3)
+            pygame.draw.line(self.screen, Colors.EDGE_COLOR.value, (start_node.x, start_node.y), (end_node.x, end_node.y), 3)
         

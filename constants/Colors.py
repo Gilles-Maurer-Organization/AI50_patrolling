@@ -6,9 +6,12 @@ class Colors(Enum):
     '''
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
-    NODE_COLOR = (0, 100, 255)
-    SELECTED_NODE_COLOR = (255, 255, 0)
-    DRAGGING_NODE_COLOR = (255, 0, 0)
+    NODE_COLOR = (204, 179, 149)
+    SELECTED_NODE_COLOR = (237, 205, 93)
+    DRAGGING_NODE_COLOR = (188, 132, 67)
+    EDGE_COLOR = (105, 105, 105)
+
+    LIGHT_GRAY = (248, 248, 248)
 
     # Relatif aux boutons
     BUTTON = (241, 241, 241)

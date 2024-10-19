@@ -44,10 +44,10 @@ class TextBoxView:
         pygame.draw.rect(text_box_surface, self.color, (0, 0, self.width, self.height), border_radius=6)
 
         if self.icon:
-            logo_x = 10
-            logo_y = (self.height - self.icon.get_height()) // 2
+            icon_x = 10
+            icon_y = (self.height - self.icon.get_height()) // 2
 
-            text_box_surface.blit(self.icon, (logo_x, logo_y))
+            text_box_surface.blit(self.icon, (icon_x, icon_y))
 
         text = self.font.render(self.text_box_content, True, self.text_color)
         text_rect = text.get_rect(center=(self.width / 2 + (self.icon.get_width() if self.icon else 0) / 2, self.height / 2))
@@ -70,23 +70,27 @@ class TextBoxView:
     
     def set_hovered(self) -> None:
         '''
-        Cette méthode change l'état de la textbox en état survolé.
+        Cette méthode change l'état de la zone de texte en état survolé.
         '''
         self.color = Colors.BUTTON_HOVER.value
 
     def set_clicked(self) -> None:
         '''
-        Cette méthode change l'état de la textbox en état cliqué.
+        Cette méthode change l'état de la zone de texte en état cliqué.
         '''
         self.color = Colors.TEXT_BOX_CLICKED.value
         self.stroke_color = Colors.BLACK.value
 
     def set_normal(self) -> None:
         '''
-        Cette méthode change l'état de la textbox en état non survolé ou non cliqué.
+        Cette méthode change l'état de la zone de texte en état non survolé ou non cliqué.
         '''
         self.color = Colors.BUTTON.value
         self.stroke_color = Colors.GRAY_TEXT.value
 
     def set_text_completed(self, is_completed: bool) -> None:
+        '''
+        Cette méthode change la couleur du texte de la zoen de texte dans le cas où celle-ci
+        est soit complétée par l'utilisateur, soit vide.
+        '''
         self.text_color = Colors.BLACK.value if is_completed else Colors.TEXT_BOX_TEXT.value
