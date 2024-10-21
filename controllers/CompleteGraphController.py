@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 # from models import Graph
 # from views import GraphView
@@ -9,11 +10,15 @@ import math
 =======
 import pygame
 <<<<<<< HEAD
+=======
+import pygame
+>>>>>>> e6b0877 (ajout complete graph controller)
 from models import Graph
 from views import GraphView
 from controllers.NodeController import NodeController
 from controllers.EdgeController import EdgeController
 from controllers.CSVController import CSVController
+<<<<<<< HEAD
 >>>>>>> 4516dea (ajout complete graph controller)
 =======
 # from models import Graph
@@ -23,6 +28,8 @@ from controllers.CSVController import CSVController
 # from controllers.CSVController import CSVController
 import math
 >>>>>>> 1e5a6d3 (finish A* and complete graph generation)
+=======
+>>>>>>> e6b0877 (ajout complete graph controller)
 
 
 class CompleteGraphController:
@@ -30,6 +37,7 @@ class CompleteGraphController:
         Class permettant de gérer un graph complet à partir d'un graphe simple.
 
         Attributs : 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 
@@ -40,11 +48,14 @@ class CompleteGraphController:
 =======
             nodePosition : dictionnaire qui pour chaque sommet indique ses coordonnées
 >>>>>>> 1e5a6d3 (finish A* and complete graph generation)
+=======
+>>>>>>> e6b0877 (ajout complete graph controller)
             simpleGraph : la matrice représentant les distances entre les sommets du graph simple 
             completeGraph : la matrice représentant les distances entre les sommets du graph complet 
 
             shortestWayMatrix : matrice qui pour chaque couple de sommet, indique le chemin à prendre pour aller de l'un à l'autre
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 
     '''
@@ -72,11 +83,21 @@ class CompleteGraphController:
         self.shortestWayMatrix = [[[] for i in range(len(simpleGraph))] for j in range(len(simpleGraph))]
         self.create_complete_graph()
 >>>>>>> 1e5a6d3 (finish A* and complete graph generation)
+=======
+    
+    '''
+     
+    def __init__(self, simpleGraph) :
+
+        self.simpleGraph = simpleGraph
+        self.completeGraph, self.shortestWayMatrix = self.create_complete_graph()
+>>>>>>> e6b0877 (ajout complete graph controller)
 
         return
     
     def create_complete_graph(self): 
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -85,6 +106,10 @@ class CompleteGraphController:
 >>>>>>> 4516dea (ajout complete graph controller)
 =======
 >>>>>>> 1e5a6d3 (finish A* and complete graph generation)
+=======
+        # TODO : algo qui crée le graph complet 
+
+>>>>>>> e6b0877 (ajout complete graph controller)
         # exemple 
         # simple :  [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
         # complet : [[0, 1, 2], [1, 0, 1], [2, 1, 0]]
@@ -96,6 +121,7 @@ class CompleteGraphController:
         for i in range(len(self.simpleGraph)): 
             for j in range(i, len(self.simpleGraph[i])):
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -122,14 +148,19 @@ class CompleteGraphController:
 <<<<<<< HEAD
 
 =======
+=======
+>>>>>>> e6b0877 (ajout complete graph controller)
                 print(self.simpleGraph[i][j])
 
         return [], []
     
+<<<<<<< HEAD
 >>>>>>> 4516dea (ajout complete graph controller)
 =======
 
 >>>>>>> 1e5a6d3 (finish A* and complete graph generation)
+=======
+>>>>>>> e6b0877 (ajout complete graph controller)
 
     def get_shortest_way(self, node1, node2): 
 
@@ -141,6 +172,7 @@ class CompleteGraphController:
         return self.completeGraph
     
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 class AStarAlgorithm: 
 
@@ -296,3 +328,6 @@ if __name__ == "__main__":
 =======
     main()
 >>>>>>> 1e5a6d3 (finish A* and complete graph generation)
+=======
+
+>>>>>>> e6b0877 (ajout complete graph controller)
