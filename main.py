@@ -15,7 +15,7 @@ view = View()
 view.initialize_graph_view()
 
 # Initialisation du controller de graphe
-graph_controller = GraphController(graph, view.get_graphView())
+graph_controller = GraphController(graph, view.get_graph_view())
 
 view.initialize_parameters_view(graph_controller)
 

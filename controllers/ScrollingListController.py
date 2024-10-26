@@ -4,14 +4,19 @@ from views.ScrollingListView import ScrollingListView
 
 from models.ScrollingList import ScrollingList
 
+from constants.Algorithms import Algorithms
+from models.Algorithm import Algorithm
+from models.NaiveAlgorithm import NaiveAlgorithm
+from models.EvolutionalAlgorithm import EvolutionalAlgorithm
+from models.AntColonyAlgorithm import AntColonyAlgorithm
+
 import pygame
 
 class ScrollingListController:
     def __init__(self, parameters_view) -> None:
         self.parameters_view = parameters_view
         self.scrolling_list = ScrollingList(
-            'algorithm',
-            ['Naive algorithm', 'Ant colony algorithm', 'Evolutional algorithm']
+            [NaiveAlgorithm(), EvolutionalAlgorithm(), AntColonyAlgorithm()]
         )
         self.scrolling_list_view = ScrollingListView(parameters_view.screen, 10, 110, 290, 40)
 
@@ -36,7 +41,7 @@ class ScrollingListController:
             return self.scrolling_list_view.scrolling_list_rect.collidepoint(mouse_pos)
         return False
 
-    def handle_event(self, event) -> None:
+    def handle_event(self, event) -> bool:
         '''
         Cette méthode gère les interactions de l'utilisateur avec la souris, permettant de contrôler 
         le comportement de la liste déroulante (ouverture, sélection, etc.).
@@ -66,9 +71,11 @@ class ScrollingListController:
                     self.scrolling_list.set_selected_algorithm(selected_option)
                     print(f"Selected algorithm : {self.scrolling_list.get_selected_algorithm()}")
                     self.scrolling_list_view.set_active(False)
+                    return True
                 # Sinon, c'est que l'utilisateur a cliqué en dehors de la liste d'options, on ferme la liste déroulante
                 else:
                     self.scrolling_list_view.set_active(False)
+                    return False
 
         if event.type == pygame.MOUSEMOTION:
             # Si l'utilisateur essaie de hover le header de la liste déroulante
@@ -77,3 +84,7 @@ class ScrollingListController:
                     self.scrolling_list_view.set_hovered()
                 else:
                     self.scrolling_list_view.set_normal()
+        return False
+
+    def get_selected_algorithm(self) -> Algorithm:
+        return self.scrolling_list.get_selected_algorithm()

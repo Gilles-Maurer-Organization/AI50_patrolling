@@ -34,13 +34,11 @@ class View:
         # Création de la vue paramètres
         self.parameters_view = ParametersView(self.screen.subsurface((self.WIDTH, 0, PARAMETERS_WINDOW_WIDTH, self.HEIGHT)), graph_controller)
 
-    def get_graphView(self) -> GraphView:
+    def get_graph_view(self) -> GraphView:
         return self.graph_view
     
     def handle_actions(self, event) -> None:
-        self.parameters_view.handle_text_box(event)
-        self.parameters_view.handle_button(event)
-        self.parameters_view.handle_scrolling_list(event)
+        self.parameters_view.handle_events(event)
 
     def draw(self, graph_controller) -> None:
         '''
