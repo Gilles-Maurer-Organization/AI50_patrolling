@@ -154,9 +154,13 @@ class AStarAlgorithm:
         self.fScore = {}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         # si node position est une liste : for node in range(len(nodePosition))
 =======
 >>>>>>> 033ea83 (finish A* and complete graph generation)
+=======
+        # si node position est une liste : for node in range(len(nodePosition))
+>>>>>>> abb693e (add comment)
         for node in self.nodePosition.keys():
             self.gScore[node] = math.inf
             self.fScore[node] = math.inf
