@@ -8,12 +8,21 @@
 import math
 =======
 import pygame
+<<<<<<< HEAD
 from models import Graph
 from views import GraphView
 from controllers.NodeController import NodeController
 from controllers.EdgeController import EdgeController
 from controllers.CSVController import CSVController
 >>>>>>> 4516dea (ajout complete graph controller)
+=======
+# from models import Graph
+# from views import GraphView
+# from controllers.NodeController import NodeController
+# from controllers.EdgeController import EdgeController
+# from controllers.CSVController import CSVController
+import math
+>>>>>>> 1e5a6d3 (finish A* and complete graph generation)
 
 
 class CompleteGraphController:
@@ -22,11 +31,15 @@ class CompleteGraphController:
 
         Attributs : 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
             nodePosition : dictionnaire qui pour chaque sommet indique ses coordonnées
 
 =======
 >>>>>>> 4516dea (ajout complete graph controller)
+=======
+            nodePosition : dictionnaire qui pour chaque sommet indique ses coordonnées
+>>>>>>> 1e5a6d3 (finish A* and complete graph generation)
             simpleGraph : la matrice représentant les distances entre les sommets du graph simple 
             completeGraph : la matrice représentant les distances entre les sommets du graph complet 
 
@@ -47,21 +60,31 @@ class CompleteGraphController:
     
     '''
      
-    def __init__(self, simpleGraph) :
+    def __init__(self, simpleGraph, nodePosition): 
 
         self.simpleGraph = simpleGraph
+<<<<<<< HEAD
         self.completeGraph, self.shortestWayMatrix = self.create_complete_graph()
 >>>>>>> 4516dea (ajout complete graph controller)
+=======
+        self.nodePosition = nodePosition
+        self.completeGraph = [[0 for i in range(len(simpleGraph))] for j in range(len(simpleGraph))]
+        self.shortestWayMatrix = [[[] for i in range(len(simpleGraph))] for j in range(len(simpleGraph))]
+        self.create_complete_graph()
+>>>>>>> 1e5a6d3 (finish A* and complete graph generation)
 
         return
     
     def create_complete_graph(self): 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         # TODO : algo qui crée le graph complet 
 
 >>>>>>> 4516dea (ajout complete graph controller)
+=======
+>>>>>>> 1e5a6d3 (finish A* and complete graph generation)
         # exemple 
         # simple :  [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
         # complet : [[0, 1, 2], [1, 0, 1], [2, 1, 0]]
@@ -74,6 +97,9 @@ class CompleteGraphController:
             for j in range(i, len(self.simpleGraph[i])):
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 1e5a6d3 (finish A* and complete graph generation)
                 if self.simpleGraph[i][j] == 0:
 
                     aStar = AStarAlgorithm(self.simpleGraph, self.nodePosition, i, j)
@@ -93,6 +119,7 @@ class CompleteGraphController:
                     self.shortestWayMatrix[i][j] = [i, j]
                     self.shortestWayMatrix[j][i] = [j, i]
                     
+<<<<<<< HEAD
 
 =======
                 print(self.simpleGraph[i][j])
@@ -100,6 +127,9 @@ class CompleteGraphController:
         return [], []
     
 >>>>>>> 4516dea (ajout complete graph controller)
+=======
+
+>>>>>>> 1e5a6d3 (finish A* and complete graph generation)
 
     def get_shortest_way(self, node1, node2): 
 
@@ -147,6 +177,43 @@ class AStarAlgorithm:
         return total_path
     
 
+<<<<<<< HEAD
+=======
+class AStarAlgorithm: 
+
+    def __init__(self, graph, nodePosition, start, end): 
+        self.graph = graph
+        self.nodePosition = nodePosition
+        self.start = start
+        self.end = end
+
+        self.openSet = []
+        self.camemFrom = {}
+        self.gScore = {}
+        self.fScore = {}
+
+        for node in self.nodePosition.keys():
+            self.gScore[node] = math.inf
+            self.fScore[node] = math.inf
+
+    def compute_h (self, node): 
+
+        # distance entre le noeud et la fin
+        (x1, y1) = self.nodePosition[node]
+        (x2, y2) = self.nodePosition[self.end]
+
+        return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+    
+    def reconstruct_path(self, current): 
+        total_path = [current]
+        while current in self.camemFrom.keys(): 
+            current = self.camemFrom[current]
+            total_path.insert(0, current)
+
+        return total_path
+    
+
+>>>>>>> 1e5a6d3 (finish A* and complete graph generation)
     def a_star(self):
 
         openSet = [self.start]  
@@ -220,7 +287,11 @@ def main():
                 print(f"Chemin le plus court de {start} à {end} : {shortest_path}")
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     main()
 =======
 
 >>>>>>> 4516dea (ajout complete graph controller)
+=======
+    main()
+>>>>>>> 1e5a6d3 (finish A* and complete graph generation)
