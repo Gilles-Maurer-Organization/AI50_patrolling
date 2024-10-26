@@ -35,9 +35,6 @@ class CompleteGraphController:
     
     def create_complete_graph(self): 
 
-        # TODO : algo qui crée le graph complet 
-
-
         # exemple 
         # simple :  [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
         # complet : [[0, 1, 2], [1, 0, 1], [2, 1, 0]]
@@ -68,8 +65,7 @@ class CompleteGraphController:
                     self.shortestWayMatrix[i][j] = [i, j]
                     self.shortestWayMatrix[j][i] = [j, i]
                     
-        return [], []
-    
+
 
     def get_shortest_way(self, node1, node2): 
 
@@ -94,7 +90,6 @@ class AStarAlgorithm:
         self.gScore = {}
         self.fScore = {}
 
-        # si node position est une liste : for node in range(len(nodePosition))
         for node in self.nodePosition.keys():
             self.gScore[node] = math.inf
             self.fScore[node] = math.inf
@@ -190,4 +185,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
