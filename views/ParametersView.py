@@ -1,5 +1,15 @@
 from constants.Colors import Colors
 
+from models.TextBox import TextBox
+
+from views.TextBoxView import TextBoxView
+
+from controllers.TextBoxController import TextBoxController
+from controllers.ButtonController import ButtonController
+from controllers.ScrollingListController import ScrollingListController
+from controllers.AlgorithmParametersController import AlgorithmParametersController
+
+
 class ParametersView:
     def __init__(self, screen) -> None:
         self.screen = screen
@@ -26,4 +36,18 @@ class ParametersView:
     def draw_algorithm_parameters(self, algorithm_parameters_controller) -> None:
         algorithm_parameters_controller.draw_text_boxes()
 
-    
+
+    def handle_scrolling_list(self, event) -> None:
+        '''
+        Cette méthode gère les événements réalisés sur une text box.
+        
+        Args:
+            event: L'événement Pygame contenant des informations concernant l'interaction de l'utilisateur avec le programme.
+        '''
+        is_algorithm_selected = self.scrolling_list_controller.handle_event(event)
+        if is_algorithm_selected:
+            algorith_selected = self.scrolling_list_controller.get_selected_algorithm()
+            self.algorithm_parameters_controller.handle_selected_algorithm(algorith_selected)
+
+    def handle_algorithm_parameters(self, event) -> None:
+        self.algorithm_parameters_controller.handle_algorithm_parameters(event)

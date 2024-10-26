@@ -5,6 +5,8 @@ from constants.Colors import Colors
 
 from models.algorithms.Algorithm import Algorithm
 
+from models.Algorithm import Algorithm
+
 class ScrollingListView:
     def __init__(self, screen, x, y, width, height) -> None:
         self.screen = screen
