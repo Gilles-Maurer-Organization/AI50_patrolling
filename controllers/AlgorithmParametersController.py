@@ -1,6 +1,6 @@
 from controllers.BaseTextBoxController import BaseTextBoxController
 from models.Algorithm import Algorithm
-from views.TextBoxView import TextBoxView
+from views.AlgorithmParametersView import AlgorithmParametersView
 
 class AlgorithmParametersController(BaseTextBoxController):
     def __init__(self, parameters_view):
@@ -14,7 +14,14 @@ class AlgorithmParametersController(BaseTextBoxController):
         self.algorithm = algorithm
         self.text_boxes.clear()
         offset_y = 0
-        for parameter in algorithm.parameters:
-            text_box_view = TextBoxView(self.parameters_view.screen, 10, 160 + offset_y, 190, 40)
+        for label, parameter in algorithm.parameters.items():
+            text_box_view = AlgorithmParametersView(
+                self.parameters_view.screen,
+                10,
+                190 + offset_y,
+                190,
+                40,
+                label_text = label
+            )
             self.add_text_box(parameter, text_box_view)
-            offset_y += 50
+            offset_y += 77
