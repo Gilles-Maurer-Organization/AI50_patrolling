@@ -30,11 +30,11 @@ class ParametersView:
         self.button_controller.draw_buttons()
 
         # Dessin de la zone de texte
-        self.text_box_controller.draw_text_box()
+        self.text_box_controller.draw_text_boxes()
 
         # Dessin de la liste déroulante
 
-        self.algorithm_parameters_controller.draw_parameters()
+        self.algorithm_parameters_controller.draw_text_boxes()
         self.scrolling_list_controller.draw_scrolling_list()
 
     def handle_events(self, event) -> None:
@@ -75,4 +75,4 @@ class ParametersView:
             self.algorithm_parameters_controller.handle_selected_algorithm(algorith_selected)
 
     def handle_algorithm_parameters(self, event) -> None:
-        self.algorithm_parameters_controller.handle_algorithm_parameters(event)
+        self.algorithm_parameters_controller.handle_event(event)
