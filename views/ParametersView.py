@@ -50,4 +50,4 @@ class ParametersView:
             self.algorithm_parameters_controller.handle_selected_algorithm(algorith_selected)
 
     def handle_algorithm_parameters(self, event) -> None:
-        self.algorithm_parameters_controller.handle_algorithm_parameters(event)
+        self.algorithm_parameters_controller.handle_event(event)
