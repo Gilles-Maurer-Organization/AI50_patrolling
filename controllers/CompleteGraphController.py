@@ -90,6 +90,7 @@ class AStarAlgorithm:
         self.gScore = {}
         self.fScore = {}
 
+        # si node position est une liste : for node in range(len(nodePosition))
         for node in self.nodePosition.keys():
             self.gScore[node] = math.inf
             self.fScore[node] = math.inf
