@@ -6,9 +6,9 @@ from views.TextBoxView import TextBoxView
 
 from controllers.TextBoxController import TextBoxController
 from controllers.ButtonController import ButtonController
+from controllers.StartButtonController import StartButtonController
 from controllers.ScrollingListController import ScrollingListController
 from controllers.AlgorithmParametersController import AlgorithmParametersController
-
 
 class ParametersView:
     def __init__(self, screen) -> None:
@@ -36,7 +36,6 @@ class ParametersView:
     def draw_algorithm_parameters(self, algorithm_parameters_controller) -> None:
         algorithm_parameters_controller.draw_text_boxes()
 
-
     def handle_scrolling_list(self, event) -> None:
         '''
         Cette méthode gère les événements réalisés sur une text box.
@@ -47,7 +46,11 @@ class ParametersView:
         is_algorithm_selected = self.scrolling_list_controller.handle_event(event)
         if is_algorithm_selected:
             algorith_selected = self.scrolling_list_controller.get_selected_algorithm()
+            self.enable_start_button()
             self.algorithm_parameters_controller.handle_selected_algorithm(algorith_selected)
 
     def handle_algorithm_parameters(self, event) -> None:
         self.algorithm_parameters_controller.handle_event(event)
+
+    def enable_start_button(self) -> bool:
+        self.start_button_controller.enable_start_button()
