@@ -2,75 +2,59 @@ from constants.Colors import Colors
 from constants.Config import GRAPH_WINDOW_WIDTH
 
 from models.Button import Button
+from controllers.BaseButtonController import BaseButtonController
 from views.ButtonView import ButtonView
 import pygame
 
-class ButtonController:
+class ButtonController(BaseButtonController):
     def __init__(self, parameters_view, graph_controller) -> None:
-        self.parameters_view = parameters_view
-        self.graph_controller = graph_controller
+        super().__init__(parameters_view, graph_controller)
 
-        # Création des modèles de boutons, 1 de chaque type (save, import, clear)
-        self.buttons = [
-            Button("Save", self.save_action),
-            Button("Import", self.import_action),
-            Button("Clear", self.clear_action),
-            Button("Start simulation", self.start_action)
-        ]
-        
-        # Création des vues de chaque bouton
-        self.button_views = [
-            ButtonView(
+        self.save_button = Button("Save", self.save_action)
+        self.import_button = Button("Import", self.import_action)
+        self.clear_button = Button("Clear", self.clear_action)
+
+        # Création de la map des boutons et leurs vues
+        self.button_map = {
+            self.save_button: ButtonView(
                 parameters_view.screen,
-                self.buttons[0].text,
-                self.buttons[0].action,
+                self.save_button.text,
+                self.save_button.action,
                 10,
                 10,
                 90,
                 40,
-                icon_path = 'assets/save.png'
+                icon_path='assets/save.png'
             ),
-            ButtonView(
+            self.import_button: ButtonView(
                 parameters_view.screen,
-                self.buttons[1].text,
-                self.buttons[1].action,
+                self.import_button.text,
+                self.import_button.action,
                 110,
                 10,
                 90,
                 40,
-                icon_path = 'assets/import.png'
+                icon_path='assets/import.png'
             ),
-            ButtonView(
+            self.clear_button: ButtonView(
                 parameters_view.screen,
-                self.buttons[2].text,
-                self.buttons[2].action,
+                self.clear_button.text,
+                self.clear_button.action,
                 210,
                 10,
                 90,
                 40,
-                icon_path = 'assets/clear.png',
-                color = Colors.BUTTON_RED,
+                color=Colors.BUTTON_RED,
                 hover_color=Colors.BUTTON_RED_HOVER
-            ),
-            ButtonView(
-                parameters_view.screen,
-                self.buttons[3].text,
-                self.buttons[3].action,
-                160,
-                490,
-                140,
-                40,
-                color = Colors.BUTTON_GREEN,
-                hover_color=Colors.BUTTON_GREEN_HOVER
-            ),
-        ]
+            )
+        }
 
     def draw_buttons(self) -> None:
         '''
         Cette méthode dessine l'intégralité des boutons sur la vue.
         '''
-        for button_view in self.button_views:
-            button_view.draw()
+        for button, button_view in self.button_map.items():
+            button_view.draw(button.is_enabled())
 
     def handle_event(self, event) -> None:
         '''
@@ -84,13 +68,13 @@ class ButtonController:
         '''
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
-            for button, button_view in zip(self.buttons, self.button_views):
+            for button, button_view in self.button_map.items():
                 if button_view.is_hovered(mouse_pos):
                     button.action()
         
         if event.type == pygame.MOUSEMOTION:
             mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
-            for button_view in self.button_views:
+            for button_view in self.button_map.values():
                 if button_view.is_hovered(mouse_pos):
                     button_view.set_hovered()
                 else:
@@ -106,8 +90,9 @@ class ButtonController:
     def import_action(self) -> None:
         '''
         Cette méthode importe un graphe depuis l'ordinateur lorsque le bouton Import est cliqué.
+        TODO : remplacer load_graph(1) par le graphe correspondant
         '''
-        self.graph_controller.load_graph(1)
+        #self.graph_controller.load_graph(1)
         print("Import action triggered")
 
     def clear_action(self) -> None:
@@ -116,9 +101,3 @@ class ButtonController:
         '''
         self.graph_controller.clear_graph()
         print("Clear action triggered")
-
-    def start_action(self) -> None:
-        '''
-        Cette méthode lance le programme selon l'algorithme sélectionné.
-        '''
-        print("Starting algorithm")

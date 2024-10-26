@@ -6,9 +6,9 @@ from views.TextBoxView import TextBoxView
 
 from controllers.TextBoxController import TextBoxController
 from controllers.ButtonController import ButtonController
+from controllers.StartButtonController import StartButtonController
 from controllers.ScrollingListController import ScrollingListController
 from controllers.AlgorithmParametersController import AlgorithmParametersController
-
 
 class ParametersView:
     def __init__(self, screen, graph_controller) -> None:
@@ -16,6 +16,7 @@ class ParametersView:
         self.background_color = Colors.WHITE.value
 
         self.button_controller = ButtonController(self, graph_controller)
+        self.start_button_controller = StartButtonController(self, graph_controller)
         self.text_box_controller = TextBoxController(self)
         self.scrolling_list_controller = ScrollingListController(self)
         self.algorithm_parameters_controller = AlgorithmParametersController(self)
@@ -28,6 +29,9 @@ class ParametersView:
 
         # Dessin de l'intégralité des boutons
         self.button_controller.draw_buttons()
+        
+        # Dessin du bouton de démarrage
+        self.start_button_controller.draw_buttons()
 
         # Dessin de la zone de texte
         self.text_box_controller.draw_text_boxes()
@@ -52,6 +56,7 @@ class ParametersView:
             event: L'événement Pygame contenant des informations sur le clic de souris.
         '''
         self.button_controller.handle_event(event)
+        self.start_button_controller.handle_event(event)
 
     def handle_text_box(self, event) -> None:
         '''
@@ -61,7 +66,6 @@ class ParametersView:
             event: L'événement Pygame contenant des informations concernant l'interaction de l'utilisateur avec le programme.
         '''
         self.text_box_controller.handle_event(event)
-
 
     def handle_scrolling_list(self, event) -> None:
         '''
@@ -73,7 +77,11 @@ class ParametersView:
         is_algorithm_selected = self.scrolling_list_controller.handle_event(event)
         if is_algorithm_selected:
             algorith_selected = self.scrolling_list_controller.get_selected_algorithm()
+            self.enable_start_button()
             self.algorithm_parameters_controller.handle_selected_algorithm(algorith_selected)
 
     def handle_algorithm_parameters(self, event) -> None:
         self.algorithm_parameters_controller.handle_event(event)
+
+    def enable_start_button(self) -> bool:
+        self.start_button_controller.enable_start_button()
