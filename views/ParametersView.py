@@ -32,9 +32,10 @@ class ParametersView:
         # Dessin de la zone de texte
         self.text_box_controller.draw_text_boxes()
 
-        # Dessin de la liste déroulante
-
+        # Dessin de la liste des paramètres d'un algorithme spécifique
         self.algorithm_parameters_controller.draw_text_boxes()
+
+        # Dessin de la liste déroulante
         self.scrolling_list_controller.draw_scrolling_list()
 
     def handle_events(self, event) -> None:

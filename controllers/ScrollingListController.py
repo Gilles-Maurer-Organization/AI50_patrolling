@@ -69,7 +69,6 @@ class ScrollingListController:
                 # S'il s'agit d'une option d'algorithme qui a été sélectionnée:
                 if selected_option:
                     self.scrolling_list.set_selected_algorithm(selected_option)
-                    print(f"Selected algorithm : {self.scrolling_list.get_selected_algorithm()}")
                     self.scrolling_list_view.set_active(False)
                     return True
                 # Sinon, c'est que l'utilisateur a cliqué en dehors de la liste d'options, on ferme la liste déroulante
