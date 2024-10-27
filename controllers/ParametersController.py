@@ -42,7 +42,6 @@ class ParametersController:
         self.handle_algorithm_parameters(event)
         self.check_start_button_state()
 
-
     def handle_button(self, event) -> None:
         '''
         Cette méthode gère les interactions de clic de souris sur un bouton.
