@@ -17,12 +17,17 @@ class ParametersController:
         self.scrolling_list_controller = ScrollingListController(self.parameters_view)
         self.algorithm_parameters_controller = AlgorithmParametersController(self.parameters_view)
 
+        if not graph_controller.graph_has_an_image():
+            self.button_controller.disable_clear_button()
+            self.button_controller.disable_save_button()
+
     def draw_parameters(self) -> None:
         '''
         Cette méthode dessine les paramètres de la vue de paramètres: bouttons, menus déroulants.
         '''
         self.parameters_view.draw()
         self.parameters_view.draw_buttons(self.button_controller)
+        self.parameters_view.draw_start_button(self.start_button_controller)
         self.parameters_view.draw_text_boxes(self.text_box_controller)
         self.parameters_view.draw_algorithm_parameters(self.algorithm_parameters_controller)
 

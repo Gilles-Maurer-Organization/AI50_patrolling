@@ -14,6 +14,9 @@ class ParametersView:
     def draw_buttons(self, button_controller) -> None:
         button_controller.draw_buttons()
 
+    def draw_start_button(self, start_button_controller) -> None:
+        start_button_controller.draw_buttons()
+
     def draw_text_boxes(self, text_box_controller) -> None:
         text_box_controller.draw_text_boxes()
 

@@ -1,7 +1,6 @@
 import pygame
-from models.Graph import Graph
+
 from controllers.ViewController import ViewController
-from controllers.CSVController import CSVController
 
 # Initialisation de Pygame
 pygame.init()

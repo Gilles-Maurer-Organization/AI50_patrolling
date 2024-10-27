@@ -30,7 +30,7 @@ class GraphController:
         background_image = pygame.image.load("image1.jpg")
         # Mise à jour des dimensions de l'image d'arrière plan par rapport à la taille de la fenêtre de graph
         background_image = pygame.transform.scale(background_image, (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
-        self.graph_view = GraphView(screen.subsurface((0, 0, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)), background_image)
+        self.graph_view = GraphView(screen.subsurface((0, 0, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)), None)
 
         # Le controlleur GraphController décompose son champ d'action grâce à l'aggrégation de nouveaux controlleurs :
         self.node_controller = NodeController(self.graph)
@@ -106,3 +106,5 @@ class GraphController:
         self.graph.nodes.clear()
         self.graph.edges.clear()
 
+    def graph_has_an_image(self) -> bool:
+        return self.graph_view.has_an_image()
