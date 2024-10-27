@@ -2,8 +2,6 @@ from constants.Colors import Colors
 
 from models.TextBox import TextBox
 
-from views.text_boxes.TextBoxView import TextBoxView
-
 from controllers.text_boxes.TextBoxController import TextBoxController
 from controllers.buttons.ButtonController import ButtonController
 from controllers.buttons.StartButtonController import StartButtonController

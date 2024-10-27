@@ -12,16 +12,6 @@ clock = pygame.time.Clock()
 csv_service = CSVService()
 view_controller = ViewController(csv_service)
 
-# Initialisation du controller de graphe
-graph_controller = GraphController(graph, view.get_graph_view())
-
-view.initialize_parameters_view(graph_controller)
-
-edges_matrix, nodes_list = graph.compute_matrix()
-
-# Initialisation du controller de CSV
-csv_controller = CSVController()
-    
 running = True
 is_saved = False
 
