@@ -1,6 +1,6 @@
 from controllers.text_boxes.BaseTextBoxController import BaseTextBoxController
 from models.TextBox import TextBox
-from views.TextBoxView import TextBoxView
+from views.text_boxes.TextBoxView import TextBoxView
 
 class TextBoxController(BaseTextBoxController):
     def __init__(self, parameters_view):

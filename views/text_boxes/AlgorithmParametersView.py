@@ -1,4 +1,4 @@
-from views.BaseTextBoxView import BaseTextBoxView
+from views.text_boxes.BaseTextBoxView import BaseTextBoxView
 from constants.Colors import Colors
 
 class AlgorithmParametersView(BaseTextBoxView):

@@ -1,6 +1,6 @@
 import pygame
 
-from views.BaseTextBoxView import BaseTextBoxView
+from views.text_boxes.BaseTextBoxView import BaseTextBoxView
 
 class TextBoxView(BaseTextBoxView):
     def __init__(self, screen, x, y, width, height, icon_path=None) -> None:
