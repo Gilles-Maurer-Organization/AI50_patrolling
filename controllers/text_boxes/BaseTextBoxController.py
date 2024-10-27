@@ -80,7 +80,6 @@ class BaseTextBoxController:
         for text_box in self.text_boxes.values():
             text_box.draw()
 
-    
     def is_everything_filled(self) -> bool:
         for model, _ in self.text_boxes.items():
             if not model.is_filled():

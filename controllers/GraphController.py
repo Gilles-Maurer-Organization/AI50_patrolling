@@ -3,7 +3,8 @@ from models.Graph import Graph
 from views.GraphView import GraphView
 from controllers.NodeController import NodeController
 from controllers.EdgeController import EdgeController
-from controllers.CSVController import CSVController
+
+from services.ICSVService import ICSVService
 
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, NODE_RADIUS
 
@@ -22,20 +23,23 @@ class GraphController:
         load_graph(): Charge un graphe déjà existant sous format csv.
     '''
      
-    def __init__(self, screen) -> None:
+    def __init__(self, screen, csv_service: ICSVService) -> None:
         # Stockage de l'instanciation du model de graph (nécessaire pour le lien entre vue et model)
         self.graph = Graph()
         
-        # TODO : Chargement dynamique, cf. Arnaud
-        background_image = pygame.image.load("image1.jpg")
+        # TODO : Chargement dynamique d'image, cf. Arnaud
+        self.image_path = "image1.jpg"
+        background_image = pygame.image.load(self.image_path)
         # Mise à jour des dimensions de l'image d'arrière plan par rapport à la taille de la fenêtre de graph
         background_image = pygame.transform.scale(background_image, (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
-        self.graph_view = GraphView(screen.subsurface((0, 0, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)), None)
+        self.graph_view = GraphView(screen.subsurface((0, 0, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)), background_image)
 
         # Le controlleur GraphController décompose son champ d'action grâce à l'aggrégation de nouveaux controlleurs :
         self.node_controller = NodeController(self.graph)
         self.edge_controller = EdgeController(self.graph, self.node_controller)
-        self.csv_controller = CSVController()
+
+        # Injection de dépendance du service de CSV
+        self.csv_service = csv_service
 
     def handle_event(self, event) -> None:
         '''
@@ -95,10 +99,10 @@ class GraphController:
 
     def save_graph(self) -> None:
         edges_matrix, nodes_list = self.graph.compute_matrix()
-        self.csv_controller.save(edges_matrix, nodes_list)
+        self.csv_service.save(edges_matrix, nodes_list, self.image_path)
 
     def load_graph(self, num_file) -> None:
-        edges_matrix, nodes_list = self.csv_controller.load(num_file)
+        edges_matrix, nodes_list = self.csv_service.load(num_file)
         if edges_matrix and nodes_list:
             self.graph.nodes = {i: coords for i, coords in enumerate(nodes_list)}
 
