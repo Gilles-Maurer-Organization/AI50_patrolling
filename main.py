@@ -3,6 +3,8 @@ import pygame
 from controllers.ViewController import ViewController
 from services.CSVService import CSVService
 
+from services.CSVService import CSVService
+
 # Initialisation de Pygame
 pygame.init()
 pygame.display.set_caption("AI50 patrolling problem")
