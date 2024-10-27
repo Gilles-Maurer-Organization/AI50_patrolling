@@ -19,7 +19,7 @@ jobs:
         python-version: '3.12.3'
 
     - name: Install distutils
-        run: sudo apt-get install python3-distutils
+      run: sudo apt-get install python3-distutils
     
     - name: Dependencies installation
       run: |
