@@ -1,30 +1,15 @@
 import pygame
 from models.Graph import Graph
-from views.View import View
-from controllers.GraphController import GraphController
+from controllers.ViewController import ViewController
 from controllers.CSVController import CSVController
 
 # Initialisation de Pygame
 pygame.init()
 pygame.display.set_caption("AI50 patrolling problem")
 
-# Initialisation du modèle de graphe
-graph = Graph()
-
 # TODO : déplacer la référence background_image, elle n'a pas de l ien direct avec la vue générale mais seulement avec la GraphView
-view = View()
-view.initialize_graph_view()
+view_controller = ViewController()
 
-# Initialisation du controller de graphe
-graph_controller = GraphController(graph, view.get_graph_view())
-
-view.initialize_parameters_view(graph_controller)
-
-edges_matrix, nodes_list = graph.compute_matrix()
-
-# Initialisation du controller de CSV
-csv_controller = CSVController()
-    
 running = True
 is_saved = False
 
@@ -35,12 +20,10 @@ while running:
 
         # On vérifie les événements de l'utilisateur dès qu'une action est réalisée tout au long du programme
         # (pour le moment, voué à être modifié, il ne faut pas les vérifier tout au long de la vie du programme)
-        graph_controller.handle_event(event)
-        
-        view.handle_actions(event)
+        view_controller.handle_actions(event)
     
     # Une fois l'événement géré, on met à jour la vue
-    view.draw(graph_controller)
+    view_controller.draw()
 
     pygame.display.flip()
     

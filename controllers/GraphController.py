@@ -1,6 +1,6 @@
 import pygame
-from models import Graph
-from views import GraphView
+from models.Graph import Graph
+from views.GraphView import GraphView
 from controllers.NodeController import NodeController
 from controllers.EdgeController import EdgeController
 from controllers.CSVController import CSVController
@@ -22,15 +22,19 @@ class GraphController:
         load_graph(): Charge un graphe déjà existant sous format csv.
     '''
      
-    def __init__(self, graph: Graph, graph_view: GraphView) -> None:
+    def __init__(self, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, screen) -> None:
         # Stockage de l'instanciation du model de graph (nécessaire pour le lien entre vue et model)
-        self.graph = graph
-        # Il en va de même pour le stockage de l'instanciation du graph côté view
-        self.graph_view = graph_view
+        self.graph = Graph()
+        
+        # TODO : Chargement dynamique, cf. Arnaud
+        background_image = pygame.image.load("image1.jpg")
+        # Mise à jour des dimensions de l'image d'arrière plan par rapport à la taille de la fenêtre de graph
+        background_image = pygame.transform.scale(background_image, (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
+        self.graph_view = GraphView(screen.subsurface((0, 0, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)), background_image)
 
         # Le controlleur GraphController décompose son champ d'action grâce à l'aggrégation de nouveaux controlleurs :
-        self.node_controller = NodeController(graph)
-        self.edge_controller = EdgeController(graph, self.node_controller)
+        self.node_controller = NodeController(self.graph)
+        self.edge_controller = EdgeController(self.graph, self.node_controller)
         self.csv_controller = CSVController()
 
     def handle_event(self, event) -> None:
