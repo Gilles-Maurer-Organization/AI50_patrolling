@@ -4,11 +4,11 @@ from models.TextBox import TextBox
 
 from views.TextBoxView import TextBoxView
 
-from controllers.TextBoxController import TextBoxController
-from controllers.ButtonController import ButtonController
-from controllers.StartButtonController import StartButtonController
+from controllers.text_boxes.TextBoxController import TextBoxController
+from controllers.buttons.ButtonController import ButtonController
+from controllers.buttons.StartButtonController import StartButtonController
 from controllers.ScrollingListController import ScrollingListController
-from controllers.AlgorithmParametersController import AlgorithmParametersController
+from controllers.text_boxes.AlgorithmParametersController import AlgorithmParametersController
 
 class ParametersView:
     def __init__(self, screen) -> None:
