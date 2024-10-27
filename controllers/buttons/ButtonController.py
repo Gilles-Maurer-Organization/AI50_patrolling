@@ -69,7 +69,7 @@ class ButtonController(BaseButtonController):
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
             for button, button_view in self.button_map.items():
-                if button_view.is_hovered(mouse_pos):
+                if button_view.is_hovered(mouse_pos) and button.is_enabled():
                     button.action()
         
         if event.type == pygame.MOUSEMOTION:
