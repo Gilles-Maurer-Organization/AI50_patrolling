@@ -15,8 +15,8 @@ class BaseTextBoxView(ABC):
         self.stroke_color = Colors.GRAY_TEXT.value
 
         self.font = pygame.font.SysFont("Arial", 16)
-        self.text_box_rect = None
-        self.text_box_content = ""
+        self.text_box_rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        self.text_box_content = None
 
     def draw(self) -> None:
         '''
@@ -34,7 +34,6 @@ class BaseTextBoxView(ABC):
 
         self.draw_text(text_box_surface)
 
-        self.text_box_rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.screen.blit(text_box_surface, (self.x, self.y))
 
     @abstractmethod

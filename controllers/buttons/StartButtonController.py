@@ -36,3 +36,9 @@ class StartButtonController(BaseButtonController):
         Cette méthode active le bouton de démarrage de la simulation.
         '''
         self.start_button.set_enabled(True)
+
+    def disable_start_button(self) -> None:
+        '''
+        Cette méthode désactive le bouton de démarrage de la simulation.
+        '''
+        self.start_button.set_enabled(False)

@@ -40,6 +40,7 @@ class ParametersController:
         self.handle_text_box(event)
         self.handle_scrolling_list(event)
         self.handle_algorithm_parameters(event)
+        self.check_start_button_state()
 
     def handle_button(self, event) -> None:
         '''
@@ -70,7 +71,6 @@ class ParametersController:
         is_algorithm_selected = self.scrolling_list_controller.handle_event(event)
         if is_algorithm_selected:
             algorith_selected = self.scrolling_list_controller.get_selected_algorithm()
-            self.enable_start_button()
             self.algorithm_parameters_controller.handle_selected_algorithm(algorith_selected)
 
     def handle_algorithm_parameters(self, event) -> None:
@@ -78,3 +78,16 @@ class ParametersController:
 
     def enable_start_button(self) -> bool:
         self.start_button_controller.enable_start_button()
+
+    def disable_start_button(self) -> bool:
+        self.start_button_controller.disable_start_button()
+
+    def check_start_button_state(self) -> None:
+        if (
+            self.scrolling_list_controller.get_selected_algorithm() is not None
+            and self.text_box_controller.is_everything_filled()
+        ):
+            self.enable_start_button()
+        else:
+            self.disable_start_button()
+        

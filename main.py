@@ -6,7 +6,6 @@ from controllers.ViewController import ViewController
 pygame.init()
 pygame.display.set_caption("AI50 patrolling problem")
 
-# TODO : déplacer la référence background_image, elle n'a pas de l ien direct avec la vue générale mais seulement avec la GraphView
 view_controller = ViewController()
 
 running = True

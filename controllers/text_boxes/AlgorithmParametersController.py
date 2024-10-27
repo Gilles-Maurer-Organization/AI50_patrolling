@@ -5,13 +5,11 @@ from views.text_boxes.AlgorithmParametersView import AlgorithmParametersView
 class AlgorithmParametersController(BaseTextBoxController):
     def __init__(self, parameters_view):
         super().__init__(parameters_view)
-        self.algorithm = None
 
     def handle_selected_algorithm(self, algorithm: Algorithm):
         '''
         Cette méthode met à jour les paramètres de l'algorithme sélectionné et initialise les zones de texte correspondantes.
         '''
-        self.algorithm = algorithm
         self.text_boxes.clear()
         offset_y = 0
         for label, parameter in algorithm.parameters.items():
@@ -23,5 +21,6 @@ class AlgorithmParametersController(BaseTextBoxController):
                 40,
                 label_text = label
             )
+            
             self.add_text_box(parameter, text_box_view)
             offset_y += 77

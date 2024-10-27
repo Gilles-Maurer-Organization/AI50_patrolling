@@ -22,16 +22,16 @@ class BaseTextBoxController:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # On vérifie si ce dernier est sur la zone de texte
                 if self.is_text_box_hovered(event, view):
-                    model.active = True
+                    model.set_active(True)
                     # On indique à la vue que la zone de texte a été cliquée
                     view.set_clicked()
                 else:
-                    model.active = False
+                    model.set_active(False)
                     # On indique à la vue que la zone de texte n'est plus active
                     view.set_normal()
 
             # Gère le survol de la souris
-            if event.type == pygame.MOUSEMOTION and not model.active:
+            if event.type == pygame.MOUSEMOTION and not model.is_active():
                 if self.is_text_box_hovered(event, view):
                     # On indique à la vue que la zone de texte est survolée
                     view.set_hovered()
@@ -41,7 +41,7 @@ class BaseTextBoxController:
                     view.set_normal()
 
             # Gestion de l'entrée clavier si la zone de texte est active
-            if event.type == pygame.KEYDOWN and model.active:
+            if event.type == pygame.KEYDOWN and model.is_active():
                 # S'il s'agit de la première fois que la zone de texte est écrite et que la touche pressée est valide (un chiffre), on supprime le texte de base
                 if model.first_input and event.unicode.isdigit():
                     model.reset()
@@ -79,3 +79,10 @@ class BaseTextBoxController:
         '''
         for text_box in self.text_boxes.values():
             text_box.draw()
+
+    
+    def is_everything_filled(self) -> bool:
+        for model, _ in self.text_boxes.items():
+            if not model.is_filled():
+                return False
+        return True
