@@ -52,19 +52,18 @@ class GraphController:
         pos = pygame.mouse.get_pos()
 
         if event.type == pygame.MOUSEBUTTONDOWN :
-            # TODO : récupérer le noeud directement grâce à la méthode get_node_at_position() de la classe NodeController
-            # plutot que de le faire à chaque fois dans start_drag, add_node, etc
-            if event.button == 1: 
+            node = self.node_controller.get_node_at_position(pos)
+            if event.button == 1:
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]:
-                    self.node_controller.delete_node(pos)
+                    self.node_controller.delete_node(node)
                 else:
                     # On clear l'éventuelle sélection de création de lien
                     self.node_controller.clear_selection()
                     # On initialise le potentiel déplacement du noeud grâce au controller Node
                     self.node_controller.start_drag(pos)
                     # Si le clic est réalisé sur une position où aucun noeud n'est présent,
-                    if self.node_controller.get_node_at_position(pos) is None:
+                    if node is None:
                         # On en crée un nouveau
                         if pos[0] < GRAPH_WINDOW_WIDTH - NODE_RADIUS and pos[1] < GRAPH_WINDOW_HEIGHT - NODE_RADIUS:
                             self.node_controller.add_node(pos)
@@ -74,7 +73,7 @@ class GraphController:
                 # On crée un lien grâce au controller Edge
                 self.edge_controller.create_link(pos)
 
-                self.node_controller.select_node(pos)
+                self.node_controller.select_node(node)
 
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:

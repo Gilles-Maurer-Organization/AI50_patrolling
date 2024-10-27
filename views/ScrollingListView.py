@@ -92,7 +92,6 @@ class ScrollingListView:
             algorithms (list[str]) : la liste des algorithmes disponibles stockés côté modèle.
         '''
 
-        # TODO: récupérer la largeur de offset sur une variable globale
         mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
         for rect, option in zip(self.options_rects, algorithms):
             if rect.collidepoint(mouse_pos):

@@ -33,16 +33,15 @@ class NodeController:
         '''
         self.graph.add_node(pos[0], pos[1])
     
-    def delete_node(self, pos) -> None:
+    def delete_node(self, node: Node) -> None:
         '''
         Cette méthode supprime le noeud sélectionné par l'utilisateur ainsi que
         les liaisons (edges) liés au noeud en question.
 
         Args:
-            pos (tuple de float): Les coordonnées du clic de la souris
+            node (Node): Noeud à supprimer
         '''
-        # On récupère le nœud à la position donnée
-        node = self.get_node_at_position(pos)
+        
         # On vérifie que le noeud existe
         if node is not None:  
             # On cherche toutes les arêtes connectées au noeud
@@ -52,7 +51,7 @@ class NodeController:
             for edge in edges_to_remove:
                 self.graph.edges.remove(edge)
 
-            # On supprime le nœud
+            # On supprime le noeud
             self.graph.nodes.remove(node)
 
 
@@ -83,14 +82,13 @@ class NodeController:
             self.dragging_node.x, self.dragging_node.y = pos
             
 
-    def select_node(self, pos) -> None:
+    def select_node(self, node: Node) -> None:
         '''
         Cette méthode sélectionne un noeud grâce aux coordonnées (x, y) de la souris (s'il existe), destiné à créer des liens entre les noeuds.
 
         Args:
-            pos (tuple de float): Coordonnées du clic de la souris
+            node (Node): Noeud sélectionné
         '''
-        node = self.get_node_at_position(pos)
         if node is not None:
             # Si le noeud, dont les coordonnées du clic de la souris a été réalisé, existe, alors on le récupère
             self.selected_node = node
