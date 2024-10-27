@@ -1,4 +1,4 @@
-from controllers.BaseTextBoxController import BaseTextBoxController
+from controllers.text_boxes.BaseTextBoxController import BaseTextBoxController
 from models.TextBox import TextBox
 from views.TextBoxView import TextBoxView
 

@@ -1,8 +1,9 @@
-from constants.Colors import Colors
 import pygame
-from constants.Config import GRAPH_WINDOW_WIDTH
 
-from models.Algorithm import Algorithm
+from constants.Config import GRAPH_WINDOW_WIDTH
+from constants.Colors import Colors
+
+from models.algorithms.Algorithm import Algorithm
 
 class ScrollingListView:
     def __init__(self, screen, x, y, width, height) -> None:

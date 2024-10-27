@@ -6,6 +6,7 @@ from controllers.CSVController import CSVController
 
 # Initialisation de Pygame
 pygame.init()
+pygame.display.set_caption("AI50 patrolling problem")
 
 # Initialisation du modèle de graphe
 graph = Graph()

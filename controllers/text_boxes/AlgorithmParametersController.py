@@ -1,5 +1,5 @@
-from controllers.BaseTextBoxController import BaseTextBoxController
-from models.Algorithm import Algorithm
+from controllers.text_boxes.BaseTextBoxController import BaseTextBoxController
+from models.algorithms.Algorithm import Algorithm
 from views.AlgorithmParametersView import AlgorithmParametersView
 
 class AlgorithmParametersController(BaseTextBoxController):

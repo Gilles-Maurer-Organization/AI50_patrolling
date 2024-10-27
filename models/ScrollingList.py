@@ -1,4 +1,4 @@
-from models.Algorithm import Algorithm
+from models.algorithms.Algorithm import Algorithm
 
 class ScrollingList:
     def __init__(self, algorithms: list[Algorithm]) -> None:

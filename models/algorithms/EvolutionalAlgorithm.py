@@ -1,4 +1,4 @@
-from models.Algorithm import Algorithm
+from models.algorithms.Algorithm import Algorithm
 from models.TextBox import TextBox
 
 class EvolutionalAlgorithm(Algorithm):

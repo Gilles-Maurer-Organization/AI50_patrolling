@@ -4,11 +4,10 @@ from views.ScrollingListView import ScrollingListView
 
 from models.ScrollingList import ScrollingList
 
-from constants.Algorithms import Algorithms
-from models.Algorithm import Algorithm
-from models.NaiveAlgorithm import NaiveAlgorithm
-from models.EvolutionalAlgorithm import EvolutionalAlgorithm
-from models.AntColonyAlgorithm import AntColonyAlgorithm
+from models.algorithms.Algorithm import Algorithm
+from models.algorithms.NaiveAlgorithm import NaiveAlgorithm
+from models.algorithms.EvolutionalAlgorithm import EvolutionalAlgorithm
+from models.algorithms.AntColonyAlgorithm import AntColonyAlgorithm
 
 import pygame
 

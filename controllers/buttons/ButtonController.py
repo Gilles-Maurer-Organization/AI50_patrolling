@@ -2,7 +2,7 @@ from constants.Colors import Colors
 from constants.Config import GRAPH_WINDOW_WIDTH
 
 from models.Button import Button
-from controllers.BaseButtonController import BaseButtonController
+from controllers.buttons.BaseButtonController import BaseButtonController
 from views.ButtonView import ButtonView
 import pygame
 

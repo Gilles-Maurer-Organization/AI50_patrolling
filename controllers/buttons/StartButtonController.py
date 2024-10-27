@@ -1,4 +1,4 @@
-from controllers.BaseButtonController import BaseButtonController
+from controllers.buttons.BaseButtonController import BaseButtonController
 from models.Button import Button
 from views.ButtonView import ButtonView
 
