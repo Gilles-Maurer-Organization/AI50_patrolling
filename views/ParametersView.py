@@ -1,13 +1,5 @@
 from constants.Colors import Colors
 
-from models.TextBox import TextBox
-
-from controllers.text_boxes.TextBoxController import TextBoxController
-from controllers.buttons.ButtonController import ButtonController
-from controllers.buttons.StartButtonController import StartButtonController
-from controllers.ScrollingListController import ScrollingListController
-from controllers.text_boxes.AlgorithmParametersController import AlgorithmParametersController
-
 class ParametersView:
     def __init__(self, screen) -> None:
         self.screen = screen
