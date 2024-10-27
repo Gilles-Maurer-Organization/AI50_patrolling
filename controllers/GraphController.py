@@ -22,7 +22,7 @@ class GraphController:
         load_graph(): Charge un graphe déjà existant sous format csv.
     '''
      
-    def __init__(self, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, screen) -> None:
+    def __init__(self, screen) -> None:
         # Stockage de l'instanciation du model de graph (nécessaire pour le lien entre vue et model)
         self.graph = Graph()
         
