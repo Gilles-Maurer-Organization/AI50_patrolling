@@ -45,6 +45,7 @@ class CSVService(ICSVService):
 
     def write_csv_information(self, edges_matrix, nodes_list, image_path, csv_path):
         file_path = os.path.join(self.csv_folder_path, csv_path)
+
         with open(file_path, "w") as f:
             f.write("Nodes,")
             for node in nodes_list:
