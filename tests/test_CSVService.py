@@ -25,9 +25,13 @@ class TestCSVService(unittest.TestCase):
     @patch('os.makedirs') # Mocking the os.makedirs function to simulate creating a directory.
     @patch('builtins.open', new_callable=mock_open)  # Mocking the open function to simulate file operations.
     def test_save_new_csv(self, mock_file, mock_makedirs, mock_exists):
-        # We simulate that the directory does not exist on the first call
-        # but he does on the second call (in order to check if the open(service.references_file_path, 'w')) is called.
-        mock_exists.side_effect = [False, True]
+        # We simulate that the directories do not exist on the first call (initialize_directories)
+        # And that the csv_files directory does not exist on the fourth call (count_files)
+        # Also that the csv_files directory does not exist on the fifth call (count_files in this test function)
+        # but he does from the sixth call
+        # (in order to check if the open(service.references_file_path, 'w'))
+        # and mock_file.assert_any_call(os.path.join(service.csv_folder_path, csv_path), 'w') are called.
+        mock_exists.side_effect = [False, False, False, False, False, True]
         
         # We create an instance of the CSVService class.
         service = CSVService()
@@ -37,23 +41,22 @@ class TestCSVService(unittest.TestCase):
         nodes_list = [(200, 100), (100, 200)]
         image_path = 'image2.jpg'
         
-
         # We call the save method to execute the functionality being tested
         service.save(edges_matrix, nodes_list, image_path)
 
-        # We assert that makedirs was called exactly once.
-        # If not, it means that the directory has'nt been created
-        # or has been created more than once
-        mock_makedirs.assert_called_once()
-
-        # We check if the references file was opened for writing.
-        # The mock_exists is now turned to true in order to enter to the open condition
-        mock_file.assert_any_call(service.references_file_path, 'w')
+        # We assert that makedirs was called two times.
+        # If not, it means that one directory has'nt been created: csv_files or references
+        # or has been created more than two
+        self.assertEqual(mock_makedirs.call_count, 2)
 
         # We get the number of CSV files.
         nb_files = service.count_files()
         # We generate the path for the new CSV file.
         csv_path = f"graph_{nb_files + 1}.csv"
+
+        # We check if the references file was opened for writing.
+        # The mock_exists is now turned to true in order to enter to the open condition
+        mock_file.assert_any_call(service.references_file_path, 'w')
 
         # And then we check if the new CSV file was opened for writing.
         mock_file.assert_any_call(os.path.join(service.csv_folder_path, csv_path), 'w')
