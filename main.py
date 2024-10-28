@@ -1,7 +1,6 @@
 import pygame
 
 from controllers.ViewController import ViewController
-from services.CSVService import CSVService
 
 from services.CSVService import CSVService
 
@@ -13,6 +12,7 @@ clock = pygame.time.Clock()
 
 csv_service = CSVService()
 view_controller = ViewController(csv_service)
+start_button_controller = StartButtonController(view_controller.parameters_view, view_controller.graph_controller)
 
 running = True
 is_saved = False
@@ -28,6 +28,8 @@ while running:
 
     # Une fois l'événement géré, on met à jour la vue
     view_controller.draw()
+    start_button_controller.update_simulation()
+    start_button_controller.draw_simulation()
     pygame.display.flip()
 
     # On limite le coût en CPU en ajoutant une limite de 30 fps pour notre programme,
