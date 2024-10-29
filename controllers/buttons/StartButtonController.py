@@ -48,9 +48,18 @@ class StartButtonController(BaseButtonController):
         self.simulation_started = True
 
     def update_simulation(self):
+        '''
+        Met à jour la position de chaque agent dans la simulation.
+        '''
         if self.simulation_started:
             for agent in self.agents:
                 agent.move()
+
+            # Vérifie si tous les agents ont fini leur parcours
+            if all(agent.finished for agent in self.agents):
+                # Si tous les agents ont fini, on les réinitialise pour un nouveau parcours
+                for agent in self.agents:
+                    agent.reset_path()
 
     def draw_simulation(self):
 
