@@ -36,8 +36,6 @@ class GraphController:
         background_image = pygame.transform.scale(background_image, (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
         self.graph_view = GraphView(screen.subsurface((0, 0, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)), background_image)
 
-        self.graph_view = GraphView(screen, background_image)
-
         # Le controlleur GraphController décompose son champ d'action grâce à l'aggrégation de nouveaux controlleurs :
         self.node_controller = NodeController(self.graph)
         self.edge_controller = EdgeController(self.graph, self.node_controller)

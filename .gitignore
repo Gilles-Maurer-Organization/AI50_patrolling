@@ -5,3 +5,4 @@ references/*
 __pycache__/
 coverage.xml
 .coverage
+/.idea

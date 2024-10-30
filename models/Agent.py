@@ -1,6 +1,6 @@
 import numpy as np
 
-class AgentModel:
+class Agent:
     def __init__(self, path, graph):
         self.path = path
         self.current_index = 0
