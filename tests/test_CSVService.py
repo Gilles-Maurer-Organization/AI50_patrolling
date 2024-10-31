@@ -71,6 +71,49 @@ class TestCSVService(unittest.TestCase):
         # the path of the graph must indeed be written as second argument
         assert 'image1.jpg,None' not in handle.write.call_args_list
 
+    @patch('os.path.exists')
+    @patch('os.makedirs')
+    @patch('builtins.open', new_callable=mock_open)
+    def test_save_existing_csv(self, mock_file, mock_makedirs, mock_exists):
+        mock_exists.side_effect = [True, True, True, False]
+        
+        # We create an instance of the CSVService class.
+        service = CSVService()
+
+        # We define some random edges, nodes, image_path
+        edges_matrix = [[0, 1], [1, 0]]
+        nodes_list = [(200, 100), (100, 200)]
+        image_path = 'image1.jpg'
+
+        # We prepare a simulated content for the references.csv file
+        mock_file.return_value.__iter__.return_value = iter([f"{image_path},graph_1.csv\n"])
+        
+        # We call the save method to execute the functionality being tested
+        service.save(edges_matrix, nodes_list, image_path)
+
+        # We make sure that the initialize_directories method didn't create any folder
+        self.assertEqual(mock_makedirs.call_count, 0, "No other directories must be created")
+
+        # We check if the write_csv_information method was called in order to change graph_1.csv
+        mock_file.assert_any_call(os.path.join(service.csv_folder_path, "graph_1.csv"), 'w')
+
+        # We get the handle for the mocked file.
+        handle = mock_file()
+        
+        # We verify that de services wrote Nodes, into the file
+        handle.write.assert_any_call("Nodes,")
+        # And we verify that for each node, the data writen is the correct one
+        for node in nodes_list:
+            handle.write.assert_any_call(f'{node},')
+        handle.write.assert_any_call("\n")
+        
+        # We check that the edges matrix has been writting into the csv file
+        for row in edges_matrix:
+            handle.write.assert_any_call(",".join(str(cell) for cell in row) + "\n")
+
+        # Finally, we verify the reference of the image
+        handle.write.assert_any_call(f'Image_ref,{image_path}')
+
     @patch('builtins.open', new_callable=mock_open, read_data='image1.jpg,graph_1.csv\n')
     def test_find_csv_reference_found(self, mock_file):
         service = CSVService()
