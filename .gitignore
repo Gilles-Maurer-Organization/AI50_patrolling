@@ -4,3 +4,4 @@ references/*
 .tox/
 __pycache__/
 coverage.xml
+.coverage
