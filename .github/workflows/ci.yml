@@ -9,6 +9,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v3
@@ -22,25 +24,6 @@ jobs:
 
       - name: Run Tox
         run: tox -e py
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: .coverage-reports/coverage.xml
-
-  sonarcloud_analysis:
-    name: SonarCloud Analysis
-    runs-on: ubuntu-latest
-    needs: build_and_test
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Download coverage report
-        uses: actions/download-artifact@v4
-        with:
-          name: coverage-report
 
       - name: Run SonarCloud Analysis
         uses: SonarSource/sonarcloud-github-action@master
