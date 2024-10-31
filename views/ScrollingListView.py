@@ -83,7 +83,7 @@ class ScrollingListView:
         '''
         self.text_color = Colors.BLACK.value
 
-    def is_option_clicked(self, event, algorithms: list[str]) -> str:
+    def is_option_clicked(self, event, algorithms: list[str]) -> str | None:
         '''
         Cette méthode vérifie si une option a été cliquée et renvoie le texte de l'option.
 
