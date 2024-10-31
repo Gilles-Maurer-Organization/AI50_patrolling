@@ -7,7 +7,7 @@ from views.text_boxes.TextBoxView import TextBoxView
 class BaseTextBoxController:
     def __init__(self, parameters_view):
         self.parameters_view = parameters_view
-        # Clé : modèle (TextBox), Valeur : vue (TextBoxView)
+        # Key : model (TextBox), Value : view (TextBoxView)
         self.text_boxes = {}
 
     def add_text_box(self, model, text_box_view):

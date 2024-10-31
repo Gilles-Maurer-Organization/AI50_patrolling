@@ -6,7 +6,7 @@ class AntColonyAlgorithm(Algorithm):
         super().__init__()
 
         self.parameters = {
-            "Alpha:": TextBox(str(alpha)),
+            "Alpha": TextBox(str(alpha)),
             "Beta": TextBox(str(beta)),
             "Rho": TextBox(str(p)),
             "Tau": TextBox(str(t))
