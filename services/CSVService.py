@@ -35,7 +35,7 @@ class CSVService(ICSVService):
         with open(self.references_file_path, "w") as f:
             f.write(f'{image_path},{csv_path}')
 
-    def find_csv_reference(self, image_path) -> str | None:
+    def find_csv_reference(self, image_path):
         with open(self.references_file_path, "r") as f:
             for line in f:
                 img_path, csv_path = line.strip().split(",")
