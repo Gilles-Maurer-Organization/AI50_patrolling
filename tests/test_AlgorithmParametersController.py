@@ -30,7 +30,7 @@ class TestAlgorithmParametersController(unittest.TestCase):
         self.assertEqual(algorithm.parameters["Beta"].text_content, "0.7")
 
     @patch('controllers.text_boxes.AlgorithmParametersController.AlgorithmParametersView')
-    def test_handle_selected_algorithm(self, MockAlgorithmParametersView):
+    def test_handle_selected_algorithm(self, mockAlgorithmParametersView):
         # We initialize a mocked view
         mock_parameters_view = MagicMock()
         
@@ -88,4 +88,4 @@ class TestAlgorithmParametersController(unittest.TestCase):
         ]
 
         # We assert that the parameters instantiated are the same as expected
-        MockAlgorithmParametersView.assert_has_calls(expected_calls, any_order=False)
+        mockAlgorithmParametersView.assert_has_calls(expected_calls, any_order=False)

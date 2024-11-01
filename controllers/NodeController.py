@@ -101,7 +101,7 @@ class NodeController:
         '''
         self.selected_node = None
 
-    def get_node_at_position(self, pos) -> None|Node:
+    def get_node_at_position(self, pos):
         '''
         Cette méthode retourne le noeud correspondant aux coordonnées du clic de l'utilisateur. Le nœud est identifié par ses coordonnées qui correspondent à celles du clic effectué.
         '''

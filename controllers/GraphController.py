@@ -61,7 +61,7 @@ class GraphController:
                 self.handle_left_click(pos, node)
 
             # S'il s'agit du clic droit :
-            elif event.button == 3:
+            elif event.button == 3 and node is not None:
                 self.handle_right_click(pos, node)
 
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
@@ -74,7 +74,7 @@ class GraphController:
 
     def handle_left_click(self, pos, node) -> None:
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]:
+        if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL] and node is not None:
             self.node_controller.delete_node(node)
         else:
             # On clear l'éventuelle sélection de création de lien
