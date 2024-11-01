@@ -80,7 +80,7 @@ class GraphController:
             # On clear l'éventuelle sélection de création de lien
             self.node_controller.clear_selection()
             # On initialise le potentiel déplacement du noeud grâce au controller Node
-            self.node_controller.start_drag(pos)
+            self.node_controller.start_drag(node)
             # Si le clic est réalisé sur une position où aucun noeud n'est présent,
             if node is None:
                 # On en crée un nouveau

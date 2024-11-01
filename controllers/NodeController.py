@@ -55,14 +55,14 @@ class NodeController:
             self.graph.nodes.remove(node)
 
 
-    def start_drag(self, pos) -> None:
+    def start_drag(self, node: Node) -> None:
         '''
         Cette méthode initialise le déplacement d'un noeud en stockant sa référence.
 
         Args:
-            pos (tuple de float): Coordonnées du clic de la souris
+            node (Node): Noeud à déplacer
         '''
-        self.dragging_node = self.get_node_at_position(pos)
+        self.dragging_node = node
 
     def end_drag(self) -> None:
         '''
@@ -93,7 +93,7 @@ class NodeController:
             # Si le noeud, dont les coordonnées du clic de la souris a été réalisé, existe, alors on le récupère
             self.selected_node = node
         else:
-            self.selected_node = None
+            self.clear_selection()
 
     def clear_selection(self) -> None:
         '''
