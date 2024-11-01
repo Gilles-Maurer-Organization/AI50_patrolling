@@ -16,10 +16,12 @@ class GraphView:
 
         Args:
             graph (Graph): Graphe possédant les informations de l'intégralité des positions des noeuds et des edges (côté Model)
-            selected_node (Bool): Noeud sélectionné sur le graphe par l'utilisateur grâce au clique gauche
+            selected_node (Node): Noeud sélectionné sur le graphe par l'utilisateur grâce au clique gauche
+            dragging_node (Node): Noeud bougé par l'utilisateur lorsqu'il souhaite déplacer ce dernier
         '''
         # Affichage du plan du musée en fond
-        self.screen.blit(self.background_image, (0, 0))
+        if self.background_image is not None:
+            self.screen.blit(self.background_image, (0, 0))
 
         # Dessin des noeuds
         for node in graph.nodes:
@@ -37,3 +39,5 @@ class GraphView:
             end_node = edge[1]
             pygame.draw.line(self.screen, Colors.EDGE_COLOR.value, (start_node.x, start_node.y), (end_node.x, end_node.y), 3)
         
+    def has_an_image(self) -> bool:
+        return self.background_image is not None

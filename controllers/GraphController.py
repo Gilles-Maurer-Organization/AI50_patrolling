@@ -1,9 +1,10 @@
 import pygame
-from models import Graph
-from views import GraphView
+from models.Graph import Graph
+from views.GraphView import GraphView
 from controllers.NodeController import NodeController
 from controllers.EdgeController import EdgeController
-from controllers.CSVController import CSVController
+
+from services.ICSVService import ICSVService
 
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, NODE_RADIUS
 
@@ -22,16 +23,23 @@ class GraphController:
         load_graph(): Charge un graphe déjà existant sous format csv.
     '''
      
-    def __init__(self, graph: Graph, graph_view: GraphView) -> None:
+    def __init__(self, screen, csv_service: ICSVService) -> None:
         # Stockage de l'instanciation du model de graph (nécessaire pour le lien entre vue et model)
-        self.graph = graph
-        # Il en va de même pour le stockage de l'instanciation du graph côté view
-        self.graph_view = graph_view
+        self.graph = Graph()
+        
+        # TODO : Chargement dynamique d'image, cf. Arnaud
+        self.image_path = "image1.jpg"
+        background_image = pygame.image.load(self.image_path)
+        # Mise à jour des dimensions de l'image d'arrière plan par rapport à la taille de la fenêtre de graph
+        background_image = pygame.transform.scale(background_image, (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
+        self.graph_view = GraphView(screen.subsurface((0, 0, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)), background_image)
 
         # Le controlleur GraphController décompose son champ d'action grâce à l'aggrégation de nouveaux controlleurs :
-        self.node_controller = NodeController(graph)
-        self.edge_controller = EdgeController(graph, self.node_controller)
-        self.csv_controller = CSVController()
+        self.node_controller = NodeController(self.graph)
+        self.edge_controller = EdgeController(self.graph, self.node_controller)
+
+        # Injection de dépendance du service de CSV
+        self.csv_service = csv_service
 
     def handle_event(self, event) -> None:
         '''
@@ -48,39 +56,42 @@ class GraphController:
         pos = pygame.mouse.get_pos()
 
         if event.type == pygame.MOUSEBUTTONDOWN :
-            # TODO : récupérer le noeud directement grâce à la méthode get_node_at_position() de la classe NodeController
-            # plutot que de le faire à chaque fois dans start_drag, add_node, etc
-            if event.button == 1: 
-                keys = pygame.key.get_pressed()
-                if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]:
-                    self.node_controller.delete_node(pos)
-                else:
-                    # On clear l'éventuelle sélection de création de lien
-                    self.node_controller.clear_selection()
-                    # On initialise le potentiel déplacement du noeud grâce au controller Node
-                    self.node_controller.start_drag(pos)
-                    # Si le clic est réalisé sur une position où aucun noeud n'est présent,
-                    if self.node_controller.get_node_at_position(pos) is None:
-                        # On en crée un nouveau
-                        if pos[0] < GRAPH_WINDOW_WIDTH - NODE_RADIUS and pos[1] < GRAPH_WINDOW_HEIGHT - NODE_RADIUS:
-                            self.node_controller.add_node(pos)
+            node = self.node_controller.get_node_at_position(pos)
+            if event.button == 1:
+                self.handle_left_click(pos, node)
 
             # S'il s'agit du clic droit :
-            elif event.button == 3:
-                # On crée un lien grâce au controller Edge
-                self.edge_controller.create_link(pos)
+            elif event.button == 3 and node is not None:
+                self.handle_right_click(pos, node)
 
-                self.node_controller.select_node(pos)
-
-        if event.type == pygame.MOUSEBUTTONUP:
-            if event.button == 1:
-                self.node_controller.end_drag()
+        if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+            self.node_controller.end_drag()
 
         # On vérifie que le déplacement (drag) du bouton ne dépasse pas les limites de la fenêtre du graphe
-        if event.type == pygame.MOUSEMOTION:
-            if event.buttons[0]:
-                if pos[0] < GRAPH_WINDOW_WIDTH  - NODE_RADIUS and pos[1] < GRAPH_WINDOW_HEIGHT - NODE_RADIUS and pos[0] > NODE_RADIUS and pos[1] > NODE_RADIUS:
-                    self.node_controller.drag_node(pos)
+        if event.type == pygame.MOUSEMOTION and event.buttons[0]:
+            if pos[0] < GRAPH_WINDOW_WIDTH  - NODE_RADIUS and pos[1] < GRAPH_WINDOW_HEIGHT - NODE_RADIUS and pos[0] > NODE_RADIUS and pos[1] > NODE_RADIUS:
+                self.node_controller.drag_node(pos)
+
+    def handle_left_click(self, pos, node) -> None:
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL] and node is not None:
+            self.node_controller.delete_node(node)
+        else:
+            # On clear l'éventuelle sélection de création de lien
+            self.node_controller.clear_selection()
+            # On initialise le potentiel déplacement du noeud grâce au controller Node
+            self.node_controller.start_drag(pos)
+            # Si le clic est réalisé sur une position où aucun noeud n'est présent,
+            if node is None:
+                # On en crée un nouveau
+                if pos[0] < GRAPH_WINDOW_WIDTH - NODE_RADIUS and pos[1] < GRAPH_WINDOW_HEIGHT - NODE_RADIUS:
+                    self.node_controller.add_node(pos)
+
+    def handle_right_click(self, pos, node) -> None:
+        # On crée un lien grâce au controller Edge
+        self.edge_controller.create_link(pos)
+
+        self.node_controller.select_node(node)
 
     def update(self) -> None:
         """
@@ -92,10 +103,10 @@ class GraphController:
 
     def save_graph(self) -> None:
         edges_matrix, nodes_list = self.graph.compute_matrix()
-        self.csv_controller.save(edges_matrix, nodes_list)
+        self.csv_service.save(edges_matrix, nodes_list, self.image_path)
 
     def load_graph(self, num_file) -> None:
-        edges_matrix, nodes_list = self.csv_controller.load(num_file)
+        edges_matrix, nodes_list = self.csv_service.load(num_file)
         if edges_matrix and nodes_list:
             self.graph.nodes = {i: coords for i, coords in enumerate(nodes_list)}
 
@@ -103,3 +114,5 @@ class GraphController:
         self.graph.nodes.clear()
         self.graph.edges.clear()
 
+    def graph_has_an_image(self) -> bool:
+        return self.graph_view.has_an_image()

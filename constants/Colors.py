@@ -22,6 +22,8 @@ class Colors(Enum):
     BUTTON_RED_HOVER = (247, 141, 141)
     GRAY_TEXT = (200, 200, 200)
 
+    BUTTON_DISABLED = (245, 235, 235)
+
     # Relatif aux textbox
     TEXT_BOX_TEXT = (166, 166, 166)
     TEXT_BOX_CLICKED = (220, 220, 220)

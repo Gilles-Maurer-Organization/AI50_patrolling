@@ -1,3 +1,7 @@
 csv_files/*
+references/*
 .venv
+.tox/
 __pycache__/
+coverage.xml
+.coverage

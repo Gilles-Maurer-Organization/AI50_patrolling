@@ -1,6 +1,9 @@
-from constants.Colors import Colors
 import pygame
+
 from constants.Config import GRAPH_WINDOW_WIDTH
+from constants.Colors import Colors
+
+from models.algorithms.Algorithm import Algorithm
 
 class ScrollingListView:
     def __init__(self, screen, x, y, width, height) -> None:
@@ -25,7 +28,7 @@ class ScrollingListView:
         self.is_active = False
         self.options_rects = []
 
-    def draw(self, algorithms: list[str], selected_algorithm = None, has_an_algorithm_selected: bool = False) -> None:
+    def draw(self, algorithms: list[Algorithm], selected_algorithm = None, has_an_algorithm_selected: bool = False) -> None:
         '''
         Cette méthode dessine les caractéristiques de la liste déroulante : header et options de la liste déroulante
         dans le cas où celle-ci est active (déroulée).
@@ -45,7 +48,7 @@ class ScrollingListView:
             selected_algorithm (string): L'algorithme sélectionné dans la liste déroulante, peut être Null.
         '''
         pygame.draw.rect(self.screen, self.color, self.scrolling_list_rect, border_radius=6)
-        text = self.font.render(selected_algorithm if selected_algorithm else 'Select algorithm', True, self.text_color)
+        text = self.font.render(selected_algorithm.name if selected_algorithm else 'Select algorithm', True, self.text_color)
 
         # Si la liste déroulante est déroulée, on réalise un miroir sur horizontal pour inverser le sens de la flèche
         icon_to_draw = self.flipped_icon if self.is_active else self.icon
@@ -57,7 +60,7 @@ class ScrollingListView:
         text_rect = text.get_rect(center=(self.x + self.width / 2 - icon_to_draw.get_width() / 2, self.y + self.height / 2))
         self.screen.blit(text, text_rect)
 
-    def draw_options(self, algorithms: list[str]) -> None:
+    def draw_options(self, algorithms: list[Algorithm]) -> None:
         '''
         Cette méthode affiche les options de la liste déroulante sous la tête de liste.
         '''
@@ -65,10 +68,11 @@ class ScrollingListView:
         self.options_rects = []
 
         for i, option in enumerate(algorithms):
+            option_name = option.name
             option_rect = pygame.Rect(self.x, self.y + (i + 1) * option_height, self.width, option_height)
             self.options_rects.append(option_rect)
             pygame.draw.rect(self.screen, Colors.LIGHT_GRAY.value, option_rect)
-            text = self.font.render(option, True, Colors.BLACK.value)
+            text = self.font.render(option_name, True, Colors.BLACK.value)
             text_rect = text.get_rect(center=(option_rect.x + option_rect.width / 2, option_rect.y + option_rect.height / 2))
             self.screen.blit(text, text_rect)
 
@@ -79,7 +83,7 @@ class ScrollingListView:
         '''
         self.text_color = Colors.BLACK.value
 
-    def is_option_clicked(self, event, algorithms: list[str]) -> str:
+    def is_option_clicked(self, event, algorithms: list[str]) -> str | None:
         '''
         Cette méthode vérifie si une option a été cliquée et renvoie le texte de l'option.
 
@@ -88,7 +92,6 @@ class ScrollingListView:
             algorithms (list[str]) : la liste des algorithmes disponibles stockés côté modèle.
         '''
 
-        # TODO: récupérer la largeur de offset sur une variable globale
         mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
         for rect, option in zip(self.options_rects, algorithms):
             if rect.collidepoint(mouse_pos):
