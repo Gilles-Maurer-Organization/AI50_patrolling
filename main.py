@@ -20,8 +20,6 @@ while running:
 
     # Redessine tous les éléments de l'interface et de la simulation
     view_controller.draw()  # Dessine les éléments statiques de l'interface
-    view_controller.parameters_controller.update_simulation()
-    view_controller.parameters_controller.draw_simulation()
 
     pygame.display.flip()
     clock.tick(30)

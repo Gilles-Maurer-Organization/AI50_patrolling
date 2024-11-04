@@ -26,3 +26,4 @@ class ViewController:
         self.parameters_controller.draw_parameters()
         self.parameters_controller.draw_simulation()
         self.graph_controller.update()
+        self.parameters_controller.draw_simulation()
