@@ -1,13 +1,8 @@
-import pygame
-# from models import Graph
-# from views import GraphView
-# from controllers.NodeController import NodeController
-# from controllers.EdgeController import EdgeController
-# from controllers.CSVController import CSVController
-import math
+
+from AStarService import AStarService
 
 
-class CompleteGraphController:
+class CompleteGraphService:
     '''
         Class permettant de gérer un graph complet à partir d'un graphe simple.
 
@@ -46,7 +41,7 @@ class CompleteGraphController:
 
                 if self.simpleGraph[i][j] == 0:
 
-                    aStar = AStarAlgorithm(self.simpleGraph, self.nodePosition, i, j)
+                    aStar = AStarService(self.simpleGraph, self.nodePosition, i, j)
                     path, distance = aStar.a_star()
 
                     self.completeGraph[i][j] = distance
@@ -75,76 +70,6 @@ class CompleteGraphController:
         return self.completeGraph
     
 
-
-class AStarAlgorithm: 
-
-    def __init__(self, graph, nodePosition, start, end): 
-        self.graph = graph
-        self.nodePosition = nodePosition
-        self.start = start
-        self.end = end
-
-        self.openSet = []
-        self.camemFrom = {}
-        self.gScore = {}
-        self.fScore = {}
-
-        # si node position est une liste : for node in range(len(nodePosition))
-        for node in self.nodePosition.keys():
-            self.gScore[node] = math.inf
-            self.fScore[node] = math.inf
-
-    def compute_h (self, node): 
-
-        # distance entre le noeud et la fin
-        (x1, y1) = self.nodePosition[node]
-        (x2, y2) = self.nodePosition[self.end]
-
-        return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
-    
-    def reconstruct_path(self, current): 
-        total_path = [current]
-        while current in self.camemFrom.keys(): 
-            current = self.camemFrom[current]
-            total_path.insert(0, current)
-
-        return total_path
-    
-
-    def a_star(self):
-
-        openSet = [self.start]  
-
-        self.gScore[self.start] = 0 
-        self.fScore[self.start] = self.compute_h(self.start)
-
-        while len(openSet) > 0:
-
-            current = openSet[0]
-            for node in openSet: 
-                if self.fScore[node] < self.fScore[current]: 
-                    current = node
-
-            if current == self.end: 
-                return (self.reconstruct_path(current), self.gScore[current])
-
-            openSet.remove(current)
-
-            for i in range(len(self.graph[current])): 
-                if self.graph[current][i] > 0: 
-                    tentative_gScore = self.gScore[current] + self.graph[current][i]
-
-                    if tentative_gScore < self.gScore[i]: 
-                        self.camemFrom[i] = current
-                        self.gScore[i] = tentative_gScore
-                        self.fScore[i] = tentative_gScore + self.compute_h(i)
-                        if i not in openSet: 
-                            openSet.append(i)
-
-        return None
-                
-                
-
 def main():
     # Exemple de graphe simple avec 4 nœuds (graphe non complet)
     # 0 est connecté à 1 avec une distance de 1, et 1 est connecté à 2 avec une distance de 2
@@ -168,7 +93,7 @@ def main():
     }
 
     # Initialisation du contrôleur de graphe complet
-    graph_controller = CompleteGraphController(simple_graph, node_positions)
+    graph_controller = CompleteGraphService(simple_graph, node_positions)
     complete_graph = graph_controller.get_complete_graph()
     print("Graphe complet généré :")
     for row in complete_graph:
@@ -179,7 +104,7 @@ def main():
     for start in range(len(simple_graph)):
         for end in range(len(simple_graph)):
             if start != end:
-                astar = AStarAlgorithm(graph=simple_graph, nodePosition=node_positions, start=start, end=end)
+                astar = AStarService(graph=simple_graph, nodePosition=node_positions, start=start, end=end)
                 shortest_path = astar.a_star()
                 print(f"Chemin le plus court de {start} à {end} : {shortest_path}")
 
