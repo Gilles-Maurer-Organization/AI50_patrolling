@@ -201,6 +201,9 @@ class ScrollingListView:
                 return option
         return None
 
+    def is_active(self) -> bool:
+        return self.active
+
     def set_active(self, is_active: bool) -> None:
         """
         Sets the active (open) state of the dropdown list.
