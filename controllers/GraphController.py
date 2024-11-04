@@ -2,6 +2,7 @@ import os
 import shutil
 import tkinter as tk
 from tkinter import filedialog
+import re
 
 import pygame
 
@@ -117,6 +118,10 @@ class GraphController:
         edges_matrix, nodes_list = self.csv_service.load(num_file)
         if edges_matrix and nodes_list:
             self.graph.nodes = {i: coords for i, coords in enumerate(nodes_list)}
+            self.graph.edges = {(i, j) for i, row in enumerate(edges_matrix) for j, distance in enumerate(row) if distance > 0}
+
+            print("Edges matrix:", edges_matrix)
+            print("Nodes list:", nodes_list)
 
     def clear_graph(self) -> None:
         self.graph.nodes.clear()
@@ -165,17 +170,28 @@ class GraphController:
         self.graph_view.background_image = background_image
 
         # Charger les données des nœuds et des arêtes à partir du CSV
-        edges_matrix, nodes_list = self.csv_service.load(csv_path)
-        if edges_matrix and nodes_list:
-            self.clear_graph()
-            for coords in nodes_list:
-                self.node_controller.add_node(coords)
-            for i, row in enumerate(edges_matrix):
-                for j, distance in enumerate(row):
-                    if distance > 0:
-                        node1 = self.graph.nodes[i]
-                        node2 = self.graph.nodes[j]
-                        self.graph.add_edge(node1, node2)
+        # regex pour récupérer le numéro de fichier
+        match = re.search(r'graph_(\d+)\.csv', csv_path)
 
-        self.update()
-        print("Le graphe a été importé et affiché avec succès.")
+        if match:
+            # Récupère le numéro de fichier
+            file_number = match.group(1)
+            edges_matrix, nodes_list = self.csv_service.load(file_number)
+
+            print("Edges matrix:", edges_matrix)
+            print("Nodes list:", nodes_list)
+            if edges_matrix and nodes_list:
+                self.clear_graph()
+                for coords in nodes_list:
+                    self.node_controller.add_node(coords)
+                for i, row in enumerate(edges_matrix):
+                    for j, distance in enumerate(row):
+                        if distance > 0:
+                            node1 = self.graph.nodes[i]
+                            node2 = self.graph.nodes[j]
+                            self.graph.add_edge(node1, node2)
+
+            self.update()
+            print("Le graphe a été importé et affiché avec succès.")
+        else:
+            raise ValueError("Le chemin ne correspond pas au format attendu.")

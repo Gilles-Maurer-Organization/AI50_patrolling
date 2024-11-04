@@ -59,7 +59,6 @@ class CSVService(ICSVService):
     
     # TODO : Fix la fonction (charge des coordonnées en string avec des () en trop)
     def load(self, num_file) -> tuple[list, list[str]]:
-
         file_path = os.path.join(self.csv_folder_path, f"graph_{num_file}.csv")
 
         if (not os.path.exists(file_path)):
