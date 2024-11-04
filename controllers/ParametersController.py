@@ -1,9 +1,9 @@
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, PARAMETERS_WINDOW_WIDTH
+from controllers.ScrollingListController import ScrollingListController
 from controllers.buttons.ButtonController import ButtonController
 from controllers.buttons.StartButtonController import StartButtonController
-from controllers.text_boxes.TextBoxController import TextBoxController
-from controllers.ScrollingListController import ScrollingListController
 from controllers.text_boxes.AlgorithmParametersController import AlgorithmParametersController
+from controllers.text_boxes.TextBoxController import TextBoxController
 from views.ParametersView import ParametersView
 
 
@@ -17,6 +17,7 @@ class ParametersController:
             screen.subsurface((GRAPH_WINDOW_WIDTH, 0, PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)))
 
         # Initialisation des différents contrôleurs avec self passé à StartButtonController
+        self.graph_controller = graph_controller
         self.button_controller = ButtonController(self.parameters_view, graph_controller)
         self.start_button_controller = StartButtonController(self.parameters_view, graph_controller, self)
         self.text_box_controller = TextBoxController(self.parameters_view)
@@ -115,7 +116,11 @@ class ParametersController:
         else:
             self.disable_start_button()
 
-    def update_and_draw_simulation(self) -> None:
-        # Appels à update et draw de StartButtonController
-        self.start_button_controller.update_simulation()
-        self.start_button_controller.draw_simulation()
+    def update_simulation(self):
+        for i, agent in enumerate(self.start_button_controller.agents):
+            agent.move()
+
+    def draw_simulation(self):
+        if self.simulation_started:
+            self.update_simulation()
+            self.graph_controller.graph_view.draw_simulation(self.start_button_controller.agents)

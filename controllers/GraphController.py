@@ -116,15 +116,5 @@ class GraphController:
         self.graph.nodes.clear()
         self.graph.edges.clear()
 
-    def draw_simulation(self):
-        self.parameters_view.screen.fill(Colors.WHITE.value)
-        self.graph_controller.load_graph()
-        for agent in self.agents:
-            pygame.draw.circle(self.parameters_view.screen, Colors.AGENT_COLOR.value, (int(agent.x), int(agent.y)), 5)
-        pygame.display.flip()
-
-    def draw_graph(self, selected_node=None, dragging_node=None):
-        self.graph_view.draw_graph(self.graph, selected_node, dragging_node)
-
     def graph_has_an_image(self) -> bool:
         return self.graph_view.has_an_image()

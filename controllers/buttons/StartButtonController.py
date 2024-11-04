@@ -1,9 +1,9 @@
-from controllers.buttons.BaseButtonController import BaseButtonController
-from models.Button import Button
-from models.Agent import Agent
-from views.ButtonView import ButtonView
 from constants.Colors import Colors
-import pygame
+from controllers.buttons.BaseButtonController import BaseButtonController
+from models.Agent import Agent
+from models.Button import Button
+from views.ButtonView import ButtonView
+
 
 class StartButtonController(BaseButtonController):
     def __init__(self, parameters_view, graph_controller, parameters_controller) -> None:
@@ -11,7 +11,7 @@ class StartButtonController(BaseButtonController):
 
         # Référence à ParametersController pour accéder à l'état centralisé
         self.parameters_controller = parameters_controller
-        self.start_button = Button("Start simulation", self.start_action, enabled=True)
+        self.start_button = Button("Start simulation", self.start_action, enabled=False)
 
         # Création de la map des boutons et leurs vues
         self.button_map = {
@@ -44,17 +44,9 @@ class StartButtonController(BaseButtonController):
         ]
         self.agents = [Agent(path, self.graph_controller.graph) for path in paths]
 
-    def update_simulation(self):
-        if self.parameters_controller.simulation_started:
-            for i, agent in enumerate(self.agents):
-                agent.move()
-
     def draw_simulation(self):
         if self.parameters_controller.simulation_started:
-            self.graph_controller.graph_view.screen.fill(Colors.WHITE.value)
-            self.graph_controller.update()
             self.graph_controller.graph_view.draw_simulation(self.agents)
-            pygame.display.flip()
 
     def enable_start_button(self) -> None:
         '''

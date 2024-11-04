@@ -14,7 +14,6 @@ class ViewController:
         self.screen = pygame.display.set_mode((GRAPH_WINDOW_WIDTH + PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
         self.graph_controller = GraphController(self.screen, csv_service)
         self.parameters_controller = ParametersController(self.screen, self.graph_controller)
-        self.parameters_view = ParametersView(self.screen)
 
     def handle_actions(self, event) -> None:
         self.parameters_controller.handle_events(event)
@@ -25,4 +24,5 @@ class ViewController:
         Cette méthode dessine tous les paramètres et la vue de graph.
         '''
         self.parameters_controller.draw_parameters()
+        self.parameters_controller.draw_simulation()
         self.graph_controller.update()
