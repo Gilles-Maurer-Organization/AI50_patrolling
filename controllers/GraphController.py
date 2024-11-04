@@ -1,14 +1,15 @@
+import tkinter as tk
+from tkinter import filedialog
+
 import pygame
 
-from constants.Colors import Colors
-from models.Graph import Graph
-from views.GraphView import GraphView
-from controllers.NodeController import NodeController
-from controllers.EdgeController import EdgeController
-
-from services.ICSVService import ICSVService
-
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, NODE_RADIUS
+from controllers.EdgeController import EdgeController
+from controllers.NodeController import NodeController
+from models.Graph import Graph
+from services.ICSVService import ICSVService
+from views.GraphView import GraphView
+
 
 class GraphController:
     '''
@@ -42,6 +43,9 @@ class GraphController:
 
         # Injection de dépendance du service de CSV
         self.csv_service = csv_service
+
+        self.root = tk.Tk()
+        self.root.withdraw()
 
     def handle_event(self, event) -> None:
         '''
@@ -118,3 +122,53 @@ class GraphController:
 
     def graph_has_an_image(self) -> bool:
         return self.graph_view.has_an_image()
+
+    def open_file_dialog_and_import_graph(self):
+        # Ouvrir l'explorateur de fichiers pour sélectionner une image
+        image_path = filedialog.askopenfilename(
+            title="Sélectionner une image de graphe",
+            filetypes=[("Images", "*.png *.jpg *.jpeg")]
+        )
+
+        # Si un fichier est sélectionné, continuer l'import
+        if image_path:
+            self.import_graph_from_image(image_path)
+
+    def import_graph_from_image(self, image_path):
+        # Vérifier l'extension du fichier sélectionné
+        if not image_path.lower().endswith(('.png', '.jpg', '.jpeg')):
+            print("Le fichier sélectionné n'est pas une image.")
+            return
+
+        # Mise à jour de self.image_path avec le chemin de l'image sélectionnée
+        self.image_path = image_path
+
+        # Recherche du fichier CSV correspondant
+        csv_path = self.csv_service.find_csv_reference(image_path)
+        if csv_path is None:
+            print(image_path + " n'a pas été trouvé dans references.csv.")
+            return
+
+        # Charger et redimensionner l'image de fond
+        background_image = pygame.image.load(self.image_path)
+        background_image = pygame.transform.scale(background_image, (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
+        self.graph_view.background_image = background_image
+
+        # Charger les données des nœuds et des arêtes à partir du CSV
+        edges_matrix, nodes_list = self.csv_service.load(csv_path)
+        if edges_matrix and nodes_list:
+            self.clear_graph()  # Nettoyer le graphe actuel avant d'importer
+
+            # Ajouter les nœuds et les arêtes au modèle
+            for coords in nodes_list:
+                self.node_controller.add_node(coords)
+            for i, row in enumerate(edges_matrix):
+                for j, distance in enumerate(row):
+                    if distance > 0:
+                        node1 = self.graph.nodes[i]
+                        node2 = self.graph.nodes[j]
+                        self.graph.add_edge(node1, node2)
+
+        # Mettre à jour l'affichage
+        self.update()
+        print("Le graphe a été importé et affiché avec succès.")

@@ -61,7 +61,6 @@ class ButtonController(BaseButtonController):
     def import_action(self) -> None:
         '''
         Cette méthode importe un graphe depuis l'ordinateur lorsque le bouton Import est cliqué.
-        TODO : remplacer load_graph(1) par le graphe correspondant
         '''
         #self.graph_controller.load_graph(1)
         self.file_explorer_controller.set_is_opened(True)
