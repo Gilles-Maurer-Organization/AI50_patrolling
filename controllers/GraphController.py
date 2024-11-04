@@ -1,3 +1,5 @@
+import os
+import shutil
 import tkinter as tk
 from tkinter import filedialog
 
@@ -31,8 +33,8 @@ class GraphController:
         self.graph = Graph()
         
         # TODO : Chargement dynamique d'image, cf. Arnaud
-        self.image_path = "image1.jpg"
-        background_image = pygame.image.load(self.image_path)
+        self.image_name = "image1.jpg"
+        background_image = pygame.image.load(self.image_name)
         # Mise à jour des dimensions de l'image d'arrière plan par rapport à la taille de la fenêtre de graph
         background_image = pygame.transform.scale(background_image, (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
         self.graph_view = GraphView(screen.subsurface((0, 0, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)), background_image)
@@ -109,7 +111,7 @@ class GraphController:
 
     def save_graph(self) -> None:
         edges_matrix, nodes_list = self.graph.compute_matrix()
-        self.csv_service.save(edges_matrix, nodes_list, self.image_path)
+        self.csv_service.save(edges_matrix, nodes_list, self.image_name)
 
     def load_graph(self, num_file) -> None:
         edges_matrix, nodes_list = self.csv_service.load(num_file)
@@ -129,37 +131,43 @@ class GraphController:
             title="Sélectionner une image de graphe",
             filetypes=[("Images", "*.png *.jpg *.jpeg")]
         )
+        image_name = os.path.basename(image_path)
 
         # Si un fichier est sélectionné, continuer l'import
-        if image_path:
+        if image_name:
             self.import_graph_from_image(image_path)
 
     def import_graph_from_image(self, image_path):
-        # Vérifier l'extension du fichier sélectionné
-        if not image_path.lower().endswith(('.png', '.jpg', '.jpeg')):
+        image_name = os.path.basename(image_path)
+        if not image_name.lower().endswith(('.png', '.jpg', '.jpeg')):
             print("Le fichier sélectionné n'est pas une image.")
             return
 
-        # Mise à jour de self.image_path avec le chemin de l'image sélectionnée
-        self.image_path = image_path
+        self.image_name = image_name
+        csv_path = self.csv_service.find_csv_reference(image_name)
 
-        # Recherche du fichier CSV correspondant
-        csv_path = self.csv_service.find_csv_reference(image_path)
+        # Vérification de l'existence du fichier CSV correspondant
         if csv_path is None:
-            print(image_path + " n'a pas été trouvé dans references.csv.")
+            print(f"{image_name} n'a pas été trouvé dans references.csv. Affichage de l'image seule.")
+            # Copie de l'image dans le dossier du projet
+            shutil.copy(image_path, image_name)
+            print(f"Image copiée dans {image_path}")
+            background_image = pygame.image.load(self.image_name)
+            background_image = pygame.transform.scale(background_image, (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
+            self.graph_view.background_image = background_image
+            self.clear_graph()  # Assurez-vous que le graphe actuel est vide si aucun CSV n'est trouvé
+            self.update()
             return
 
         # Charger et redimensionner l'image de fond
-        background_image = pygame.image.load(self.image_path)
+        background_image = pygame.image.load(self.image_name)
         background_image = pygame.transform.scale(background_image, (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
         self.graph_view.background_image = background_image
 
         # Charger les données des nœuds et des arêtes à partir du CSV
         edges_matrix, nodes_list = self.csv_service.load(csv_path)
         if edges_matrix and nodes_list:
-            self.clear_graph()  # Nettoyer le graphe actuel avant d'importer
-
-            # Ajouter les nœuds et les arêtes au modèle
+            self.clear_graph()
             for coords in nodes_list:
                 self.node_controller.add_node(coords)
             for i, row in enumerate(edges_matrix):
@@ -169,6 +177,5 @@ class GraphController:
                         node2 = self.graph.nodes[j]
                         self.graph.add_edge(node1, node2)
 
-        # Mettre à jour l'affichage
         self.update()
         print("Le graphe a été importé et affiché avec succès.")
