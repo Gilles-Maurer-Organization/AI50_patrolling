@@ -25,5 +25,3 @@ class ParametersView:
 
     def draw_algorithm_parameters(self, algorithm_parameters_controller) -> None:
         algorithm_parameters_controller.draw_text_boxes()
-
-    

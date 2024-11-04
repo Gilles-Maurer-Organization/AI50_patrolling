@@ -1,4 +1,6 @@
 import pygame
+
+from constants.Colors import Colors
 from models.Graph import Graph
 from views.GraphView import GraphView
 from controllers.NodeController import NodeController

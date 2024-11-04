@@ -38,6 +38,13 @@ class GraphView:
             start_node = edge[0]
             end_node = edge[1]
             pygame.draw.line(self.screen, Colors.EDGE_COLOR.value, (start_node.x, start_node.y), (end_node.x, end_node.y), 3)
-        
+
+    def draw_simulation(self, agents):
+        """Dessine chaque agent à sa position mise à jour"""
+
+        for i, agent in enumerate(agents):
+            pygame.draw.circle(self.screen, Colors.AGENT_COLOR.value, (int(agent.x), int(agent.y)), 5)
+
+
     def has_an_image(self) -> bool:
         return self.background_image is not None
