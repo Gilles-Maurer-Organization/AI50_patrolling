@@ -24,6 +24,5 @@ class ViewController:
         Cette méthode dessine tous les paramètres et la vue de graph.
         '''
         self.parameters_controller.draw_parameters()
-        self.parameters_controller.draw_simulation()
         self.graph_controller.update()
         self.parameters_controller.draw_simulation()
