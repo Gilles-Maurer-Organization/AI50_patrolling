@@ -1,4 +1,4 @@
-
+import pygame
 # from models import Graph
 # from views import GraphView
 # from controllers.NodeController import NodeController
@@ -12,17 +12,15 @@ class CompleteGraphController:
         Class permettant de gérer un graph complet à partir d'un graphe simple.
 
         Attributs : 
-
             nodePosition : dictionnaire qui pour chaque sommet indique ses coordonnées
-
             simpleGraph : la matrice représentant les distances entre les sommets du graph simple 
             completeGraph : la matrice représentant les distances entre les sommets du graph complet 
 
             shortestWayMatrix : matrice qui pour chaque couple de sommet, indique le chemin à prendre pour aller de l'un à l'autre
 
-
+    
     '''
-
+     
     def __init__(self, simpleGraph, nodePosition): 
 
         self.simpleGraph = simpleGraph
@@ -76,6 +74,7 @@ class CompleteGraphController:
     def get_complete_graph(self): 
         return self.completeGraph
     
+
 
 class AStarAlgorithm: 
 
