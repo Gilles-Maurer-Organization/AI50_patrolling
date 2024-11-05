@@ -20,11 +20,11 @@ class CompleteGraphService:
 
         self.simple_graph = simple_graph
         self.node_position = node_position
-        self.complete_graph = [[0 for i in range(len(simple_graph))] for j in range(len(simple_graph))]
-        self.shortest_way_matrix = [[[] for i in range(len(simple_graph))] for j in range(len(simple_graph))]
+        self.complete_graph = [[0 for _ in range(len(simple_graph))] for _ in range(len(simple_graph))]
+        self.shortest_way_matrix = [[[] for _ in range(len(simple_graph))] for _ in range(len(simple_graph))]
         self.create_complete_graph()
 
-    
+
     def create_complete_graph(self): 
 
         # simple :  [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
@@ -102,8 +102,8 @@ def main():
     for start in range(len(simple_graph)):
         for end in range(len(simple_graph)):
             if start != end:
-                astar = AStarService(graph=simple_graph, node_position=node_positions, start=start, end=end)
-                shortest_path = astar.a_star()
+                a_star = AStarService(graph=simple_graph, node_position=node_positions, start=start, end=end)
+                shortest_path = a_star.a_star()
                 print(f"Chemin le plus court de {start} à {end} : {shortest_path}")
 
 if __name__ == "__main__":
