@@ -81,7 +81,7 @@ class CSVService(ICSVService):
             for line in lines[1:]:
                 if "Image_ref" in line:  # Ignorer la ligne avec l'image de référence
                     continue
-                row = line.split(",")[1:]  # Ignore la première colonne
+                row = line.split(",")
                 cleaned_row = [float(cell.strip()) if cell.strip() else 0.0 for cell in row]
                 edges_matrix.append(cleaned_row)
 
