@@ -1,6 +1,5 @@
-
 from AStarService import AStarService
-
+from IPathFindingService import IPathFindingService
 
 class CompleteGraphService:
     '''
@@ -12,16 +11,14 @@ class CompleteGraphService:
             complete_graph : la matrice représentant les distances entre les sommets du graph complet 
 
             shortest_way_matrix : matrice qui pour chaque couple de sommet, indique le chemin à prendre pour aller de l'un à l'autre
-
-    
     '''
      
-    def __init__(self, simple_graph, node_position): 
-
+    def __init__(self,  simple_graph, node_position, path_finding_service : IPathFindingService): 
         self.simple_graph = simple_graph
         self.node_position = node_position
         self.complete_graph = [[0 for _ in range(len(simple_graph))] for _ in range(len(simple_graph))]
         self.shortest_way_matrix = [[[] for _ in range(len(simple_graph))] for _ in range(len(simple_graph))]
+        self.path_finding_service = path_finding_service
         self.create_complete_graph()
 
 
@@ -39,8 +36,8 @@ class CompleteGraphService:
 
                 if self.simple_graph[i][j] == 0:
 
-                    a_star = AStarService(self.simple_graph, self.node_position, i, j)
-                    path, distance = a_star.a_star()
+                    path_finding_service = self.path_finding_service(self.simple_graph, self.node_position, i, j)
+                    path, distance = path_finding_service.find_path()
 
                     self.complete_graph[i][j] = distance
                     self.complete_graph[j][i] = distance
@@ -55,8 +52,6 @@ class CompleteGraphService:
 
                     self.shortest_way_matrix[i][j] = [i, j]
                     self.shortest_way_matrix[j][i] = [j, i]
-                    
-
 
     def get_shortest_way(self, node1, node2): 
 
@@ -90,8 +85,9 @@ def main():
         5: (3, -1)
     }
 
-    # Initialisation du contrôleur de graphe complet
-    graph_controller = CompleteGraphService(simple_graph, node_positions)
+    # Initialisation of the complete graph service,
+    # with a dependancy injection (in this case a AStarService)
+    graph_controller = CompleteGraphService(simple_graph, node_positions, AStarService)
     complete_graph = graph_controller.get_complete_graph()
     print("Graphe complet généré :")
     for row in complete_graph:
@@ -102,8 +98,8 @@ def main():
     for start in range(len(simple_graph)):
         for end in range(len(simple_graph)):
             if start != end:
-                a_star = AStarService(graph=simple_graph, node_position=node_positions, start=start, end=end)
-                shortest_path = a_star.a_star()
+                a_star = AStarService(simple_graph, node_positions, start, end)
+                shortest_path = a_star.find_path()
                 print(f"Chemin le plus court de {start} à {end} : {shortest_path}")
 
 if __name__ == "__main__":

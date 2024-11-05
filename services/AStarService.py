@@ -1,8 +1,8 @@
 
 import math
+from IPathFindingService import IPathFindingService
 
-
-class AStarService: 
+class AStarService(IPathFindingService): 
 
     def __init__(self, graph, node_position, start, end): 
         self.graph = graph
@@ -37,8 +37,7 @@ class AStarService:
         return total_path
     
 
-    def a_star(self):
-
+    def find_path(self):
         open_set = [self.start]  
 
         self.g_score[self.start] = 0 
