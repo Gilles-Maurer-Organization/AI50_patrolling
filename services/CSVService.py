@@ -57,8 +57,6 @@ class CSVService(ICSVService):
                 f.write(",".join(str(cell) for cell in row) + "\n")
             f.write(f'Image_ref,{image_name}')
 
-    
-    # TODO : Fix la fonction (charge des coordonnées en string avec des () en trop)
     def load(self, num_file) -> tuple[list[list[float]], list[tuple[int, int]]]:
         file_path = os.path.join(self.csv_folder_path, f"graph_{num_file}.csv")
 
