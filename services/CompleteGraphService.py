@@ -7,28 +7,26 @@ class CompleteGraphService:
         Class permettant de gérer un graph complet à partir d'un graphe simple.
 
         Attributs : 
-            nodePosition : dictionnaire qui pour chaque sommet indique ses coordonnées
-            simpleGraph : la matrice représentant les distances entre les sommets du graph simple 
-            completeGraph : la matrice représentant les distances entre les sommets du graph complet 
+            node_position : dictionnaire qui pour chaque sommet indique ses coordonnées
+            simple_graph : la matrice représentant les distances entre les sommets du graph simple 
+            complete_graph : la matrice représentant les distances entre les sommets du graph complet 
 
-            shortestWayMatrix : matrice qui pour chaque couple de sommet, indique le chemin à prendre pour aller de l'un à l'autre
+            shortest_way_matrix : matrice qui pour chaque couple de sommet, indique le chemin à prendre pour aller de l'un à l'autre
 
     
     '''
      
-    def __init__(self, simpleGraph, nodePosition): 
+    def __init__(self, simple_graph, node_position): 
 
-        self.simpleGraph = simpleGraph
-        self.nodePosition = nodePosition
-        self.completeGraph = [[0 for i in range(len(simpleGraph))] for j in range(len(simpleGraph))]
-        self.shortestWayMatrix = [[[] for i in range(len(simpleGraph))] for j in range(len(simpleGraph))]
+        self.simple_graph = simple_graph
+        self.node_position = node_position
+        self.complete_graph = [[0 for i in range(len(simple_graph))] for j in range(len(simple_graph))]
+        self.shortest_way_matrix = [[[] for i in range(len(simple_graph))] for j in range(len(simple_graph))]
         self.create_complete_graph()
 
-        return
     
     def create_complete_graph(self): 
 
-        # exemple 
         # simple :  [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
         # complet : [[0, 1, 2], [1, 0, 1], [2, 1, 0]]
 
@@ -36,38 +34,38 @@ class CompleteGraphService:
         #                      [(1, 0), (1), (1, 2)], 
         #                      [(2, 1, 0), (2, 1), (2)]]
 
-        for i in range(len(self.simpleGraph)): 
-            for j in range(i, len(self.simpleGraph[i])):
+        for i in range(len(self.simple_graph)): 
+            for j in range(i, len(self.simple_graph[i])):
 
-                if self.simpleGraph[i][j] == 0:
+                if self.simple_graph[i][j] == 0:
 
-                    aStar = AStarService(self.simpleGraph, self.nodePosition, i, j)
+                    aStar = AStarService(self.simple_graph, self.node_position, i, j)
                     path, distance = aStar.a_star()
 
-                    self.completeGraph[i][j] = distance
-                    self.completeGraph[j][i] = distance
+                    self.complete_graph[i][j] = distance
+                    self.complete_graph[j][i] = distance
 
-                    self.shortestWayMatrix[i][j] = path
-                    self.shortestWayMatrix[j][i] = path.reverse()
+                    self.shortest_way_matrix[i][j] = path
+                    self.shortest_way_matrix[j][i] = path.reverse()
 
                 elif i != j: 
 
-                    self.completeGraph[i][j] = self.simpleGraph[i][j]
-                    self.completeGraph[j][i] = self.simpleGraph[i][j]
+                    self.complete_graph[i][j] = self.simple_graph[i][j]
+                    self.complete_graph[j][i] = self.simple_graph[i][j]
 
-                    self.shortestWayMatrix[i][j] = [i, j]
-                    self.shortestWayMatrix[j][i] = [j, i]
+                    self.shortest_way_matrix[i][j] = [i, j]
+                    self.shortest_way_matrix[j][i] = [j, i]
                     
 
 
     def get_shortest_way(self, node1, node2): 
 
         # find the shortest way in the matrix 
-        return self.shortestWayMatrix[node1, node2]
+        return self.shortest_way_matrix[node1, node2]
 
 
     def get_complete_graph(self): 
-        return self.completeGraph
+        return self.complete_graph
     
 
 def main():
@@ -104,7 +102,7 @@ def main():
     for start in range(len(simple_graph)):
         for end in range(len(simple_graph)):
             if start != end:
-                astar = AStarService(graph=simple_graph, nodePosition=node_positions, start=start, end=end)
+                astar = AStarService(graph=simple_graph, node_position=node_positions, start=start, end=end)
                 shortest_path = astar.a_star()
                 print(f"Chemin le plus court de {start} à {end} : {shortest_path}")
 
