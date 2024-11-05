@@ -39,8 +39,8 @@ class CompleteGraphService:
 
                 if self.simple_graph[i][j] == 0:
 
-                    aStar = AStarService(self.simple_graph, self.node_position, i, j)
-                    path, distance = aStar.a_star()
+                    a_star = AStarService(self.simple_graph, self.node_position, i, j)
+                    path, distance = a_star.a_star()
 
                     self.complete_graph[i][j] = distance
                     self.complete_graph[j][i] = distance
