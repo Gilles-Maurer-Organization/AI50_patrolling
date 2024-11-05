@@ -105,7 +105,7 @@ class GraphController:
     def update(self) -> None:
         """
         Cette méthode met à jour l'affichage du graphe.
-        
+
         Elle ne prend pas d'arguments et ne retourne rien.
         """
         self.graph_view.draw_graph(self.graph, self.node_controller.selected_node, self.node_controller.dragging_node)
@@ -178,8 +178,6 @@ class GraphController:
             file_number = match.group(1)
             edges_matrix, nodes_list = self.csv_service.load(file_number)
 
-            print("Edges matrix:", edges_matrix)
-            print("Nodes list:", nodes_list)
             if edges_matrix and nodes_list:
                 self.clear_graph()
                 for coords in nodes_list:

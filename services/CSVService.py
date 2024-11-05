@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import re
 
 from services.ICSVService import ICSVService
 
@@ -32,8 +33,8 @@ class CSVService(ICSVService):
             self.write_csv_information(edges_matrix, nodes_list, image_name, csv_path)
 
     def save_csv_reference(self, csv_path, image_name):
-        with open(self.references_file_path, "w") as f:
-            f.write(f'{image_name},{csv_path}')
+        with open(self.references_file_path, "a") as f:
+            f.write(f'{image_name},{csv_path}\n')
 
     def find_csv_reference(self, image_name):
         with open(self.references_file_path, "r") as f:
@@ -58,10 +59,10 @@ class CSVService(ICSVService):
 
     
     # TODO : Fix la fonction (charge des coordonnées en string avec des () en trop)
-    def load(self, num_file) -> tuple[list, list[str]]:
+    def load(self, num_file) -> tuple[list[list[float]], list[tuple[int, int]]]:
         file_path = os.path.join(self.csv_folder_path, f"graph_{num_file}.csv")
 
-        if (not os.path.exists(file_path)):
+        if not os.path.exists(file_path):
             print("File does not exist")
             return None, None
 
@@ -71,10 +72,19 @@ class CSVService(ICSVService):
         with open(file_path, "r") as f:
             lines = f.readlines()
 
-            nodes_list = lines[0].split(",")[1:-1]
+            # Extraction des noeuds en tant que tuples (x, y)
+            nodes_line = lines[0]  # Première ligne complète
+            matches = re.findall(r"\((\d+),\s*(\d+)\)", nodes_line)  # Extraire toutes les paires (x, y)
+            for match in matches:
+                x, y = map(int, match)
+                nodes_list.append((x, y))
 
+            # Extraction de la matrice des arêtes
             for line in lines[1:]:
-                row = line.split(",")[1:-1]
-                edges_matrix.append([float(cell) for cell in row])
+                if "Image_ref" in line:  # Ignorer la ligne avec l'image de référence
+                    continue
+                row = line.split(",")[1:]  # Ignore la première colonne
+                cleaned_row = [float(cell.strip()) if cell.strip() else 0.0 for cell in row]
+                edges_matrix.append(cleaned_row)
 
         return edges_matrix, nodes_list
