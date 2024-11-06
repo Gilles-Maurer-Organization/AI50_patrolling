@@ -1,7 +1,7 @@
 from constants.Colors import Colors
 from constants.Config import GRAPH_WINDOW_WIDTH
 
-from controllers import FileExplorerController
+from controllers.FileExplorerController import FileExplorerController
 from models.Button import Button
 from controllers.buttons.BaseButtonController import BaseButtonController
 from views.ButtonView import ButtonView
@@ -65,7 +65,7 @@ class ButtonController(BaseButtonController):
         '''
         #self.graph_controller.load_graph(1)
         print("Import action triggered")
-        self.file_explorer_controller.draw_file_explorer()
+        self.file_explorer_controller.set_is_opened(True)
 
     def clear_action(self) -> None:
         '''
