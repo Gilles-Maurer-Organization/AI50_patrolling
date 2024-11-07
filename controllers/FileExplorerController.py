@@ -1,30 +1,48 @@
-from constants.Config import GRAPH_WINDOW_HEIGHT, GRAPH_WINDOW_WIDTH, PARAMETERS_WINDOW_WIDTH
 import pygame_gui
 import pygame
 
 from views.FileExplorerView import FileExplorerView
 
+from models.FileExplorer import FileExplorer
+
 class FileExplorerController:
     def __init__(self, screen):
         self.is_opened = False
         self.screen = screen
-        self.ui_manager = pygame_gui.UIManager((GRAPH_WINDOW_WIDTH + PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
-        self.file_explorer_view = FileExplorerView(screen, self.ui_manager)
+        
+        self.file_explorer = FileExplorer()
+        self.file_explorer_view = FileExplorerView(screen)
 
-    def set_is_opened(self, is_opened):
-        self.is_opened = is_opened
+    def set_is_opened(self, is_opened: bool) -> None:
+        self.file_explorer.set_is_opened(is_opened)
 
-    def draw_file_explorer(self):
+    def draw_file_explorer(self) -> None:
         self.file_explorer_view.draw_file_explorer()
-        self.ui_manager.draw_ui(self.screen)
-        self.ui_manager.update(30/1000)
+        self.file_explorer_view.ui_manager.draw_ui(self.screen)
+        self.file_explorer_view.ui_manager.update(30/1000)
 
-    def handle_event(self, event):
-        self.ui_manager.process_events(event)
+    def handle_event(self, event) -> None:
+        self.file_explorer_view.ui_manager.process_events(event)
         if event.type == pygame.USEREVENT:
-            if event.user_type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
-                if event.ui_element == self.file_explorer_view.file_dialog:
-                    file_path = event.text
-                    print(f'Fichier sélectionné: {file_path}')
-                else:
-                    self.file_explorer_view.close_file_dialog()
+            if hasattr(event, 'ui_object_id') and event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                self._handle_close_button(event)
+            elif event.user_type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
+                self._handle_select_file(event)
+
+    def _close_file_dialog(self) -> None:
+        self.file_explorer_view.close_file_dialog()
+        self.file_explorer.set_is_opened(False)
+
+    def is_file_dialog_opened(self) -> bool:
+        return self.file_explorer.is_opened()
+
+    def _handle_close_button(self, event) -> None:
+        if event.ui_object_id == '#file_dialog.#close_button':
+                    self._close_file_dialog()
+
+    def _handle_select_file(self, event) -> None:
+        if event.ui_element == self.file_explorer_view.file_dialog:
+            file_path = event.text
+            print(f'Fichier sélectionné: {file_path}')
+            self.file_explorer.set_path(file_path)
+        self._close_file_dialog()

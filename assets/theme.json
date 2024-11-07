@@ -1,0 +1,45 @@
+{
+    "defaults":
+    {
+        "colours":
+        {
+             "normal_bg": "#f1f1f1",
+             "normal_text": "black",
+             "normal_border": "#c8c8c8",
+
+             "hovered_bg": "#e2e2e2",
+             "hovered_text": "black",
+             "hovered_border": "#c8c8c8",
+
+             "disabled_bg": "#f5ebeb",
+             "disabled_text": "#c7c7c7",
+             "disabled_border": "#c7c7c7",
+
+             "selected_bg": "#e2e2e2",
+             "selected_text": "black",
+
+             "active_bg": "#c7c7c7",
+             "active_text": "black",
+             "active_border": "black",
+
+             "dark_bg": "white"
+        }
+    },
+    
+    "#file_dialog.#file_path_text_line":
+    {
+        "colours":
+        {
+            "dark_bg": "white"
+        }
+    
+    },
+    
+    "#file_dialog.#file_display_list.#file_list_item":
+    {
+        "colours":
+        {
+            "normal_bg": "white"
+        }  
+    }
+}  

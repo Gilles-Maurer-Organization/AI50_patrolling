@@ -17,8 +17,10 @@ class ViewController:
 
 
     def handle_actions(self, event) -> None:
-        self.parameters_controller.handle_events(event)
-        self.graph_controller.handle_event(event)
+
+        if not self.file_explorer_controller.is_file_dialog_opened():
+            self.parameters_controller.handle_events(event)
+            self.graph_controller.handle_event(event)
         self.file_explorer_controller.handle_event(event)
 
     def draw(self) -> None:
@@ -28,5 +30,5 @@ class ViewController:
         self.parameters_controller.draw_parameters()
         self.graph_controller.update()
         self.parameters_controller.draw_simulation()
-        if self.file_explorer_controller.is_opened: 
+        if self.file_explorer_controller.is_file_dialog_opened():
             self.file_explorer_controller.draw_file_explorer()
