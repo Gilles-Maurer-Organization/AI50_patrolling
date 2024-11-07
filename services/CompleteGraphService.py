@@ -37,8 +37,15 @@ class CompleteGraphService:
                 if self.simple_graph[i][j] == 0:
 
                     path_finding_service = self.path_finding_service(self.simple_graph, self.node_position, i, j)
-                    path, distance = path_finding_service.find_path()
 
+                    a_star_result = path_finding_service.find_path()
+
+                    if a_star_result is None:
+                        self.complete_graph = None
+                        return
+
+                    path, distance = a_star_result
+                    
                     self.complete_graph[i][j] = distance
                     self.complete_graph[j][i] = distance
 
@@ -66,12 +73,21 @@ class CompleteGraphService:
 def main():
     # Exemple de graphe simple avec 4 nœuds (graphe non complet)
     # 0 est connecté à 1 avec une distance de 1, et 1 est connecté à 2 avec une distance de 2
+    # simple_graph = [
+    #     [0, 1, 4, 0, 0, 0],  # Node 0
+    #     [1, 0, 2, 5, 0, 0],  # Node 1
+    #     [4, 2, 0, 1, 3, 0],  # Node 2
+    #     [0, 5, 1, 0, 2, 6],  # Node 3
+    #     [0, 0, 3, 2, 0, 2],  # Node 4
+    #     [0, 0, 0, 6, 2, 0]   # Node 5
+    # ]
+
     simple_graph = [
         [0, 1, 4, 0, 0, 0],  # Node 0
-        [1, 0, 2, 5, 0, 0],  # Node 1
-        [4, 2, 0, 1, 3, 0],  # Node 2
-        [0, 5, 1, 0, 2, 6],  # Node 3
-        [0, 0, 3, 2, 0, 2],  # Node 4
+        [1, 0, 2, 0, 0, 0],  # Node 1
+        [4, 2, 0, 0, 0, 0],  # Node 2
+        [0, 0, 0, 0, 2, 6],  # Node 3
+        [0, 0, 0, 2, 0, 2],  # Node 4
         [0, 0, 0, 6, 2, 0]   # Node 5
     ]
 
@@ -89,9 +105,13 @@ def main():
     # with a dependancy injection (in this case a AStarService)
     graph_controller = CompleteGraphService(simple_graph, node_positions, AStarService)
     complete_graph = graph_controller.get_complete_graph()
-    print("Graphe complet généré :")
-    for row in complete_graph:
-        print(row)
+
+    if complete_graph is None:
+        print("Erreur lors de la génération du graphe complet")
+    else :
+        print("Graphe complet généré :")
+        for row in complete_graph:
+            print(row)
 
 
     # Tester A* pour obtenir le plus court chemin entre chaque paire de nœuds
