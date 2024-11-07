@@ -47,7 +47,7 @@ class FileExplorerView:
         # We define the rectangle of our file explorer
         self.rect = pygame.Rect((GRAPH_WINDOW_WIDTH, 0), (self.explorer_width, self.explorer_height))
         # We center the file explorer at the middle of the screen
-        self.rect.center = self.screen.get_rect()
+        self.rect.center = self.screen.get_rect().center
 
         # We create a new instance of the UIFileDialog class in order to create our file explorer
         self.file_explorer = pygame_gui.windows.ui_file_dialog.UIFileDialog(

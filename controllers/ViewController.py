@@ -21,7 +21,7 @@ class ViewController:
             self.graph_controller.handle_event(event)
         self.file_explorer_controller.handle_event(event)
 
-    def draw(self, frequency) -> None:
+    def draw(self) -> None:
         '''
         Cette méthode dessine tous les paramètres et la vue de graph.
         '''
@@ -29,4 +29,4 @@ class ViewController:
         self.graph_controller.update()
         self.parameters_controller.draw_simulation()
         if self.file_explorer_controller.is_file_explorer_opened():
-            self.file_explorer_controller.draw_file_explorer(frequency)
+            self.file_explorer_controller.draw_file_explorer()
