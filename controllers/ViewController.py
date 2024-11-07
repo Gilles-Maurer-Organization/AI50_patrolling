@@ -16,17 +16,17 @@ class ViewController:
         self.parameters_controller = ParametersController(self.screen, self.graph_controller, self.file_explorer_controller)
 
     def handle_actions(self, event) -> None:
-        if not self.file_explorer_controller.is_file_dialog_opened():
+        if not self.file_explorer_controller.is_file_explorer_opened():
             self.parameters_controller.handle_events(event)
             self.graph_controller.handle_event(event)
         self.file_explorer_controller.handle_event(event)
 
-    def draw(self) -> None:
+    def draw(self, frequency) -> None:
         '''
         Cette méthode dessine tous les paramètres et la vue de graph.
         '''
         self.parameters_controller.draw_parameters()
         self.graph_controller.update()
         self.parameters_controller.draw_simulation()
-        if self.file_explorer_controller.is_file_dialog_opened():
-            self.file_explorer_controller.draw_file_explorer()
+        if self.file_explorer_controller.is_file_explorer_opened():
+            self.file_explorer_controller.draw_file_explorer(frequency)
