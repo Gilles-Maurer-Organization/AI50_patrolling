@@ -1,14 +1,16 @@
 from constants.Colors import Colors
 from constants.Config import GRAPH_WINDOW_WIDTH
 
+from controllers.FileExplorerController import FileExplorerController
 from models.Button import Button
 from controllers.buttons.BaseButtonController import BaseButtonController
 from views.ButtonView import ButtonView
-import pygame
 
 class ButtonController(BaseButtonController):
-    def __init__(self, parameters_view, graph_controller) -> None:
+    def __init__(self, parameters_view, graph_controller, file_explorer_controller: FileExplorerController) -> None:
         super().__init__(parameters_view, graph_controller)
+
+        self.file_explorer_controller = file_explorer_controller
 
         self.save_button = Button("Save", self.save_action)
         self.import_button = Button("Import", self.import_action)
@@ -62,7 +64,7 @@ class ButtonController(BaseButtonController):
         TODO : remplacer load_graph(1) par le graphe correspondant
         '''
         #self.graph_controller.load_graph(1)
-        print("Import action triggered")
+        self.file_explorer_controller.set_is_opened(True)
 
     def clear_action(self) -> None:
         '''
