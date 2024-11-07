@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
+from controllers.FileExplorerController import FileExplorerController
 from controllers.ParametersController import ParametersController
 from controllers.GraphController import GraphController
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, PARAMETERS_WINDOW_WIDTH
@@ -13,10 +14,11 @@ class TestParametersController(unittest.TestCase):
         self.screen = pygame.Surface((GRAPH_WINDOW_WIDTH + PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
 
         self.graph_controller = MagicMock(spec=GraphController)
+        self.file_explorer_controller = MagicMock(spec=FileExplorerController)
         
         self.graph_controller.graph_has_an_image.return_value = False
 
-        self.parameters_controller = ParametersController(self.screen, self.graph_controller)
+        self.parameters_controller = ParametersController(self.screen, self.graph_controller, self.file_explorer_controller)
 
         self.parameters_controller.start_button_controller.enable_start_button = MagicMock()
         self.parameters_controller.start_button_controller.disable_start_button = MagicMock()
