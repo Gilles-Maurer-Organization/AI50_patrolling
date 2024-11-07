@@ -6,7 +6,7 @@ class FileExplorerView:
     def __init__(self, screen):
         self.screen = screen
         self.ui_manager = pygame_gui.UIManager((GRAPH_WINDOW_WIDTH + PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT), 'assets/theme.json')
-        
+
         self.file_dialog = None
         self.dialog_width = 300
         self.dialog_height = 350
@@ -27,10 +27,8 @@ class FileExplorerView:
             allow_picking_directories=False
         )
 
-        # We hide the delete icon button in order to prevent the user from deleting a file selected in the file dialog
-        for element in self.file_dialog.get_container().elements:
-            if '#delete_icon_button' in element.object_ids:
-                element.hide()
+        # Hide the delete icon button to prevent file deletion
+        self._hide_delete_button()
 
         self.file_dialog.resizable = False
 
@@ -38,3 +36,9 @@ class FileExplorerView:
         if self.file_dialog is not None:
             self.file_dialog.kill()
             self.file_dialog = None
+
+    def _hide_delete_button(self):
+        """This method hides the delete button in the file dialog."""
+        for element in self.file_dialog.get_container().elements:
+            if '#delete_icon_button' in element.object_ids:
+                element.hide()

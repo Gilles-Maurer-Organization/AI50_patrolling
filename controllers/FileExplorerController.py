@@ -7,7 +7,6 @@ from models.FileExplorer import FileExplorer
 
 class FileExplorerController:
     def __init__(self, screen):
-        self.is_opened = False
         self.screen = screen
         
         self.file_explorer = FileExplorer()
@@ -17,9 +16,10 @@ class FileExplorerController:
         self.file_explorer.set_is_opened(is_opened)
 
     def draw_file_explorer(self) -> None:
-        self.file_explorer_view.draw_file_explorer()
-        self.file_explorer_view.ui_manager.draw_ui(self.screen)
-        self.file_explorer_view.ui_manager.update(30/1000)
+        if self.is_file_dialog_opened():
+            self.file_explorer_view.draw_file_explorer()
+            self.file_explorer_view.ui_manager.draw_ui(self.screen)
+            self.file_explorer_view.ui_manager.update(30/1000)
 
     def handle_event(self, event) -> None:
         self.file_explorer_view.ui_manager.process_events(event)
@@ -30,6 +30,7 @@ class FileExplorerController:
                 self._handle_select_file(event)
 
     def _close_file_dialog(self) -> None:
+        print("blabla")
         self.file_explorer_view.close_file_dialog()
         self.file_explorer.set_is_opened(False)
 
@@ -38,7 +39,7 @@ class FileExplorerController:
 
     def _handle_close_button(self, event) -> None:
         if event.ui_object_id == '#file_dialog.#close_button':
-                    self._close_file_dialog()
+            self._close_file_dialog()
 
     def _handle_select_file(self, event) -> None:
         if event.ui_element == self.file_explorer_view.file_dialog:

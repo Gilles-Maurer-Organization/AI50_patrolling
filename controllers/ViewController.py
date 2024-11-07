@@ -15,9 +15,7 @@ class ViewController:
         self.file_explorer_controller = FileExplorerController(self.screen)
         self.parameters_controller = ParametersController(self.screen, self.graph_controller, self.file_explorer_controller)
 
-
     def handle_actions(self, event) -> None:
-
         if not self.file_explorer_controller.is_file_dialog_opened():
             self.parameters_controller.handle_events(event)
             self.graph_controller.handle_event(event)

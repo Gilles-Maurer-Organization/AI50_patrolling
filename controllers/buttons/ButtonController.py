@@ -64,7 +64,6 @@ class ButtonController(BaseButtonController):
         TODO : remplacer load_graph(1) par le graphe correspondant
         '''
         #self.graph_controller.load_graph(1)
-        print("Import action triggered")
         self.file_explorer_controller.set_is_opened(True)
 
     def clear_action(self) -> None:
