@@ -1,7 +1,8 @@
-from AStarService import AStarService
-from IPathFindingService import IPathFindingService
+from services.AStarService import AStarService
+from services.IPathFindingService import IPathFindingService
+from services.ICompleteGraphService import ICompleteGraphService
 
-class CompleteGraphService:
+class CompleteGraphService(ICompleteGraphService):
     '''
         Class permettant de gérer un graph complet à partir d'un graphe simple.
 

@@ -1,6 +1,6 @@
 
 import math
-from IPathFindingService import IPathFindingService
+from services.IPathFindingService import IPathFindingService
 
 class AStarService(IPathFindingService): 
 

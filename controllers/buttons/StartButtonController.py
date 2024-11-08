@@ -3,6 +3,8 @@ from controllers.SimulationController import SimulationController
 from controllers.buttons.BaseButtonController import BaseButtonController
 from models.Agent import Agent
 from models.Button import Button
+from services.AStarService import AStarService
+from services.ICompleteGraphService import ICompleteGraphService
 from views.ButtonView import ButtonView
 
 

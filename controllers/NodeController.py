@@ -49,7 +49,7 @@ class NodeController:
             
             # On supprime les arêtes connectées
             for edge in edges_to_remove:
-                self.graph.edges.remove(edge)
+                del self.graph.edges[edge]
 
             # On supprime le noeud
             self.graph.nodes.remove(node)

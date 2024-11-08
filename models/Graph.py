@@ -4,11 +4,12 @@ import math
 class Graph:
     def __init__(self) -> None:
         self.nodes = []
-        self.edges = []
+        # Utiliser un dictionnaire pour stocker les arêtes
+        self.edges = {}
 
     def add_node(self, x: float, y: float) -> None:
         '''
-        Cette méthode ajoute un nouveau noeud dans la liste de noeuds du graphe (côté Model).
+        Ajoute un nouveau noeud dans le graphe.
 
         Args:
             x (float): Coordonnée x du noeud
@@ -18,60 +19,55 @@ class Graph:
 
     def add_edge(self, node1: Node, node2: Node) -> None:
         '''
-        Cette méthode ajoute un lien entre deux noeuds et stocke ce lien dans la liste de liens du graphe (côté Model).
-
-        Args:
-            node1 (Node): Premier noeud
-            node2 (Node): Deuxième noeud faisant la liaison avec le précédent
-        '''
-        self.edges.append((node1, node2))
-
-    def distance(self, node1: Node, node2: Node) -> float:
-        '''
-        Cette méthode calcule la distance entre deux noeuds.
+        Ajoute un lien entre deux noeuds avec leur distance, stockée dans le dictionnaire des arêtes.
 
         Args:
             node1 (Node): Premier noeud
             node2 (Node): Deuxième noeud
         '''
+        distance = self.distance(node1, node2)
+        # Stockage de la distance dans un dictionnaire avec des tuples (node1, node2) comme clés
+        self.edges[(node1, node2)] = distance
+        # La matrice est symétrique donc on ajoute l'arête dans les deux sens
+        self.edges[(node2, node1)] = distance
 
-        # Calcul de la distance entre les noeuds à l'aide de leurs coordonnées
+    def distance(self, node1: Node, node2: Node) -> float:
+        '''
+        Calcule la distance entre deux noeuds.
+
+        Args:
+            node1 (Node): Premier noeud
+            node2 (Node): Deuxième noeud
+
+        Returns:
+            float: La distance entre les deux noeuds.
+        '''
         x1, y1 = node1.x, node1.y
         x2, y2 = node2.x, node2.y
         return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
     def compute_matrix(self):
         '''
-        Cette méthode génère la matrice de noeuds du graphe ainsi que les éventuels liens entre les noeuds.
-        Dans le cas où deux noeuds sont lié, leur distance les séparant est stocké dans la matrice des edges.
-
-        Elle ne prend pas d'arguments.
-
-        Returns:
-            tuple: Un tuple contenant deux éléments :
-            - edges_matrix (liste de liste de float): Une matrice d'adjacence, où edges_matrix[i][j] représente 
-              la distance entre le noeud i et le noeud j. Si i et j ne sont pas liés, la valeur est 0.
-            - nodes_list (liste de tuple): Une liste de tuples représentant les coordonnées des noeuds. 
-              Chaque tuple contient deux coordonnées (x, y) correspondant à la position d'un noeud.
-        '''
-
-        # Création d'une matrice d'adjacence dont l'intégralité des valeurs est initialisée à zéro
-        size = len(self.nodes)
-        edges_matrix = [[0 for _ in range(size)] for _ in range(size)]
+        Génère la matrice d'adjacence du graphe ainsi que la liste des noeuds.
         
-        # Remplissage de la matrice en fonction des arêtes
-        for edge in self.edges:
-            # On récupère les noeuds dont leur référence se situent dans les liens stockés dans la liste edge
-            node1_index = self.nodes.index(edge[0])
-            node2_index = self.nodes.index(edge[1])
+        Returns:
+            tuple: (edges_matrix, nodes_list)
+        '''
+        size = len(self.nodes)
 
-            # On calcule leur distance
-            distance = self.distance(edge[0], edge[1])
+        # Initialiser une matrice d'adjacence avec des zéros
+        edges_matrix = [[0 for _ in range(size)] for _ in range(size)]
 
-            # On stocke cette distance dans la matrice des edges
+        # Remplir la matrice d'adjacence
+        for (node1, node2), distance in self.edges.items():
+            node1_index = self.nodes.index(node1)
+            node2_index = self.nodes.index(node2)
             edges_matrix[node1_index][node2_index] = distance
-            # La matrice d'adjacence est symétrique, on réalise donc la même chose pour son symétrique
-            edges_matrix[node2_index][node1_index] = distance
+            edges_matrix[node2_index][node1_index] = distance  # Graph symétrique
+
+        # Liste des positions des noeuds (coordonnées x, y)
+        nodes_list = {index: (node.x, node.y) for index, node in enumerate(self.nodes)}
+        
+        return edges_matrix, nodes_list
 
 
-        return edges_matrix, [(node.x, node.y) for node in self.nodes]
