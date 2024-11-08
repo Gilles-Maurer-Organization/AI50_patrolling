@@ -8,6 +8,7 @@ from controllers.ParametersController import ParametersController
 from controllers.SimulationController import SimulationController
 from services import IImageService
 
+from services.CompleteGraphService import CompleteGraphService
 from services.ICSVService import ICSVService
 
 class ViewController:
