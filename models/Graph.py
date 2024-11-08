@@ -29,6 +29,7 @@ class Graph:
         distance = self.distance(node1, node2)
         # Stockage de la distance dans un dictionnaire avec des tuples (node1, node2) comme clés
         self.edges[(node1, node2)] = distance
+        # La matrice est symétrique donc on ajoute l'arête dans les deux sens
         self.edges[(node2, node1)] = distance
 
     def distance(self, node1: Node, node2: Node) -> float:
@@ -55,13 +56,17 @@ class Graph:
         '''
         size = len(self.nodes)
 
+        # Initialiser une matrice d'adjacence avec des zéros
         edges_matrix = [[0 for _ in range(size)] for _ in range(size)]
 
+        # Remplir la matrice d'adjacence
         for (node1, node2), distance in self.edges.items():
             node1_index = self.nodes.index(node1)
             node2_index = self.nodes.index(node2)
-            edges_matrix[node1_index][node2_index] = distance  # Graph symétrique
+            edges_matrix[node1_index][node2_index] = distance
+            edges_matrix[node2_index][node1_index] = distance  # Graph symétrique
 
+        # Liste des positions des noeuds (coordonnées x, y)
         nodes_list = {index: (node.x, node.y) for index, node in enumerate(self.nodes)}
         
         return edges_matrix, nodes_list
