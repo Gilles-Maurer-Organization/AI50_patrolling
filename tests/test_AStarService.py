@@ -17,7 +17,6 @@ class TestAStarService(unittest.TestCase):
         }
     
     def test_compute_h(self):
-        # Test de la méthode compute_h
         service = AStarService(self.graph, self.node_position, start=0, end=3)
         heuristic = service.compute_h(0)
         expected = math.sqrt((0 - 1) ** 2 + (0 - 1) ** 2)
@@ -36,7 +35,6 @@ class TestAStarService(unittest.TestCase):
         self.assertEqual(path, expected_path)
         self.assertEqual(cost, 2)
     
-    '''
     def test_find_path_no_path(self):
         self.graph[2][3] = 0
         self.graph[3][2] = 0
@@ -45,4 +43,3 @@ class TestAStarService(unittest.TestCase):
         service = AStarService(self.graph, self.node_position, start=0, end=3)
         result = service.find_path()
         self.assertIsNone(result)
-    '''
