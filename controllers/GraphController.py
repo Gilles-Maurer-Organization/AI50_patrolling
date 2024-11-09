@@ -1,6 +1,7 @@
 import os
 import shutil
 import tkinter as tk
+from pathlib import Path
 from tkinter import filedialog
 import re
 
@@ -125,17 +126,27 @@ class GraphController:
         self.image_name = image_name
         csv_path = self.csv_service.find_csv_reference(image_name)
 
+        # if the image is not found in the project folder, copy it there
+        project_root = Path(__file__).resolve().parent.parent
+        project_image_path = project_root / image_name
+        if not os.path.exists(project_image_path):
+            print(f"Image '{image_name}' not found in the project folder, copying...")
+            shutil.copy(image_path, project_image_path)
+        else:
+            print(f"Image '{image_name}' found in the project folder.")
+
+        # load the image as background
+        self.load_background_image(self.image_name)
+
+        # if the image has no associated csv file, display it only
         if csv_path is None:
             print(f"{image_name} not found in references.csv. Displaying image only.")
-            shutil.copy(image_path, image_name)
-            self.load_background_image(self.image_name)
             self.clear_graph()
             self.update()
             return
 
-        self.load_background_image(self.image_name)
+        # if a csv file exists, load the associated graph
         match = re.search(r'graph_(\d+)\.csv', csv_path)
-
         if match:
             file_number = match.group(1)
             edges_matrix, nodes_list = self.csv_service.load(file_number)
@@ -150,9 +161,6 @@ class GraphController:
                             node1 = self.graph.nodes[i]
                             node2 = self.graph.nodes[j]
                             self.graph.add_edge(node1, node2)
-
-            print("Edges matrix:", edges_matrix)
-            print("Nodes list:", nodes_list)
 
             self.update()
             print("Graph imported and displayed successfully.")

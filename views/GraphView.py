@@ -25,8 +25,6 @@ class GraphView:
             color = self.get_node_color(node, selected_node, dragging_node)
             pygame.draw.circle(self.screen, color, (node.x, node.y), NODE_RADIUS)
 
-        print("Nodes:", graph.nodes)
-        print("Edges:", graph.edges)
         self.draw_edges(graph)
 
     def get_node_color(self, node, selected_node, dragging_node):
