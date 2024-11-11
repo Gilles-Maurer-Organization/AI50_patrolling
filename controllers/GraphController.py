@@ -1,8 +1,6 @@
 import os
 import shutil
-import tkinter as tk
 from pathlib import Path
-from tkinter import filedialog
 import re
 
 import pygame
@@ -11,6 +9,7 @@ from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, NODE_RADIU
 from controllers.EdgeController import EdgeController
 from controllers.NodeController import NodeController
 from models.Graph import Graph
+from models.FileExplorer import FileExplorer
 from services.ICSVService import ICSVService
 from views.GraphView import GraphView
 
@@ -30,10 +29,6 @@ class GraphController:
         # Initialize node and edge controllers
         self.node_controller = NodeController(self.graph)
         self.edge_controller = EdgeController(self.graph, self.node_controller)
-
-        # Set up Tkinter for file dialog
-        self.root = tk.Tk()
-        self.root.withdraw()
 
         # Load initial background image
         self.image_name = "image1.jpg"
@@ -107,11 +102,8 @@ class GraphController:
         self.graph.nodes.clear()
         self.graph.edges.clear()
 
-    def open_file_dialog_and_import_graph(self):
-        image_path = filedialog.askopenfilename(
-            title="Select a graph image",
-            filetypes=[("Images", "*.png *.jpg *.jpeg")]
-        )
+    def import_graph(self, image_path):
+        print(f"Selected image: {image_path}")
         image_name = os.path.basename(image_path)
 
         if image_name:

@@ -12,7 +12,7 @@ class ViewController:
     def __init__(self, csv_service: ICSVService) -> None:
         self.screen = pygame.display.set_mode((GRAPH_WINDOW_WIDTH + PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
         self.graph_controller = GraphController(self.screen, csv_service)
-        self.file_explorer_controller = FileExplorerController(self.screen)
+        self.file_explorer_controller = FileExplorerController(self.screen, self.graph_controller)
         self.parameters_controller = ParametersController(self.screen, self.graph_controller, self.file_explorer_controller)
 
     def handle_actions(self, event) -> None:

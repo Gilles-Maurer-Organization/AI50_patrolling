@@ -4,6 +4,7 @@ import pygame
 from views.FileExplorerView import FileExplorerView
 
 from models.FileExplorer import FileExplorer
+from controllers.GraphController import GraphController
 
 class FileExplorerController:
     '''
@@ -39,8 +40,9 @@ class FileExplorerController:
         _handle_select_file(event) -> None:
             Handles file selection, storing the selected file path in the model.
     '''
-    def __init__(self, screen):
+    def __init__(self, screen, graph_controller):
         self.screen = screen
+        self.graph_controller = graph_controller
         
         # We instanciate our model and view of file explorer
         self.file_explorer = FileExplorer()
@@ -90,6 +92,7 @@ class FileExplorerController:
         '''
         self.file_explorer_view._close_file_explorer()
         self.file_explorer.set_is_opened(False)
+        self.graph_controller.import_graph(self.file_explorer.get_path())
 
     def is_file_explorer_opened(self) -> bool:
         '''
