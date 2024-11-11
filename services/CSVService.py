@@ -58,7 +58,7 @@ class CSVService(ICSVService):
 
         with open(file_path, "w") as f:
             f.write("Nodes,")
-            for node in nodes_list:
+            for node in nodes_list.values():
                 f.write(f'{node},')
             f.write("\n")
 
