@@ -158,3 +158,6 @@ class GraphController:
             print("Graph imported and displayed successfully.")
         else:
             raise ValueError("Path does not match expected format.")
+
+    def graph_has_an_image(self) -> bool:
+        return self.graph_view.has_an_image()
