@@ -3,16 +3,15 @@ import re
 
 import pygame
 
-from models.Graph import Graph
-from views.GraphView import GraphView
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, NODE_RADIUS
+from views.GraphView import GraphView
+from controllers.NodeController import NodeController
 from controllers.EdgeController import EdgeController
 from controllers.NodeController import NodeController
 from models.Agent import Agent
 from models.Graph import Graph
 from services import IImageService
 from services.ICSVService import ICSVService
-from views.GraphView import GraphView
 
 
 class GraphController:
