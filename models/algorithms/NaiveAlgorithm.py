@@ -5,6 +5,3 @@ class NaiveAlgorithm(Algorithm):
         super().__init__()
         self.parameters = {}
         self.name = "Naive Algorithm"
-
-        #test
-        
