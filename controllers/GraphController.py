@@ -3,6 +3,8 @@ import re
 
 import pygame
 
+from models.Graph import Graph
+from views.GraphView import GraphView
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, NODE_RADIUS
 from controllers.EdgeController import EdgeController
 from controllers.NodeController import NodeController
@@ -51,6 +53,7 @@ class GraphController:
         else:
             print(f"Image {image_name} not found or could not be copied.")
             self.graph_view.set_background_image(None)
+
 
     def handle_event(self, event) -> None:
         """
