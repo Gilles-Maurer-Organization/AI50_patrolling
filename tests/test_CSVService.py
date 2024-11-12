@@ -152,4 +152,4 @@ class TestCSVService(unittest.TestCase):
 
         # We assert that both edges_matrix and nodes are None since the file does not exist.
         self.assertIsNone(edges_matrix)
-        self.assertIsNone(nodes_list)
+        self.assertIsNone(nodes)

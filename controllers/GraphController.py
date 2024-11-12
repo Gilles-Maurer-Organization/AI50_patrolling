@@ -3,6 +3,8 @@ import re
 
 import pygame
 
+from models.Graph import Graph
+from views.GraphView import GraphView
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, NODE_RADIUS
 from views.GraphView import GraphView
 from controllers.NodeController import NodeController
