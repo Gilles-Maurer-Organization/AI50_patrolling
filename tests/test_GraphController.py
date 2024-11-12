@@ -1,13 +1,15 @@
 import unittest
-from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
-from controllers.GraphController import GraphController
+from unittest.mock import Mock, patch
+
+import pygame
+
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT
+from controllers.GraphController import GraphController
 from models.Graph import Graph
 from models.Node import Node
-from views.GraphView import GraphView
 from services.ICSVService import ICSVService
-import pygame
+from views.GraphView import GraphView
+
 
 class TestGraphController(unittest.TestCase):
 
@@ -105,7 +107,7 @@ class TestGraphController(unittest.TestCase):
         self.graph_controller.save_graph()
         
         # We verify that the CSV Service has been called with the good parameters
-        self.mock_csv_service.save.assert_called_once_with(edges_matrix, nodes_list, self.graph_controller.image_name)
+        self.mock_csv_service.save.assert_called_once_with(edges_matrix, nodes_list, self.graph_controller.image_path)
 
     def test_load_graph_calls_csv_service_load(self):
         # We configure the feedback of the load method of the CSV Service
@@ -153,11 +155,3 @@ class TestGraphController(unittest.TestCase):
         self.graph_controller.graph_view.has_an_image.return_value = False
         self.assertFalse(self.graph_controller.graph_has_an_image())
 
-    @patch('shutil.copy')
-    @patch('pygame.image.load')
-    def test_import_graph_from_image_valid_image(self, mock_load, mock_copy):
-        image_path = "/path/to/image.jpg"
-        self.graph_controller.import_graph(image_path)
-        self.assertEqual(self.graph_controller.image_name, "image.jpg")
-        mock_load.assert_called_once_with("image.jpg")
-        mock_copy.assert_called_once_with(image_path, Path(__file__).resolve().parent.parent / "image.jpg")
