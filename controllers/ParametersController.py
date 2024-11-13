@@ -25,7 +25,7 @@ class ParametersController:
         self.algorithm_parameters_controller = AlgorithmParametersController(self.parameters_view)
 
         # Désactiver certains boutons si le graph n'a pas d'image
-        if not graph_controller.graph_view.has_an_image():
+        if not graph_controller.graph_has_an_image():
             self.button_controller.disable_clear_button()
             self.button_controller.disable_save_button()
 

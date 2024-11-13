@@ -4,10 +4,8 @@ from constants.Colors import Colors
 from constants.Config import NODE_RADIUS
 
 class GraphView:
-    def __init__(self, screen, width, height) -> None:
+    def __init__(self, screen) -> None:
         self.screen = screen
-        self.width = width
-        self.height = height
         self.background_image = None
 
     def set_background_image(self, background_image):

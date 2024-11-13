@@ -1,10 +1,9 @@
-import pygame_gui
 import pygame
-
-from views.FileExplorerView import FileExplorerView
+import pygame_gui
 
 from models.FileExplorer import FileExplorer
-from controllers.GraphController import GraphController
+from views.FileExplorerView import FileExplorerView
+
 
 class FileExplorerController:
     '''
@@ -92,7 +91,6 @@ class FileExplorerController:
         '''
         self.file_explorer_view._close_file_explorer()
         self.file_explorer.set_is_opened(False)
-        self.graph_controller.import_graph(self.file_explorer.get_path())
 
     def is_file_explorer_opened(self) -> bool:
         '''
@@ -116,4 +114,5 @@ class FileExplorerController:
             file_path = event.text
             # We store the path into the file explorer model
             self.file_explorer.set_path(file_path)
+            self.graph_controller.import_graph_from_image(self.file_explorer.get_path())
         self._close_file_explorer()
