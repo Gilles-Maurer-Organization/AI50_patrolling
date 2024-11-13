@@ -25,22 +25,6 @@ class CSVService(ICSVService):
             return 0
         return len(os.listdir(self.csv_folder_path))
 
-    def is_an_image(self, image_name):
-        if image_name.lower().endswith(('.png', '.jpg', '.jpeg')):
-            return True
-        else:
-            return False
-
-    def check_if_image_exists(self, image_path):
-        image_name = os.path.basename(image_path)
-        project_root = Path(__file__).resolve().parent.parent
-        project_image_path = project_root / "backgrounds" / image_name
-        if not os.path.exists(project_image_path):
-            print(f"Image '{image_name}' not found in the backgrounds folder, copying...")
-            shutil.copy(image_path, project_image_path)
-        else:
-            print(f"Image '{image_name}' found in the backgrounds folder.")
-
     def save(self, edges_matrix, nodes_list, image_name) -> None:
         # save graph information and reference to the csv file
         self.initialize_directories()

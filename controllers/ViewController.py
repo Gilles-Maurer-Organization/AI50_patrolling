@@ -5,13 +5,14 @@ from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, PARAMETERS
 from controllers.FileExplorerController import FileExplorerController
 from controllers.GraphController import GraphController
 from controllers.ParametersController import ParametersController
+from services import IImageService
 
 from services.ICSVService import ICSVService
 
 class ViewController:
-    def __init__(self, csv_service: ICSVService) -> None:
+    def __init__(self, csv_service: ICSVService, image_service: IImageService) -> None:
         self.screen = pygame.display.set_mode((GRAPH_WINDOW_WIDTH + PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
-        self.graph_controller = GraphController(self.screen, csv_service)
+        self.graph_controller = GraphController(self.screen, csv_service, image_service)
         self.file_explorer_controller = FileExplorerController(self.screen, self.graph_controller)
         self.parameters_controller = ParametersController(self.screen, self.graph_controller, self.file_explorer_controller)
 

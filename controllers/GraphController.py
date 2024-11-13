@@ -1,7 +1,5 @@
 import os
 import re
-import shutil
-from pathlib import Path
 
 import pygame
 
@@ -9,6 +7,7 @@ from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, NODE_RADIU
 from controllers.EdgeController import EdgeController
 from controllers.NodeController import NodeController
 from models.Graph import Graph
+from services import IImageService
 from services.ICSVService import ICSVService
 from views.GraphView import GraphView
 
@@ -18,12 +17,13 @@ class GraphController:
     Controller for managing the graph's operations and user interactions.
     """
 
-    def __init__(self, screen, csv_service: ICSVService) -> None:
+    def __init__(self, screen, csv_service: ICSVService, image_service: IImageService) -> None:
         self.graph = Graph()
         self.csv_service = csv_service
+        self.image_service = image_service
 
         # Initialize the view
-        self.graph_view = GraphView(screen)
+        self.graph_view = GraphView(screen.subsurface((0, 0, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)))
 
         # Initialize node and edge controllers
         self.node_controller = NodeController(self.graph)
@@ -128,15 +128,15 @@ class GraphController:
         Import a graph based on an image file, check if a CSV file is associated with it, and display it.
         """
         image_name = os.path.basename(image_path)
-        if not self.csv_service.is_an_image(image_name):
-            print("Selected file is not an image.")
+        if self.image_service.is_an_image(image_path):
+            # if the image is not found in the project folder, copy it there
+            self.image_service.check_if_image_exists(image_path)
+        else:
+            print(f"{image_path} is not a valid image file.")
             return
 
         self.image_name = image_name
         csv_path = self.csv_service.find_csv_reference(image_name)
-
-        # if the image is not found in the project folder, copy it there
-        self.csv_service.check_if_image_exists(image_path)
 
         # load the image as background
         self.load_background_image(self.image_name)

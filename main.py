@@ -1,6 +1,7 @@
 import pygame
 from controllers.ViewController import ViewController
 from services.CSVService import CSVService
+from services.ImageService import ImageService
 
 # Initialisation de Pygame
 pygame.init()
@@ -8,7 +9,8 @@ pygame.display.set_caption("AI50 patrolling problem")
 clock = pygame.time.Clock()
 
 csv_service = CSVService()
-view_controller = ViewController(csv_service)
+image_service = ImageService()
+view_controller = ViewController(csv_service, image_service)
 
 running = True
 while running:
