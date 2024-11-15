@@ -37,7 +37,7 @@ class GraphController:
         """
         Load and scale the background image for the view.
         """
-        image_path = "backgrounds\\" + image_name
+        image_path = os.path.join("backgrounds", image_name)
         background_image = pygame.image.load(image_path)
         background_image = pygame.transform.scale(background_image, (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
         self.graph_view.set_background_image(background_image)
