@@ -1,19 +1,20 @@
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 import pygame
 import pygame_gui
 from pygame_gui import UIManager
 from models.FileExplorer import FileExplorer
 from views.FileExplorerView import FileExplorerView
 from controllers.FileExplorerController import FileExplorerController
+from controllers.GraphController import GraphController
 
 
 class TestFileExplorerController(unittest.TestCase):
     def setUp(self):
         pygame.init()
         self.screen = pygame.Surface((800, 600))
-    
-        self.controller = FileExplorerController(self.screen)
+        self.graph_controller = Mock(spec=GraphController)
+        self.controller = FileExplorerController(self.screen, self.graph_controller)
         
         self.controller.file_explorer_view = MagicMock(spec=FileExplorerView)
         self.controller.file_explorer = MagicMock(spec=FileExplorer)

@@ -65,7 +65,7 @@ class TestCSVService(unittest.TestCase):
         handle = mock_file()
         
         # We verify that the write method was called with the expected data in the CSV.
-        handle.write.assert_any_call(f'{image_path},{csv_path}')
+        handle.write.assert_any_call(f'{image_path},{csv_path}\n')
         
         # We assert that 'image1.jpg,None' was not written to the file
         # the path of the graph must indeed be written as second argument

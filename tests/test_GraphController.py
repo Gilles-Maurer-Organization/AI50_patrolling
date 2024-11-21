@@ -8,6 +8,7 @@ from controllers.GraphController import GraphController
 from models.Graph import Graph
 from models.Node import Node
 from services.ICSVService import ICSVService
+from services.IImageService import IImageService
 from views.GraphView import GraphView
 
 
@@ -23,9 +24,11 @@ class TestGraphController(unittest.TestCase):
         self.screen = pygame.Surface((GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
         # And we instantiate a mock of our CSV Service
         self.mock_csv_service = Mock(spec=ICSVService)
+        # And our Image Service
+        self.image_service = Mock(spec=IImageService)
 
         # We instantiate our GraphController that we want to test
-        self.graph_controller = GraphController(screen=self.screen, csv_service=self.mock_csv_service)
+        self.graph_controller = GraphController(screen=self.screen, csv_service=self.mock_csv_service, image_service=self.image_service)
         self.graph_controller.graph = Mock(spec=Graph)
         self.graph_controller.graph_view = Mock(spec=GraphView)
         self.graph_controller.graph.nodes = []
@@ -107,7 +110,7 @@ class TestGraphController(unittest.TestCase):
         self.graph_controller.save_graph()
         
         # We verify that the CSV Service has been called with the good parameters
-        self.mock_csv_service.save.assert_called_once_with(edges_matrix, nodes_list, self.graph_controller.image_path)
+        self.mock_csv_service.save.assert_called_once_with(edges_matrix, nodes_list, self.graph_controller.image_name)
 
     def test_load_graph_calls_csv_service_load(self):
         # We configure the feedback of the load method of the CSV Service

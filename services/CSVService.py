@@ -27,7 +27,6 @@ class CSVService(ICSVService):
 
     def save(self, edges_matrix, nodes_list, image_name) -> None:
         # save graph information and reference to the csv file
-        self.initialize_directories()
         csv_path = self.find_csv_reference(image_name)
         if csv_path is None:
             new_csv_path = f'graph_{self.count_files() + 1}.csv'
