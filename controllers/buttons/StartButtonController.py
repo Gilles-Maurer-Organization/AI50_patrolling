@@ -43,9 +43,52 @@ class StartButtonController(BaseButtonController):
             [1, 3, 0],        # Agent 4 suit un autre chemin en étoile
             [2, 0, 3, 4, 1]   # Agent 5 suit un chemin en zigzag
         ]
+        # self.agents = [Agent(path, self.graph_controller.graph) for path in paths]
+        
         self._simulation_controller.initialize_agents(paths)
 
         self._simulation_controller.set_simulation_started(True)
+        
+        #complete_graph_data = self.csv_service.find_csv_reference("path/to/image")
+        #if complete_graph_data:
+        #    pass
+
+        if self.graph_controller.is_graph_modified():
+            self.graph_controller.save_graph()
+            complete_graph, shortest_paths = self.get_complete_graph_and_shortest_paths()
+
+            self.graph_controller.save_complements(complete_graph, shortest_paths)
+        
+        elif self.graph_controller.are_complements_not_saved():
+            complete_graph, shortest_paths = self.get_complete_graph_and_shortest_paths()
+            
+            self.graph_controller.save_complements(complete_graph, shortest_paths)
+            
+    def get_complete_graph_and_shortest_paths(self):
+
+        simple_graph, node_positions = self.graph_controller.graph.compute_matrix()
+        complete_graph = self.complete_graph_service(
+            simple_graph=simple_graph,
+            node_position=node_positions,
+            path_finding_service=AStarService
+        ).get_complete_graph()
+
+        # TODO: Check if the gomplete graph is None, and if it is the case,
+        # create a pop-up to the user interface
+        shortest_paths = []
+        for start in range(len(simple_graph)):
+            for end in range(len(simple_graph)):
+                if start != end:
+                    a_star = AStarService(simple_graph, node_positions, start, end)
+                    shortest_paths.append(a_star.find_path())
+
+        return complete_graph, shortest_paths
+
+
+    def draw_simulation(self):
+        pass
+        if self.parameters_controller.simulation_started:
+            self.graph_controller.graph_view.draw_simulation(self.agents)
 
     def enable_start_button(self) -> None:
         '''

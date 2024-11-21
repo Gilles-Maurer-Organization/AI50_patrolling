@@ -5,6 +5,7 @@ from controllers.buttons.ButtonController import ButtonController
 from controllers.buttons.StartButtonController import StartButtonController
 from controllers.text_boxes.AlgorithmParametersController import AlgorithmParametersController
 from controllers.text_boxes.TextBoxController import TextBoxController
+from controllers.GraphController import GraphController
 from services.CompleteGraphService import CompleteGraphService
 from views.ParametersView import ParametersView
 
@@ -113,6 +114,7 @@ class ParametersController:
         if (
                 self.scrolling_list_controller.get_selected_algorithm() is not None
                 and self.text_box_controller.is_everything_filled()
+                and not self.graph_controller.is_graph_empty()
         ):
             self.enable_start_button()
         else:

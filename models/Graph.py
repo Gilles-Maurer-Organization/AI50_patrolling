@@ -7,6 +7,32 @@ class Graph:
         self.edges = {}
         self.complete_adjacency_matrix = []
         self.shortest_paths = {}
+        self.modified = False
+
+    def mark_as_modified(self):
+        if not self.modified:
+            print("Graph Modified")
+            self.modified = True
+
+    def is_modified(self):
+        return self.modified
+    
+    def is_empty(self):
+        return not self.nodes
+    
+    def update_distances(self, dragged_node: Node) -> None:
+        neighbors = set()
+
+        for (n1, n2) in self.edges.keys():
+            if n1 == dragged_node:
+                neighbors.add(n2)
+            elif n2 == dragged_node:
+                neighbors.add(n1)
+        
+        for neighbor in neighbors:
+            print("modifying distance")
+            distance = self.distance(neighbor, dragged_node)
+            self.edges[neighbor, dragged_node] = self.edges[dragged_node, neighbor] = distance
 
     def add_node(self, x: float, y: float) -> None:
         '''
@@ -28,8 +54,7 @@ class Graph:
         '''
         distance = self.distance(node1, node2)
         # Stockage de la distance dans un dictionnaire avec des tuples (node1, node2) comme clés
-        self.edges[(node1, node2)] = distance
-        self.edges[(node2, node1)] = distance
+        self.edges[(node1, node2)] = self.edges[(node2, node1)] = distance
 
     def distance(self, node1: Node, node2: Node) -> float:
         '''

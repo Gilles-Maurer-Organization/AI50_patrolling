@@ -35,6 +35,50 @@ class CSVService(ICSVService):
         else:
             self.write_csv_information(edges_matrix, nodes_list, image_name, csv_path)
 
+    def save_complements(self, complete_graph, shortest_paths, image_name):
+        """
+        Ajoute les données du complete_graph et des shortest_paths à la suite du fichier CSV correspondant à image_name.
+        """
+        # Trouver le chemin du fichier CSV associé à l'image
+        csv_path = self.find_csv_reference(image_name)
+        print("blabla")
+
+        if csv_path is None:
+            raise FileNotFoundError("No CSV file associated to this image")
+        
+        file_path = os.path.join(self.csv_folder_path, csv_path)
+        
+        complete_graph_lines = [
+            ",".join(map(str, row)) + "\n" for row in complete_graph
+        ]
+        shortest_paths_lines = [
+            ",".join(map(str, row)) + "\n" for row in shortest_paths
+        ]
+
+        with open(file_path, mode='a', newline='') as f:
+            f.write("Complete Graph,\n")
+            f.writelines(complete_graph_lines)
+            f.write("Shortest paths,\n")
+            f.writelines(shortest_paths_lines)
+    
+    def are_complements_not_saved(self, image_name):
+        csv_path = self.find_csv_reference(image_name)
+
+        if csv_path is None:
+            raise FileNotFoundError("No CSV file associated to this image")
+        
+        file_path = os.path.join(self.csv_folder_path, csv_path)
+
+        try:
+            with open(file_path, mode='r') as f:
+                for line in f:
+                    if "Graph Complete" in line:
+                        return False
+        except FileNotFoundError:
+            raise FileNotFoundError(f"CSV file {csv_path} not found at {file_path}")
+        
+        return True
+    
     def save_csv_reference(self, csv_path, image_name):
         # add csv file reference and image to the reference file
         with open(self.references_file_path, "a") as f:
@@ -65,7 +109,7 @@ class CSVService(ICSVService):
             # write edges matrix
             for row in edges_matrix:
                 f.write(",".join(str(cell) for cell in row) + "\n")
-            f.write(f'Image_ref,{image_name}')
+            f.write(f'Image_ref,{image_name}\n')
 
     def _parse_csv_file(self, file_path: str) -> tuple[list[list[float]], list[tuple[int, int]]]:
         """
