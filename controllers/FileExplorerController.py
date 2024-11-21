@@ -1,9 +1,9 @@
-import pygame_gui
 import pygame
-
-from views.FileExplorerView import FileExplorerView
+import pygame_gui
 
 from models.FileExplorer import FileExplorer
+from views.FileExplorerView import FileExplorerView
+
 
 class FileExplorerController:
     '''
@@ -39,8 +39,9 @@ class FileExplorerController:
         _handle_select_file(event) -> None:
             Handles file selection, storing the selected file path in the model.
     '''
-    def __init__(self, screen):
+    def __init__(self, screen, graph_controller):
         self.screen = screen
+        self.graph_controller = graph_controller
         
         # We instanciate our model and view of file explorer
         self.file_explorer = FileExplorer()
@@ -113,4 +114,5 @@ class FileExplorerController:
             file_path = event.text
             # We store the path into the file explorer model
             self.file_explorer.set_path(file_path)
+            self.graph_controller.import_graph_from_image(self.file_explorer.get_path())
         self._close_file_explorer()
