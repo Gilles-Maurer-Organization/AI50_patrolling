@@ -245,5 +245,5 @@ class GraphController:
     
     def get_graph(self) -> Graph:
         return self.graph    
-    def are_complements_not_saved(self):
-        return self.csv_service.are_complements_not_saved(self.image_name)
+    def are_complements_saved(self):
+        return self.csv_service.are_complements_saved(self.image_name)

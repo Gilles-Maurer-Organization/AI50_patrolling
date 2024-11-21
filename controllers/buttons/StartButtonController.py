@@ -59,10 +59,14 @@ class StartButtonController(BaseButtonController):
 
             self.graph_controller.save_complements(complete_graph, shortest_paths)
         
-        elif self.graph_controller.are_complements_not_saved():
+        elif not self.graph_controller.are_complements_saved():
             complete_graph, shortest_paths = self.get_complete_graph_and_shortest_paths()
             
             self.graph_controller.save_complements(complete_graph, shortest_paths)
+
+        elif self.graph_controller.are_complements_saved():
+            print("Launching algorithm with complete graph")
+
             
     def get_complete_graph_and_shortest_paths(self):
 

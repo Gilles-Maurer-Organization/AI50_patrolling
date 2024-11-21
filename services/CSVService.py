@@ -1,5 +1,4 @@
 import os
-import shutil
 from pathlib import Path
 import re
 
@@ -41,7 +40,6 @@ class CSVService(ICSVService):
         """
         # Trouver le chemin du fichier CSV associé à l'image
         csv_path = self.find_csv_reference(image_name)
-        print("blabla")
 
         if csv_path is None:
             raise FileNotFoundError("No CSV file associated to this image")
@@ -61,7 +59,7 @@ class CSVService(ICSVService):
             f.write("Shortest paths,\n")
             f.writelines(shortest_paths_lines)
     
-    def are_complements_not_saved(self, image_name):
+    def are_complements_saved(self, image_name):
         csv_path = self.find_csv_reference(image_name)
 
         if csv_path is None:
@@ -72,12 +70,12 @@ class CSVService(ICSVService):
         try:
             with open(file_path, mode='r') as f:
                 for line in f:
-                    if "Graph Complete" in line:
-                        return False
+                    if "Complete Graph" in line:
+                        return True
         except FileNotFoundError:
             raise FileNotFoundError(f"CSV file {csv_path} not found at {file_path}")
         
-        return True
+        return False
     
     def save_csv_reference(self, csv_path, image_name):
         # add csv file reference and image to the reference file
