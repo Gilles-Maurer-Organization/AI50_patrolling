@@ -236,6 +236,9 @@ class GraphController:
     def graph_has_an_image(self) -> bool:
         return self.graph_view.has_an_image()
     
+    def are_complements_saved(self):
+        return self.csv_service.are_complements_saved(self.image_name)
+
     def draw_simulation(self, agents: list[Agent]) -> None:
         self.graph_view.draw_simulation(agents)
     
