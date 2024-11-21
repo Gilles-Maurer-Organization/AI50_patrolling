@@ -112,7 +112,7 @@ class TestCSVService(unittest.TestCase):
             handle.write.assert_any_call(",".join(str(cell) for cell in row) + "\n")
 
         # Finally, we verify the reference of the image
-        handle.write.assert_any_call(f'Image_ref,{image_path}')
+        handle.write.assert_any_call(f'Image_ref,{image_path}\n')
 
     @patch('builtins.open', new_callable=mock_open, read_data='image1.jpg,graph_1.csv\n')
     def test_find_csv_reference_found(self, mock_file):
