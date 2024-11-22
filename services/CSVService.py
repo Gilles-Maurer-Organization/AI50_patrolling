@@ -67,10 +67,10 @@ class CSVService(ICSVService):
                 f.write(",".join(str(cell) for cell in row) + "\n")
             f.write(f'Image_ref,{image_name}')
 
-    def load(self, num_file) -> tuple[list[list[float]], list[tuple[int, int]]]:
-        # load graph data from a csv file
-        file_path = os.path.join(self.csv_folder_path, f"graph_{num_file}.csv")
-
+    def _parse_csv_file(self, file_path: str) -> tuple[list[list[float]], list[tuple[int, int]]]:
+        """
+        Private utility to parse a CSV file and extract node information and the edge matrix.
+        """
         if not os.path.exists(file_path):
             print("File does not exist")
             return None, None
@@ -84,16 +84,40 @@ class CSVService(ICSVService):
             # extract nodes as tuples (x, y)
             nodes_line = lines[0]  # first line with nodes data
             matches = re.findall(r"\((\d+),\s*(\d+)\)", nodes_line)  # extract all (x, y) pairs
-            for match in matches:
-                x, y = map(int, match)
-                nodes_list.append((x, y))
+            nodes_list = [(int(x), int(y)) for x, y in matches]
 
             # extract edges matrix
             for line in lines[1:]:
+                if "Complete Graph" in line:  # only display the real graph
+                    break
+                if "Shortest paths" in line:  # ignore lines with shortest paths
+                    break
                 if "Image_ref" in line:  # ignore line with image reference
                     continue
-                row = line.split(",")
-                cleaned_row = [float(cell.strip()) if cell.strip() else 0.0 for cell in row]
-                edges_matrix.append(cleaned_row)
+                edges_matrix.append([float(cell.strip()) if cell.strip() else 0.0 for cell in line.split(",")])
 
         return edges_matrix, nodes_list
+
+    def load_from_num_file(self, num_file: int) -> tuple[list[list[float]], list[tuple[int, int]]]:
+        """
+        Load graph data from a CSV file identified by its number.
+        """
+        file_path = os.path.join(self.csv_folder_path, f"graph_{num_file}.csv")
+        return self._parse_csv_file(file_path)
+
+    def load(self, file_path: str) -> tuple[list[list[float]], list[tuple[int, int]]]:
+        """
+        Load graph data from a specified CSV file path.
+        """
+        return self._parse_csv_file(file_path)
+
+    def get_image_name(self, file_path: str) -> str:
+        """
+        Give the image associated with the csv file.
+        """
+        with open(file_path, "r") as f:
+            for line in f:
+                if "Image_ref" in line:
+                    return line.split(",")[1]
+        return None
+

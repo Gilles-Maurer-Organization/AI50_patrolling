@@ -148,7 +148,7 @@ class TestCSVService(unittest.TestCase):
 
         service = CSVService()
         # We attempt to load data using index of 1, but the file doesn't exists in any case in the mock data.
-        edges_matrix, nodes_list = service.load(1)
+        edges_matrix, nodes_list = service.load_from_num_file(1)
 
         # We assert that both edges_matrix and nodes_list are None since the file does not exist.
         self.assertIsNone(edges_matrix)

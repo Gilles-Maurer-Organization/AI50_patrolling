@@ -16,7 +16,9 @@ class GraphView:
         """
         Draw the user interface for graph design.
         """
-        if self.background_image is not None:
+        if self.background_image is None:
+            self.screen.fill(Colors.WHITE.value)
+        else:
             self.screen.blit(self.background_image, (0, 0))
 
         for node in graph.nodes:
