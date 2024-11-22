@@ -158,7 +158,8 @@ class GraphController:
             print(f"{csv_path} is not a valid CSV file.")
             return
 
-        self.load_background_image(self.csv_service.get_image_name(csv_path))
+        self.image_name = self.csv_service.get_image_name(csv_path).strip()
+        self.load_background_image(self.image_name)
         edges_matrix, nodes_list = self.csv_service.load(csv_path)
         self._load_graph(edges_matrix, nodes_list)
 
