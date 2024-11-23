@@ -1,7 +1,9 @@
 import os
 import shutil
 from pathlib import Path
+
 from services.IImageService import IImageService
+
 
 class ImageService(IImageService):
     def __init__(self) -> None:
@@ -13,10 +15,23 @@ class ImageService(IImageService):
     def is_an_image(self, image_name: str) -> bool:
         return image_name.lower().endswith(('.png', '.jpg', '.jpeg'))
 
-    def check_if_image_exists(self, image_path: str) -> None:
+    def check_if_image_exists(self, image_path: str) -> bool:
+        """
+        Check if the image already exists in the backgrounds folder.
+        """
         image_name = os.path.basename(image_path)
         project_image_path = self.backgrounds_folder / image_name
-        if not project_image_path.exists():
+        return project_image_path.exists()
+
+    def ensure_image_exists_and_copy(self, image_path: str) -> None:
+        """
+        Ensure the image exists in the backgrounds folder. If not, copy it there.
+        """
+        image_name = os.path.basename(image_path)
+        project_image_path = self.backgrounds_folder / image_name
+        if not self.check_if_image_exists(image_path):
+            if not os.path.exists(image_path):
+                return
             print(f"Image '{image_name}' not found in the backgrounds folder, copying...")
             shutil.copy(image_path, project_image_path)
         else:

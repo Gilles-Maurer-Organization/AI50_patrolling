@@ -36,19 +36,20 @@ class GraphController:
     def load_background_image(self, image_name: str) -> None:
         """
         Load and scale the background image for the view.
+        The image service ensures the image exists, but the view sets the background.
         """
+        # Ensure the image exists in the "backgrounds" folder
         image_path = os.path.join("backgrounds", image_name)
-        if image_name is None:
-            self.graph_view.set_background_image(None)
-            return
-        elif not os.path.exists(image_path):
-            print(f"Image {image_name} not found.")
-            self.graph_view.set_background_image(None)
-            return
+        self.image_service.ensure_image_exists_and_copy(image_path)
 
-        background_image = pygame.image.load(image_path)
-        background_image = pygame.transform.scale(background_image, (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
-        self.graph_view.set_background_image(background_image)
+        # Check if the image exists in the folder
+        if self.image_service.check_if_image_exists(image_path):
+            background_image = pygame.image.load(image_path)
+            background_image = pygame.transform.scale(background_image, (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
+            self.graph_view.set_background_image(background_image)
+        else:
+            print(f"Image {image_name} not found or could not be copied.")
+            self.graph_view.set_background_image(None)
 
     def handle_event(self, event) -> None:
         """
@@ -128,7 +129,7 @@ class GraphController:
             return
 
         # If the image is not found in the project folder, copy it there
-        self.image_service.check_if_image_exists(image_path)
+        self.image_service.ensure_image_exists_and_copy(image_path)
         self.image_name = image_name
         csv_path = self.csv_service.find_csv_reference(image_name)
 
