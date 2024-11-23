@@ -117,5 +117,5 @@ class FileExplorerController:
             if file_path.endswith('.csv'):
                 self.graph_controller.import_graph_from_csv(file_path)
             else:
-                self.graph_controller.import_graph_from_image(self.file_explorer.get_path())
+                self.graph_controller.import_graph_from_image(file_path)
         self._close_file_explorer()
