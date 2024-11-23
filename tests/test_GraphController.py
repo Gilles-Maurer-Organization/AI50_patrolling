@@ -26,6 +26,7 @@ class TestGraphController(unittest.TestCase):
         self.mock_csv_service = Mock(spec=ICSVService)
         # And our Image Service
         self.image_service = Mock(spec=IImageService)
+        self.image_service.ensure_image_exists_and_copy = Mock()
 
         # We instantiate our GraphController that we want to test
         self.graph_controller = GraphController(screen=self.screen, csv_service=self.mock_csv_service, image_service=self.image_service)
@@ -157,4 +158,3 @@ class TestGraphController(unittest.TestCase):
         # graph_view has no image
         self.graph_controller.graph_view.has_an_image.return_value = False
         self.assertFalse(self.graph_controller.graph_has_an_image())
-
