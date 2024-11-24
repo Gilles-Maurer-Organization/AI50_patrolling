@@ -128,8 +128,11 @@ class GraphController:
             print(f"{image_path} is not a valid image file.")
             return
 
-        # If the image is not found in the project folder, copy it there
-        self.image_service.ensure_image_exists_and_copy(image_path)
+        # Copy the image if it doesn't already exist
+        if not self.image_service.check_if_image_exists(image_path):
+            self.image_service.ensure_image_exists_and_copy(image_path)
+
+        # Update the image name and attempt to find its CSV reference
         self.image_name = image_name
         csv_path = self.csv_service.find_csv_reference(image_name)
 
