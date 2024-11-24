@@ -8,3 +8,7 @@ class ICSVService(ABC):
     @abstractmethod
     def load_from_num_file(self, num_file):
         pass
+
+    @abstractmethod
+    def load(self, file_path):
+        pass
