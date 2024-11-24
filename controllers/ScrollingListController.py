@@ -51,7 +51,7 @@ class ScrollingListController:
         if event.type == pygame.MOUSEBUTTONDOWN:
             # Si l'élément est survolé, c'est que l'utilisateur a cliqué sur le header de la liste déroulante
             if self.is_scrolling_list_header_hovered(event):
-                return self.handle_header_clicked(event)
+                return self.handle_header_clicked()
 
             # Sinon, c'est qu'il essaie soit de cliquer sur les options de la liste déroulante, soit en dehors
             elif self.scrolling_list_view.is_active:
@@ -62,7 +62,7 @@ class ScrollingListController:
             return self.handle_header_hovered(event)
         return False
 
-    def handle_header_clicked(self, event) -> bool:
+    def handle_header_clicked(self) -> bool:
         # Si la liste déroulante est déjà déroulée:
         if self.scrolling_list_view.is_active:
             # On la replie

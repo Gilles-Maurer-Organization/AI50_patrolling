@@ -1,6 +1,7 @@
 from constants.Colors import Colors
 from controllers.SimulationController import SimulationController
 from controllers.buttons.BaseButtonController import BaseButtonController
+from controllers.GraphController import GraphController
 from models.Agent import Agent
 from models.Button import Button
 from services.AStarService import AStarService
@@ -65,7 +66,11 @@ class StartButtonController(BaseButtonController):
             self.graph_controller.save_complements(complete_graph, shortest_paths)
 
         elif self.graph_controller.are_complements_saved():
-            print("Launching algorithm with complete graph")
+            selected_algorithm = self.parameters_controller.scrolling_list_controller.get_selected_algorithm()
+            # TODO: interface for all the algorithm that owns a launch() method, that all the algorithm implement
+            # paths = selected_algorithm.launch()
+            # passer paths à la simulation
+            print("Launching algorithm with complete graph", selected_algorithm)
 
             
     def get_complete_graph_and_shortest_paths(self):
