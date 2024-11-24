@@ -26,6 +26,7 @@ class TestGraphController(unittest.TestCase):
         self.mock_csv_service = Mock(spec=ICSVService)
         # And our Image Service
         self.image_service = Mock(spec=IImageService)
+        self.image_service.ensure_image_exists_and_copy = Mock()
 
         # We instantiate our GraphController that we want to test
         self.graph_controller = GraphController(screen=self.screen, csv_service=self.mock_csv_service, image_service=self.image_service)
@@ -116,7 +117,7 @@ class TestGraphController(unittest.TestCase):
         # We configure the feedback of the load method of the CSV Service
         edges_matrix = [[0, 1], [1, 0]]
         nodes_list = [(50, 50), (100, 100)]
-        self.mock_csv_service.load.return_value = (edges_matrix, nodes_list)
+        self.mock_csv_service.load_from_num_file.return_value = (edges_matrix, nodes_list)
         
         # We call the load_graph() method 
         self.graph_controller.load_graph(1)
@@ -157,4 +158,3 @@ class TestGraphController(unittest.TestCase):
         # graph_view has no image
         self.graph_controller.graph_view.has_an_image.return_value = False
         self.assertFalse(self.graph_controller.graph_has_an_image())
-

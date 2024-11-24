@@ -36,11 +36,20 @@ class GraphController:
     def load_background_image(self, image_name: str) -> None:
         """
         Load and scale the background image for the view.
+        The image service ensures the image exists, but the view sets the background.
         """
+        # Ensure the image exists in the "backgrounds" folder
         image_path = os.path.join("backgrounds", image_name)
-        background_image = pygame.image.load(image_path)
-        background_image = pygame.transform.scale(background_image, (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
-        self.graph_view.set_background_image(background_image)
+        self.image_service.ensure_image_exists_and_copy(image_path)
+
+        # Check if the image exists in the folder
+        if self.image_service.check_if_image_exists(image_path):
+            background_image = pygame.image.load(image_path)
+            background_image = pygame.transform.scale(background_image, (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
+            self.graph_view.set_background_image(background_image)
+        else:
+            print(f"Image {image_name} not found or could not be copied.")
+            self.graph_view.set_background_image(None)
 
     def handle_event(self, event) -> None:
         """
@@ -91,7 +100,7 @@ class GraphController:
         self.csv_service.save(edges_matrix, nodes_list, self.image_name)
 
     def load_graph(self, num_file) -> None:
-        edges_matrix, nodes_list = self.csv_service.load(num_file)
+        edges_matrix, nodes_list = self.csv_service.load_from_num_file(num_file)
         if edges_matrix and nodes_list:
             self.graph.nodes = {i: coords for i, coords in enumerate(nodes_list)}
             self.graph.edges = {(i, j) for i, row in enumerate(edges_matrix) for j, distance in enumerate(row) if distance > 0}
@@ -106,35 +115,21 @@ class GraphController:
         """
         Load a graph from a CSV file based on the file number, and update the graph with nodes and edges.
         """
-        edges_matrix, nodes_list = self.csv_service.load(file_number)
-
-        if edges_matrix and nodes_list:
-            self.clear_graph()
-            for coords in nodes_list:
-                self.node_controller.add_node(coords)
-            for i, row in enumerate(edges_matrix):
-                for j, distance in enumerate(row):
-                    if distance > 0:
-                        node1 = self.graph.nodes[i]
-                        node2 = self.graph.nodes[j]
-                        self.graph.add_edge(node1, node2)
-            self.update()
-            print("Graph imported and displayed successfully.")
-        else:
-            print("No valid graph data found in the CSV file.")
+        edges_matrix, nodes_list = self.csv_service.load_from_num_file(file_number)
+        self._load_graph(edges_matrix, nodes_list)
 
     def import_graph_from_image(self, image_path) -> None:
         """
         Import a graph based on an image file, check if a CSV file is associated with it, and display it.
         """
         image_name = os.path.basename(image_path)
-        if self.image_service.is_an_image(image_path):
-            # if the image is not found in the project folder, copy it there
-            self.image_service.check_if_image_exists(image_path)
-        else:
+
+        if not self.image_service.is_an_image(image_path):
             print(f"{image_path} is not a valid image file.")
             return
 
+        # If the image is not found in the project folder, copy it there
+        self.image_service.ensure_image_exists_and_copy(image_path)
         self.image_name = image_name
         csv_path = self.csv_service.find_csv_reference(image_name)
 
@@ -155,6 +150,38 @@ class GraphController:
             self.load_graph_from_csv(file_number)
         else:
             raise ValueError("Path does not match expected format.")
+
+    def import_graph_from_csv(self, csv_path) -> None:
+        """
+        Import a graph based on a CSV file, and display it.
+        """
+        if not csv_path.endswith('.csv'):
+            print(f"{csv_path} is not a valid CSV file.")
+            return
+
+        self.image_name = self.csv_service.get_image_name(csv_path).strip()
+        self.load_background_image(self.image_name)
+        edges_matrix, nodes_list = self.csv_service.load(csv_path)
+        self._load_graph(edges_matrix, nodes_list)
+
+    def _load_graph(self, edges_matrix, nodes_list) -> None:
+        """
+        A helper method to load the nodes and edges into the graph, reducing duplication.
+        """
+        if edges_matrix and nodes_list:
+            self.clear_graph()
+            for coords in nodes_list:
+                self.node_controller.add_node(coords)
+            for i, row in enumerate(edges_matrix):
+                for j, distance in enumerate(row):
+                    if distance > 0:
+                        node1 = self.graph.nodes[i]
+                        node2 = self.graph.nodes[j]
+                        self.graph.add_edge(node1, node2)
+            self.update()
+            print("Graph imported and displayed successfully.")
+        else:
+            print("No valid graph data found in the CSV file.")
 
     def graph_has_an_image(self) -> bool:
         return self.graph_view.has_an_image()
