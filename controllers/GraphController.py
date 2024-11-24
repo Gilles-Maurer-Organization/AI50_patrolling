@@ -153,14 +153,6 @@ class GraphController:
         '''
         self.csv_service.save_complements(complete_graph, shortest_paths, self.image_name)
 
-    def load_graph(self, num_file) -> None:
-        edges_matrix, nodes_list = self.csv_service.load_from_num_file(num_file)
-        if edges_matrix and nodes_list:
-            self.graph.nodes = {i: coords for i, coords in enumerate(nodes_list)}
-            self.graph.edges = {(i, j) for i, row in enumerate(edges_matrix) for j, distance in enumerate(row) if distance > 0}
-            print("Edges matrix:", edges_matrix)
-            print("Nodes list:", nodes_list)
-
     def clear_graph(self) -> None:
         self.graph.nodes.clear()
         self.graph.edges.clear()

@@ -1,3 +1,4 @@
+import pygame
 import pygame_gui
 
 from models.FileExplorer import FileExplorer

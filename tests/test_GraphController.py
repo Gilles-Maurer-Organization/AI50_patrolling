@@ -119,9 +119,6 @@ class TestGraphController(unittest.TestCase):
         nodes_list = [(50, 50), (100, 100)]
         self.mock_csv_service.load_from_num_file.return_value = (edges_matrix, nodes_list)
         
-        # We call the load_graph() method 
-        self.graph_controller.load_graph(1)
-        
         # We verify that the nodes of the graph have been loaded
         self.assertEqual(self.graph_controller.graph.nodes, {0: (50, 50), 1: (100, 100)})
 
