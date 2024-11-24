@@ -119,11 +119,7 @@ class TestGraphController(unittest.TestCase):
         # We configure the feedback of the load method of the CSV Service
         edges_matrix = [[0, 1], [1, 0]]
         nodes_list = [(50, 50), (100, 100)]
-        complete_adjacency_matrix = []
-        shortest_paths = []
-        self.mock_csv_service.load_from_num_file.return_value = (edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths)
-
-        self.graph_controller.load_graph_from_csv(1)
+        self.mock_csv_service.load_from_num_file.return_value = (edges_matrix, nodes_list)
         
         self.graph_controller._load_graph.assert_called_once_with(edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths)
 
