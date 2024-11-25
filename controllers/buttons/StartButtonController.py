@@ -1,4 +1,5 @@
 from constants.Colors import Colors
+from controllers.SimulationController import SimulationController
 from controllers.buttons.BaseButtonController import BaseButtonController
 from models.Agent import Agent
 from models.Button import Button
@@ -6,11 +7,11 @@ from views.ButtonView import ButtonView
 
 
 class StartButtonController(BaseButtonController):
-    def __init__(self, parameters_view, graph_controller, parameters_controller) -> None:
+    def __init__(self, parameters_view, graph_controller, simulation_controller: SimulationController) -> None:
         super().__init__(parameters_view, graph_controller)
 
-        # Référence à ParametersController pour accéder à l'état centralisé
-        self.parameters_controller = parameters_controller
+        self._simulation_controller = simulation_controller
+
         self.start_button = Button("Start simulation", self.start_action, enabled=False)
 
         # Création de la map des boutons et leurs vues
@@ -32,7 +33,7 @@ class StartButtonController(BaseButtonController):
         self.agents = []
 
     def start_action(self) -> None:
-        self.parameters_controller.simulation_started = True
+        self._simulation_controller.set_simulation_started(True)
 
         # Mock pour les agents
         paths = [
@@ -42,7 +43,7 @@ class StartButtonController(BaseButtonController):
             [1, 3, 0],        # Agent 4 suit un autre chemin en étoile
             [2, 0, 3, 4, 1]   # Agent 5 suit un chemin en zigzag
         ]
-        self.agents = [Agent(path, self.graph_controller.graph) for path in paths]
+        self._simulation_controller.set_agents([Agent(path, self.graph_controller.graph) for path in paths])
 
     def draw_simulation(self):
         if self.parameters_controller.simulation_started:
