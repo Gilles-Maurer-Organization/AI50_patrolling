@@ -33,8 +33,6 @@ class StartButtonController(BaseButtonController):
         self.agents = []
 
     def start_action(self) -> None:
-        self._simulation_controller.set_simulation_started(True)
-
         # Mock pour les agents
         paths = [
             [0, 1, 2, 3, 4],  # Agent 1 fait le tour du pentagone
@@ -45,9 +43,7 @@ class StartButtonController(BaseButtonController):
         ]
         self._simulation_controller.initialize_agents(paths)
 
-    def draw_simulation(self):
-        if self.parameters_controller.simulation_started:
-            self.graph_controller.graph_view.draw_simulation(self.agents)
+        self._simulation_controller.set_simulation_started(True)
 
     def enable_start_button(self) -> None:
         '''
