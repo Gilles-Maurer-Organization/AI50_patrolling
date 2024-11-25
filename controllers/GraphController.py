@@ -189,3 +189,6 @@ class GraphController:
     
     def draw_simulation(self, agents: list[Agent]) -> None:
         self.graph_view.draw_simulation(agents)
+    
+    def get_graph(self) -> Graph:
+        return self.graph

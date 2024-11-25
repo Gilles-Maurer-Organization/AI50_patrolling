@@ -43,7 +43,7 @@ class StartButtonController(BaseButtonController):
             [1, 3, 0],        # Agent 4 suit un autre chemin en étoile
             [2, 0, 3, 4, 1]   # Agent 5 suit un chemin en zigzag
         ]
-        self._simulation_controller.set_agents([Agent(path, self.graph_controller.graph) for path in paths])
+        self._simulation_controller.initialize_agents(paths)
 
     def draw_simulation(self):
         if self.parameters_controller.simulation_started:
