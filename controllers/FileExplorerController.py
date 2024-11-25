@@ -103,7 +103,7 @@ class FileExplorerController:
         This method checks if the button clicked is the close button.
         '''
         # If this is the case, we close the file explorer
-        if event.ui_object_id == '#file_dialog.#close_button':
+        if event.ui_object_id == '#file_dialog.#close_button' or event.ui_object_id == '#file_dialog.#cancel_button':
             self._close_file_explorer()
 
     def _handle_select_file(self, event) -> None:
