@@ -90,5 +90,12 @@ class Graph:
         nodes_list = {index: (node.x, node.y) for index, node in enumerate(self.nodes)}
         
         return edges_matrix, nodes_list
+    
+
+    def set_shortest_paths(self, shortest_paths):
+        self.shortest_paths = shortest_paths
+
+    def set_complete_adjacency_matrix(self, complete_adjacency_matrix):
+        self.complete_adjacency_matrix = complete_adjacency_matrix
 
 

@@ -56,24 +56,25 @@ class StartButtonController(BaseButtonController):
 
         if self.graph_controller.is_graph_modified():
             self.graph_controller.save_graph()
-            complete_graph, shortest_paths = self.get_complete_graph_and_shortest_paths()
+            complete_graph, shortest_paths = self.compute_complete_graph_and_shortest_paths()
 
             self.graph_controller.save_complements(complete_graph, shortest_paths)
         
         elif not self.graph_controller.are_complements_saved():
-            complete_graph, shortest_paths = self.get_complete_graph_and_shortest_paths()
+            complete_graph, shortest_paths = self.compute_complete_graph_and_shortest_paths()
             
             self.graph_controller.save_complements(complete_graph, shortest_paths)
 
         elif self.graph_controller.are_complements_saved():
             selected_algorithm = self.parameters_controller.scrolling_list_controller.get_selected_algorithm()
+            print(self.graph_controller.graph.shortest_paths)
             # TODO: interface for all the algorithm that owns a launch() method, that all the algorithm implement
             # paths = selected_algorithm.launch()
             # passer paths à la simulation
             print("Launching algorithm with complete graph", selected_algorithm)
 
             
-    def get_complete_graph_and_shortest_paths(self):
+    def compute_complete_graph_and_shortest_paths(self):
 
         simple_graph, node_positions = self.graph_controller.graph.compute_matrix()
         complete_graph = self.complete_graph_service(
@@ -84,15 +85,15 @@ class StartButtonController(BaseButtonController):
 
         # TODO: Check if the gomplete graph is None, and if it is the case,
         # create a pop-up to the user interface
-        shortest_paths = []
+        shortest_paths = {}
         for start in range(len(simple_graph)):
             for end in range(len(simple_graph)):
                 if start != end:
                     a_star = AStarService(simple_graph, node_positions, start, end)
-                    shortest_paths.append(a_star.find_path())
+                    shortest_paths[(start, end)] = a_star.find_path()
+        print(shortest_paths)            
 
         return complete_graph, shortest_paths
-
 
     def draw_simulation(self):
         pass

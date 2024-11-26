@@ -161,8 +161,9 @@ class GraphController:
         """
         Load a graph from a CSV file based on the file number, and update the graph with nodes and edges.
         """
-        edges_matrix, nodes_list = self.csv_service.load_from_num_file(file_number)
-        self._load_graph(edges_matrix, nodes_list)
+        edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths = self.csv_service.load_from_num_file(file_number)
+
+        self._load_graph(edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths)
 
     def import_graph_from_image(self, image_path) -> None:
         """
@@ -207,10 +208,11 @@ class GraphController:
 
         self.image_name = self.csv_service.get_image_name(csv_path).strip()
         self.load_background_image(self.image_name)
-        edges_matrix, nodes_list = self.csv_service.load(csv_path)
-        self._load_graph(edges_matrix, nodes_list)
+        edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths = self.csv_service.load(csv_path)
+        
+        self._load_graph(edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths)
 
-    def _load_graph(self, edges_matrix, nodes_list) -> None:
+    def _load_graph(self, edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths) -> None:
         """
         A helper method to load the nodes and edges into the graph, reducing duplication.
         """
@@ -224,6 +226,13 @@ class GraphController:
                         node1 = self.graph.nodes[i]
                         node2 = self.graph.nodes[j]
                         self.graph.add_edge(node1, node2)
+            if complete_adjacency_matrix:
+                self.graph.set_complete_adjacency_matrix(complete_adjacency_matrix)
+                if not shortest_paths:
+                    raise ValueError("Shortest paths are missing despite a complete adjacency matrix being present.")
+                else:
+                    self.graph.set_shortest_paths(shortest_paths)
+
             self.update()
             print("Graph imported and displayed successfully.")
         else:

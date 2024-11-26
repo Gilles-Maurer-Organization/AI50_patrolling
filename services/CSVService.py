@@ -50,7 +50,7 @@ class CSVService(ICSVService):
             ",".join(map(str, row)) + "\n" for row in complete_graph
         ]
         shortest_paths_lines = [
-            ",".join(map(str, row)) + "\n" for row in shortest_paths
+            ",".join(map(str, (start, end, path))) + "\n" for (start, end), path in shortest_paths.items()
         ]
 
         with open(file_path, mode='a', newline='') as f:
@@ -103,7 +103,8 @@ class CSVService(ICSVService):
             for node in nodes_list.values():
                 f.write(f'{node},')
             f.write("\n")
-
+            
+            f.write("Simple Graph,\n")
             # write edges matrix
             for row in edges_matrix:
                 f.write(",".join(str(cell) for cell in row) + "\n")
@@ -119,26 +120,53 @@ class CSVService(ICSVService):
 
         edges_matrix = []
         nodes_list = []
+        
+        complete_adjacency_matrix = []
+        shortest_paths = {}
 
         with open(file_path, "r") as f:
             lines = f.readlines()
 
-            # extract nodes as tuples (x, y)
-            nodes_line = lines[0]  # first line with nodes data
-            matches = re.findall(r"\((\d+),\s*(\d+)\)", nodes_line)  # extract all (x, y) pairs
-            nodes_list = [(int(x), int(y)) for x, y in matches]
-
-            # extract edges matrix
-            for line in lines[1:]:
-                if "Complete Graph" in line:  # only display the real graph
-                    break
-                if "Shortest paths" in line:  # ignore lines with shortest paths
-                    break
-                if "Image_ref" in line:  # ignore line with image reference
-                    continue
+        nodes_line = lines[0]  # first line with nodes data
+        matches = re.findall(r"\((\d+),\s*(\d+)\)", nodes_line)  # extract all (x, y) pairs
+        nodes_list = [(int(x), int(y)) for x, y in matches]
+        
+        section = None
+        for line in lines:
+            line = line.strip()
+            
+            if not line:
+                continue
+            
+            if "Simple Graph" in line:
+                section = "Simple Graph"
+                continue
+            elif "Complete Graph" in line:
+                section = "Complete Graph"
+                continue
+            elif "Shortest paths" in line:
+                section = "Shortest paths"
+                continue
+            elif "Image_ref" in line:
+                section = None
+                continue
+            
+            if section == "Simple Graph":
                 edges_matrix.append([float(cell.strip()) if cell.strip() else 0.0 for cell in line.split(",")])
+            
+            elif section == "Complete Graph":
+                complete_adjacency_matrix.append([float(cell.strip()) if cell.strip() else 0.0 for cell in line.split(",")])
+            
+            elif section == "Shortest paths":
+                parts = line.split(",", maxsplit=2)
+                if len(parts) == 3:
+                    start = int(parts[0])
+                    end = int(parts[1])
+                    path_info = eval(parts[2])
+                    path, cost = path_info
+                    shortest_paths[(start, end)] = {"path": path, "cost": cost}
 
-        return edges_matrix, nodes_list
+        return edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths
 
     def load_from_num_file(self, num_file: int) -> tuple[list[list[float]], list[tuple[int, int]]]:
         """
