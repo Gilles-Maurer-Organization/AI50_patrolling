@@ -226,12 +226,7 @@ class GraphController:
                         node1 = self.graph.nodes[i]
                         node2 = self.graph.nodes[j]
                         self.graph.add_edge(node1, node2)
-            if complete_adjacency_matrix:
-                self.graph.set_complete_adjacency_matrix(complete_adjacency_matrix)
-                if not shortest_paths:
-                    raise ValueError("Shortest paths are missing despite a complete adjacency matrix being present.")
-                else:
-                    self.graph.set_shortest_paths(shortest_paths)
+            self.store_complements_to_model(complete_adjacency_matrix, shortest_paths)
 
             self.update()
             print("Graph imported and displayed successfully.")
@@ -248,3 +243,11 @@ class GraphController:
         return self.graph    
     def are_complements_saved(self):
         return self.csv_service.are_complements_saved(self.image_name)
+
+    def store_complements_to_model(self, complete_adjacency_matrix, shortest_paths):
+        if complete_adjacency_matrix:
+            self.graph.set_complete_adjacency_matrix(complete_adjacency_matrix)
+            if not shortest_paths:
+                raise ValueError("Shortest paths are missing despite a complete adjacency matrix being present.")
+            else:
+                self.graph.set_shortest_paths(shortest_paths)

@@ -56,23 +56,29 @@ class StartButtonController(BaseButtonController):
 
         if self.graph_controller.is_graph_modified():
             self.graph_controller.save_graph()
-            complete_graph, shortest_paths = self.compute_complete_graph_and_shortest_paths()
-
-            self.graph_controller.save_complements(complete_graph, shortest_paths)
+            self._compute_store_and_save_graph_data()
+            self._launch_algorithm()
         
         elif not self.graph_controller.are_complements_saved():
-            complete_graph, shortest_paths = self.compute_complete_graph_and_shortest_paths()
-            
-            self.graph_controller.save_complements(complete_graph, shortest_paths)
+            self._compute_store_and_save_graph_data()
+            self._launch_algorithm()
 
         elif self.graph_controller.are_complements_saved():
-            selected_algorithm = self.parameters_controller.scrolling_list_controller.get_selected_algorithm()
-            print(self.graph_controller.graph.shortest_paths)
-            # TODO: interface for all the algorithm that owns a launch() method, that all the algorithm implement
-            # paths = selected_algorithm.launch()
-            # passer paths à la simulation
-            print("Launching algorithm with complete graph", selected_algorithm)
+            self._launch_algorithm()
 
+    def _compute_store_and_save_graph_data(self):
+        complete_graph, shortest_paths = self.compute_complete_graph_and_shortest_paths()
+        self.graph_controller.store_complements_to_model(complete_graph, shortest_paths)
+
+        self.graph_controller.save_complements(complete_graph, shortest_paths)
+
+    def _launch_algorithm(self):
+        selected_algorithm = self.parameters_controller.scrolling_list_controller.get_selected_algorithm()
+        
+        # TODO: interface for all the algorithm that owns a launch() method, that all the algorithm implement
+        # paths = selected_algorithm.launch()
+        # passer paths à la simulation
+        print("Launching algorithm with complete graph", selected_algorithm)
             
     def compute_complete_graph_and_shortest_paths(self):
 
@@ -90,8 +96,7 @@ class StartButtonController(BaseButtonController):
             for end in range(len(simple_graph)):
                 if start != end:
                     a_star = AStarService(simple_graph, node_positions, start, end)
-                    shortest_paths[(start, end)] = a_star.find_path()
-        print(shortest_paths)            
+                    shortest_paths[(start, end)] = a_star.find_path()       
 
         return complete_graph, shortest_paths
 
