@@ -142,6 +142,7 @@ class GraphController:
         Update the view with the current state of the graph.
         """
         self.graph_view.draw_graph(self.graph, self.node_controller.selected_node, self.node_controller.dragging_node)
+        self.graph_view.draw_popup()
 
     def save_graph(self) -> None:
         edges_matrix, nodes_list = self.graph.compute_matrix()
@@ -254,3 +255,15 @@ class GraphController:
                 raise ValueError("Shortest paths are missing despite a complete adjacency matrix being present.")
             else:
                 self.graph.set_shortest_paths(shortest_paths)
+
+    def raise_error_message(self, message: str) -> None:
+        """
+        This method triggers an error popup with a specific message.
+        """
+        self.graph_view.show_error_popup(message)
+
+    def raise_info(self, message: str) -> None:
+        """
+        This method triggers an error popup with a specific message.
+        """
+        self.graph_view.show_info_popup(message)

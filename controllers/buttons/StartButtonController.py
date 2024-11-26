@@ -64,21 +64,36 @@ class StartButtonController(BaseButtonController):
 
         if self.graph_controller.is_graph_modified():
             self.graph_controller.save_graph()
-            self._compute_store_and_save_graph_data()
-            self._launch_algorithm()
+            success = self._compute_store_and_save_graph_data()
+            if success:
+                self._launch_algorithm()
+                self.graph_controller.raise_info('Algorithm launched')
+            else:
+                self.graph_controller.raise_error_message('The graph must not have isolated subgraphs')
         
         elif not self.graph_controller.are_complements_saved():
-            self._compute_store_and_save_graph_data()
-            self._launch_algorithm()
+            success = self._compute_store_and_save_graph_data()
+            if success:
+                self._launch_algorithm()
+                self.graph_controller.raise_info('Algorithm launched')
+            else:
+                self.graph_controller.raise_error_message('The graph must not have isolated subgraphs')
 
         elif self.graph_controller.are_complements_saved():
             self._launch_algorithm()
+            self.graph_controller.raise_info('Algorithm launched')
 
     def _compute_store_and_save_graph_data(self):
         complete_graph, shortest_paths = self.compute_complete_graph_and_shortest_paths()
+        if not complete_graph:
+            return False
+        if not shortest_paths:
+            raise ValueError('Shortest paths dictionnary is null while Complete Graph array exists.')
+    
         self.graph_controller.store_complements_to_model(complete_graph, shortest_paths)
 
         self.graph_controller.save_complements(complete_graph, shortest_paths)
+        return True
 
     def _launch_algorithm(self):
         selected_algorithm = self._scrolling_list_controller.get_selected_algorithm()
