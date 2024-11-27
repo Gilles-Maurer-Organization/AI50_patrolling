@@ -57,13 +57,14 @@ class AntColony:
         Returns the path with the highest pheromone levels by following the most popular routes as determined by the ants.
     """
     
-    def __init__(self, evaporation_rate_, alpha_parameter_, beta_parameter_, nb_agents_, nb_colony_, nb_iterations_):
+    def __init__(self, evaporation_rate_, alpha_parameter_, beta_parameter_, nb_agents_, nb_colony_, nb_iterations_, Q_):
             self.evaporation_rate = evaporation_rate_
             self.alpha_parameter = alpha_parameter_
             self.beta_parameter = beta_parameter_
             self.nb_ants = nb_agents_
             self.nb_colony = nb_colony_
             self.nb_iterations = nb_iterations_
+            self.Q = Q_
 
     def get_length_path(self, ants_path, cost_matrix):
         """
@@ -122,9 +123,8 @@ class AntColony:
                 # Symetrie
                 mask[ant_path[0],  ant_path[-1]] = True
 
-                # Set delta values where the ant travels using boolean masking, using Q = 100
-                # TODO variable Q insted of 100
-                delta_t_pheromone_matrix[k_colony][k_ant][mask] += 1000 / length_path
+                # Set delta values where the ant travels using boolean masking, usiing Q
+                delta_t_pheromone_matrix[k_colony][k_ant][mask] += self.Q / length_path
 
 
         # Sum of delta_pheromone_matrix for each ant, without evaporation np.sum, what come before is the evaporation term
@@ -139,7 +139,6 @@ class AntColony:
         Return a probability vector representing the probability that an ant at the current node 
         moves to each possible next node, while ignoring already visited nodes.
         """
-        BIAI = 1
         # Calcul de la composante de phéromone élevée à la puissance alpha
         pheromone_component = pheromone_matrix ** self.alpha_parameter
 
@@ -147,7 +146,7 @@ class AntColony:
         with np.errstate(divide='ignore', invalid='ignore'):
             reverse_cost_matrix = np.where(cost_matrix != 0, (1 / cost_matrix)** self.beta_parameter, 0)
         
-        length_component = BIAI* reverse_cost_matrix
+        length_component = reverse_cost_matrix
         
         # Calcul du numérateur de la probabilité
         nominateur = pheromone_component * length_component
@@ -302,9 +301,35 @@ class AntColony:
             global_pheromone_matrix = self.get_pheromone_matrix(cost_matrix, global_pheromone_matrix, global_ants_path)
             pheromone_history.append(global_pheromone_matrix)
 
+            #Check for convergence
+            if self.check_convergence(path_length_history):
+                break
+
         # Get the best path after all iterations
         best_path = self.get_best_path(global_ants_path, cost_matrix)
         return best_path, path_length_history, probs_history, pheromone_history
+
+    def check_convergence(self, path_length_history, n=10):
+        """
+        Check if the algorithm has converged based on the path length history.
+        
+        Parameters:
+            path_length_history (list): History of path lengths to check for convergence.
+            n (int): Number of recent iterations to consider for convergence.
+            
+        Returns:
+            bool: True if the algorithm has converged, False otherwise.
+        """
+        if len(path_length_history) < n:
+            return False
+
+        # Check if the path lengths have not changed significantly in the last n iterations
+        recent_lengths = path_length_history[-n:]  # Get the last n path lengths
+        last_lengths = recent_lengths[-1]
+
+        # Verify if all recent path lengths are close to the most recent one
+        return all(np.allclose(last_lengths, lengths, atol=1e-2) for lengths in recent_lengths[:-1])
+
 
 
 
@@ -429,14 +454,15 @@ if __name__ == "__main__":
     ])
 
     # Evaporation rate between 0 and 1
-    evaporation_rate = 0.5
+    evaporation_rate = 0.7
     alpha_parameter = 1
-    beta_parameter = 1
+    beta_parameter = 2
     nb_agents = 3  #Nb agent = nb fourmis
     nb_colony = 3
     nb_iterations = 1000
+    Q = 10
 
-    fourmis = AntColony(evaporation_rate, alpha_parameter, beta_parameter, nb_agents,nb_colony, nb_iterations)
+    fourmis = AntColony(evaporation_rate, alpha_parameter, beta_parameter, nb_agents,nb_colony, nb_iterations, Q)
 
     # launch ant colony algorithm
     final_path, history, prob_history, pheromone_history = fourmis.launch(cost_matrix)
