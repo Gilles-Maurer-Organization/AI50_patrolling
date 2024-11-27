@@ -14,10 +14,8 @@ Example:
     >>> best_path = colony.launch()
 """
 
-from matplotlib import pyplot as plt
 import numpy as np
 import time as time
-from matplotlib.animation import FuncAnimation
 
 class AntColony:
     """
