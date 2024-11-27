@@ -20,7 +20,7 @@ class ParametersController:
         # Initialisation des différents contrôleurs avec self passé à StartButtonController
         self.graph_controller = graph_controller
         self.button_controller = ButtonController(self.parameters_view, graph_controller, file_explorer_controller)
-        self.start_button_controller = StartButtonController(self.parameters_view, graph_controller, simulation_controller) #TODO : check si self est utile
+        self.start_button_controller = StartButtonController(self.parameters_view, graph_controller, simulation_controller)
         self.text_box_controller = TextBoxController(self.parameters_view)
         self.scrolling_list_controller = ScrollingListController(self.parameters_view)
         self.algorithm_parameters_controller = AlgorithmParametersController(self.parameters_view)
