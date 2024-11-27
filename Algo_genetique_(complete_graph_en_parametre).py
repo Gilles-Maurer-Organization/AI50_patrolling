@@ -5,9 +5,12 @@ import time
 class Genetics_Algorithm:
 
     #needs to be cleand up at the end ! 
+<<<<<<< HEAD
 
     #TODO: rempalcer complete_grpah et shortest_way par l'objet de la classe Grpah() drecteement
     #dans le init, remplacer (au bon endroit) les attributs (shortest_way et complte_graph) par classe.attributs
+=======
+>>>>>>> Algo genetique V1
     def __init__(self, nb_of_generations, nb_agent, individuals_number_per_population, nb_of_nodes_in_graph, complete_graph, shortest_way_matrix):
 
         self.nb_generations = nb_of_generations
@@ -25,6 +28,7 @@ class Genetics_Algorithm:
     '''
     WORKS
     '''
+<<<<<<< HEAD
     def initial_population_generation(self):
         
         #the length of 1 gene of the individual
@@ -38,14 +42,32 @@ class Genetics_Algorithm:
             #while the individual is not covering all nodes, we generate him
             while True:
 
+=======
+    def initial_population_generation_V2(self):
+        
+        #the length of 1 gene of the individual
+        gene_length = max(1, int( 0.1 * len(self.nodes_idx_list))) 
+        print(gene_length)
+        indicative_population = []
+        # For each individual
+        for _ in range(self.nb_individuals_in_pop):
+            #while the individual is not covering all nodes, we generate him
+            while True:
+>>>>>>> Algo genetique V1
                 individual = []
                 # For each gene of the individual (a gene is a path of an agent)
                 for _ in range(self.nb_agents): 
                     #while the gene generated gene already exists, we generate another one
                     while True:
+<<<<<<< HEAD
 
                         # Generate a random individual of the desired length
                         random_individual = rd.sample(self.nodes_idx_list.tolist(), gene_length)
+=======
+                        # Generate a random individual of the desired length
+                        random_individual = rd.sample(self.nodes_idx_list.tolist(), gene_length)
+                        
+>>>>>>> Algo genetique V1
                         # Ensure the generated path does not already exist in the individual's genes
                         if random_individual not in individual:
                             individual.append(random_individual)
@@ -59,7 +81,11 @@ class Genetics_Algorithm:
 
         # Transforming into np.array for later use
         indicative_population = np.array(indicative_population)
+<<<<<<< HEAD
     
+=======
+        
+>>>>>>> Algo genetique V1
         return indicative_population
 
     '''
@@ -67,8 +93,15 @@ class Genetics_Algorithm:
     '''
     #used in the fitness calculation, if this function returns False, it means that 1 node is never visited by any agent, thus the associated fitness should automatically be the worst possible
     def are_all_nodes_visited(self,individual):
+<<<<<<< HEAD
         #creating an empty set to store the visited nodes
         visited_nodes = set() 
+=======
+    
+        #creating an empty set to store the visited nodes
+        visited_nodes = set() 
+
+>>>>>>> Algo genetique V1
         for gene in individual:
             for node in gene:
                 #we add the visited nodes to the corresponding set
@@ -76,6 +109,10 @@ class Genetics_Algorithm:
 
         #creating a set of the nodes the individuals have to cover
         nodes_to_cover = set(self.nodes_idx_list)
+<<<<<<< HEAD
+=======
+
+>>>>>>> Algo genetique V1
         #if the sets are equal, the individual covered all the nodes, so the individual is valid
         if nodes_to_cover <= visited_nodes:
             return True
@@ -90,6 +127,10 @@ class Genetics_Algorithm:
     def path_lengths_computing(self, path,graph_distance_matrix): 
         #contains the final value of the path 
         eval_distance = 0
+<<<<<<< HEAD
+=======
+
+>>>>>>> Algo genetique V1
         for i in range(len(path)-1):
             #we retrieve the actual node and the following one 
             origin, destination = path[i],path[i+1]
@@ -98,11 +139,38 @@ class Genetics_Algorithm:
 
         return eval_distance
     
+<<<<<<< HEAD
     
     '''
     works 
 
     en refaire une pour générer des vrais chemins sans mon système de [] et la mettre dans un fichier à part ? 
+=======
+    '''
+    maybe updated directly in the Graph Class ? ( atm it's written here)
+    WORKS
+    '''
+    '''
+    def update_simple_graph_distance_matrix(self,s_g_dist_mat : np.ndarray):
+        
+        #creating a matrix with the same shape as the shape of the simple graph matrix
+        complete_graph_distance_matrix = np.zeros_like(s_g_dist_mat)
+
+        for idx_line,line in enumerate(self.shortest_way_matrix):
+            for idx_path,path in enumerate(line):
+                #if the path from the node to itself, it's obviously 0
+                if idx_line == idx_path:
+                   pass 
+                else:
+                    #we compute the distance of the whole path and we put it inside of the function
+                    complete_graph_distance_matrix[idx_line][idx_path] = self.path_lengths_computing(path,self.simple_graph_distance_matrix)
+
+        #now we have the whole complete grpah distance matrix, we sipmly return it so it can be used 
+        return complete_graph_distance_matrix
+    '''
+    '''
+    seems to work, only used at the end of the algorithm, right before the output ? (to be confirmed)
+>>>>>>> Algo genetique V1
     '''
     def get_real_population_from_indicative_population(self,indicative_pop:np.ndarray):
 
@@ -245,6 +313,7 @@ class Genetics_Algorithm:
         
         return fitness_lst
 
+<<<<<<< HEAD
 
     
     '''
@@ -279,6 +348,8 @@ class Genetics_Algorithm:
         
         return fitness_lst
 
+=======
+>>>>>>> Algo genetique V1
     '''
     WORKS 
     '''
@@ -295,6 +366,7 @@ class Genetics_Algorithm:
         
         return parents.astype(int)
 
+<<<<<<< HEAD
     
     def dominates(self, individual_1, individual_2):
         """
@@ -404,6 +476,8 @@ class Genetics_Algorithm:
 
         return selected_individuals
 
+=======
+>>>>>>> Algo genetique V1
 
     '''
     WORKS
@@ -413,6 +487,10 @@ class Genetics_Algorithm:
        
         #matrix of same shape
         children = np.empty((nb_enfant,parents.shape[1],parents.shape[2])) 
+<<<<<<< HEAD
+=======
+
+>>>>>>> Algo genetique V1
         number_of_crossing_points = 2 #we cut in 2 parts atm
 
         #probability of crossing the parents
@@ -536,6 +614,7 @@ class Genetics_Algorithm:
         
         #we return the flattened path ( a typical python list or ndarray)
         return result
+<<<<<<< HEAD
     
     '''
     WORKS
@@ -576,11 +655,21 @@ class Genetics_Algorithm:
         self.indicative_paths_population = self.initial_population_generation()
         self.real_paths_population = self.get_real_population_from_indicative_population(self.indicative_paths_population)
         #print("POP INIT:\n",self.indicative_paths_population)
+=======
+
+    def run_genetics_algorithm(self):
+
+        #generating the initial population
+        self.indicative_paths_population = self.initial_population_generation_V2()
+        self.real_paths_population = self.get_real_population_from_indicative_population(self.indicative_paths_population)
+
+>>>>>>> Algo genetique V1
         #declaring the number of parents and thus, the number of children
         nbr_parents = self.nb_individuals_in_pop // 2
         nbr_enfants = self.nb_individuals_in_pop - nbr_parents
 
         for _ in range(self.nb_generations):
+<<<<<<< HEAD
             print("iter",_)
                 #evaluating the fitness of the current population
             #fitness = self.fitness_calculation()
@@ -599,12 +688,18 @@ class Genetics_Algorithm:
             
             #exit()
 
+=======
+            
+                #evaluating the fitness of the current population
+            fitness = self.fitness_calculation()
+>>>>>>> Algo genetique V1
                 #---for testing
             if _ == 0:
                 print("fitness initiale\n",fitness)
             #print("iter ",_)
                 #---
                 #selecting the best individuals to use them as parents
+<<<<<<< HEAD
             #parents = self.selection(fitness,nbr_parents)
 
             parents = self.selection_with_pareto(fitness,nbr_parents)
@@ -614,6 +709,9 @@ class Genetics_Algorithm:
 
             #exit()
 
+=======
+            parents = self.selection(fitness,nbr_parents)
+>>>>>>> Algo genetique V1
             #print("paretns OK")
                 #crossing the parents to get children
             children = self.crossing(parents, nbr_enfants)
@@ -630,6 +728,7 @@ class Genetics_Algorithm:
             self.real_paths_population = new_real_population
 
         #evaluating the fitness of the final population
+<<<<<<< HEAD
         #fitness_finale = self.fitness_calculation()
         fitness_finale = self.fitness_2()
         print(fitness_finale)
@@ -661,6 +760,20 @@ class Genetics_Algorithm:
         #    print(self.flatten_result_path(elem1))
         #    print(elem2)
         #    print("---")
+=======
+        fitness_finale = self.fitness_calculation()
+        print(fitness_finale)
+        #retrieving the optimal fitness of the population
+        optimal_fitness = np.where(fitness_finale == np.min(fitness_finale))[0][0]
+
+        #getting the associated individual from the indicative population
+        res_of_algo = self.indicative_paths_population[optimal_fitness]
+
+        #flattening the individual so he's usable when we return him
+        algorithm_output = []
+        for elem in res_of_algo:
+            algorithm_output.append(self.flatten_result_path(elem))
+>>>>>>> Algo genetique V1
 
         #print("res algo\n",algorithm_output)
         
@@ -723,7 +836,11 @@ if __name__ == "__main__":
         [(9, 0),     (9, 0, 1), (9, 0, 1, 2), (9, 0, 1, 2, 3), (9, 0, 4), (9, 5),  (9, 0, 1, 2, 6), (9, 0, 7), (9, 0, 1, 8), (9,)]
     ]
     '''
+<<<<<<< HEAD
     
+=======
+    '''
+>>>>>>> Algo genetique V1
     simple_graph = [[0, 269, 194, 41, 4, 145, 110, 164, 159, 62, 4, 70, 63, 94, 4, 69, 144, 40, 115, 66, 186, 142, 154, 97, 285, 188, 214, 300, 77, 86, 117, 191, 98, 236, 289, 62, 212, 216, 152, 35, 190, 164, 109, 154, 85, 83, 168, 191, 12, 242],
         [206, 0, 218, 232, 48, 153, 71, 36, 202, 299, 12, 75, 5, 155, 201, 290, 144, 37, 160, 114, 26, 5, 247, 140, 11, 263, 24, 160, 184, 52, 47, 183, 75, 22, 93, 128, 258, 134, 29, 71, 23, 173, 208, 207, 111, 149, 190, 25, 297, 61],
         [14, 40, 0, 279, 81, 44, 130, 180, 191, 71, 287, 53, 202, 98, 95, 137, 290, 214, 102, 116, 17, 212, 124, 75, 130, 80, 71, 237, 188, 63, 47, 264, 60, 75, 181, 125, 168, 206, 292, 20, 213, 108, 268, 67, 34, 199, 146, 149, 33, 225],
@@ -827,11 +944,19 @@ if __name__ == "__main__":
         [(48, 23, 2, 0), (48, 37, 1), (48, 23, 2), (48, 37, 1, 21, 9, 49, 19, 3), (48, 23, 2, 0, 4), (48, 37, 5), (48, 37, 16, 6), (48, 23, 17, 22, 7), (48, 37, 1, 21, 34, 8), (48, 37, 1, 21, 9), (48, 37, 1, 10), (48, 37, 1, 21, 9, 11), (48, 37, 1, 12), (48, 37, 1, 21, 13), (48, 37, 1, 12, 14), (48, 37, 1, 10, 15), (48, 37, 16), (48, 23, 17), (48, 18), (48, 37, 1, 21, 9, 49, 19), (48, 20), (48, 37, 1, 21), (48, 23, 17, 22), (48, 23), (48, 37, 1, 24), (48, 37, 1, 21, 9, 49, 25), (48, 37, 1, 26), (48, 37, 1, 21, 13, 27), (48, 37, 1, 12, 14, 28), (48, 37, 1, 21, 29), (48, 37, 1, 21, 9, 11, 30), (48, 38, 31), (48, 37, 1, 21, 9, 49, 25, 32), (48, 37, 1, 33), (48, 37, 1, 21, 34), (48, 37, 1, 21, 9, 49, 25, 32, 35), (48, 37, 1, 21, 9, 11, 36), (48, 37), (48, 38), (48, 37, 1, 21, 9, 11, 39), (48, 40), (48, 18, 41), (48, 37, 1, 21, 34, 42), (48, 37, 1, 21, 9, 49, 19, 3, 43), (48, 37, 1, 21, 44), (48, 37, 45), (48, 37, 1, 21, 13, 27, 46), (48, 37, 1, 21, 9, 49, 19, 3, 47), (48,), (48, 37, 1, 21, 9, 49)],
         [(49, 19, 23, 2, 0), (49, 37, 1), (49, 19, 23, 2), (49, 19, 3), (49, 19, 3, 4), (49, 25, 32, 46, 5), (49, 19, 6), (49, 19, 3, 34, 8, 17, 22, 7), (49, 19, 3, 34, 8), (49, 37, 1, 21, 9), (49, 19, 10), (49, 19, 3, 34, 8, 17, 39, 11), (49, 37, 1, 12), (49, 37, 1, 21, 13), (49, 19, 44, 14), (49, 19, 10, 15), (49, 37, 16), (49, 19, 3, 34, 8, 17), (49, 37, 1, 21, 9, 18), (49, 19), (49, 37, 45, 20), (49, 37, 1, 21), (49, 19, 3, 34, 8, 17, 22), (49, 19, 23), (49, 19, 3, 34, 26, 24), (49, 25), (49, 19, 3, 34, 26), (49, 19, 3, 43, 29, 27), (49, 25, 28), (49, 19, 3, 43, 29), (49, 19, 3, 34, 8, 17, 39, 11, 30), (49, 19, 31), (49, 25, 32), (49, 37, 1, 33), (49, 19, 3, 34), (49, 25, 32, 35), (49, 19, 3, 34, 8, 17, 39, 11, 36), (49, 37), (49, 19, 3, 34, 42, 48, 38), (49, 19, 3, 34, 8, 17, 39), (49, 37, 1, 40), (49, 37, 1, 21, 9, 18, 41), (49, 19, 3, 34, 42), (49, 19, 3, 43), (49, 19, 44), (49, 37, 45), (49, 25, 32, 46), (49, 19, 3, 47), (49, 19, 3, 34, 42, 48), (49,)]
     ] 
+<<<<<<< HEAD
 
     #faire un test avec une 50x50 et voir !!!
 
     '''test musée orsay '''
     '''
+=======
+    '''
+    #faire un test avec une 50x50 et voir !!!
+
+    '''test musée orsay '''
+    
+>>>>>>> Algo genetique V1
     simple_graph = [
         [0.0, 54.0, 129.0, 183.0, 267.0, 311.0, 164.0, 264.0, 257.0, 208.0, 134.0, 176.0, 269.0, 169.0, 262.0, 227.00537618869137, 206.0, 299.0, 172.0, 215.0, 281.0, 406.0, 342.0, 270.0, 578.0016834969122, 713.0016834969122, 627.0016834969122, 850.0016834969122, 936.0016834969122, 391.0, 318.0, 246.0, 304.0, 381.0, 309.0, 347.0, 100.0, 164.0, 54.0, 537.0, 227.0, 499.0, 575.0, 455.0, 531.0, 494.0, 566.0, 637.0, 708.0, 597.0, 526.0, 610.0, 752.0, 681.0, 376.0, 746.0, 747.0, 686.0, 605.0, 534.0, 464.0, 522.0, 593.0, 664.0, 668.0, 803.0016834969122, 694.0016834969122, 906.0016834969122, 791.0016834969122, 740.0016834969122, 939.0016834969122, 1032.0016834969122, 1028.0016834969122],
         [54.0, 0.0, 183.0, 129.0, 213.0, 257.0, 110.0, 210.0, 203.0, 154.0, 188.0, 230.0, 323.0, 223.0, 316.0, 281.00537618869134, 260.0, 353.0, 226.0, 269.0, 335.0, 460.0, 396.0, 324.0, 632.0016834969122, 767.0016834969122, 681.0016834969122, 904.0016834969122, 990.0016834969122, 445.0, 372.0, 300.0, 358.0, 435.0, 363.0, 401.0, 154.0, 218.0, 108.0, 591.0, 281.0, 445.0, 521.0, 401.0, 477.0, 548.0, 620.0, 691.0, 762.0, 651.0, 580.0, 664.0, 806.0, 735.0, 430.0, 800.0, 801.0, 740.0, 659.0, 588.0, 518.0, 576.0, 647.0, 718.0, 722.0, 857.0016834969122, 748.0016834969122, 960.0016834969122, 845.0016834969122, 794.0016834969122, 993.0016834969122, 1086.0016834969122, 1082.0016834969122],
@@ -983,12 +1108,20 @@ if __name__ == "__main__":
         [(71, 70, 65, 66, 24, 20, 19, 18, 36, 38, 0), (71, 70, 65, 66, 24, 20, 19, 18, 36, 38, 0, 1), (71, 70, 65, 66, 24, 20, 19, 18, 36, 38, 0, 2), (71, 70, 65, 66, 24, 20, 19, 18, 36, 38, 0, 1, 3), (71, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37, 9, 6, 4), (71, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37, 9, 8, 5), (71, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37, 9, 6), (71, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37, 9, 7), (71, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37, 9, 8), (71, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37, 9), (71, 70, 65, 66, 24, 20, 19, 18, 36, 10), (71, 70, 65, 66, 24, 20, 19, 18, 36, 10, 11), (71, 70, 65, 66, 24, 20, 19, 18, 16, 13, 10, 11, 12), (71, 70, 65, 66, 24, 20, 19, 18, 16, 13), (71, 70, 65, 66, 24, 20, 19, 18, 16, 13, 14), (71, 70, 65, 66, 24, 20, 19, 18, 16, 13, 10, 15), (71, 70, 65, 66, 24, 20, 19, 18, 16), (71, 70, 65, 66, 24, 20, 19, 18, 16, 17), (71, 70, 65, 66, 24, 20, 19, 18), (71, 70, 65, 66, 24, 20, 19), (71, 70, 65, 66, 24, 20), (71, 70, 65, 66, 24, 20, 21), (71, 70, 65, 66, 24, 20, 19, 23, 22), (71, 70, 65, 66, 24, 20, 19, 23), (71, 70, 65, 66, 24), (71, 70, 65, 66, 24, 26, 25), (71, 70, 65, 66, 24, 26), (71, 70, 65, 66, 24, 26, 27), (71, 70, 65, 66, 24, 26, 25, 28), (71, 70, 65, 57, 58, 59, 60, 29), (71, 70, 65, 57, 58, 59, 60, 29, 30), (71, 70, 65, 57, 58, 59, 60, 29, 30, 31), (71, 70, 65, 57, 58, 59, 60, 29, 30, 31, 32), (71, 70, 65, 57, 58, 59, 60, 29, 30, 33), (71, 70, 65, 57, 58, 59, 60, 29, 30, 31, 34), (71, 70, 65, 57, 58, 59, 60, 29, 30, 33, 35), (71, 70, 65, 66, 24, 20, 19, 18, 36), (71, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37), (71, 70, 65, 66, 24, 20, 19, 18, 36, 38), (71, 70, 65, 67, 48, 47, 46, 45, 39), (71, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37, 40), (71, 70, 65, 57, 58, 59, 60, 29, 45, 44, 42, 41), (71, 70, 65, 57, 58, 59, 60, 29, 45, 44, 42), (71, 70, 65, 57, 58, 59, 60, 29, 45, 44, 43), (71, 70, 65, 57, 58, 59, 60, 29, 45, 44), (71, 70, 65, 57, 58, 59, 60, 29, 45), (71, 70, 65, 67, 48, 47, 46), (71, 70, 65, 67, 48, 47), (71, 70, 65, 67, 48), (71, 70, 65, 57, 58, 59, 49), (71, 70, 65, 57, 58, 59, 60, 50), (71, 70, 65, 67, 48, 47, 46, 51), (71, 70, 65, 67, 48, 52), (71, 70, 65, 67, 48, 47, 53), (71, 70, 65, 57, 58, 59, 60, 29, 30, 54), (71, 70, 65, 57, 55), (71, 70, 65, 57, 56), (71, 70, 65, 57), (71, 70, 65, 57, 58), (71, 70, 65, 57, 58, 59), (71, 70, 65, 57, 58, 59, 60), (71, 70, 65, 57, 58, 59, 60, 61), (71, 70, 65, 57, 58, 59, 62), (71, 70, 65, 57, 58, 63), (71, 70, 65, 57, 58, 64), (71, 70, 65), (71, 70, 65, 66), (71, 70, 65, 67), (71, 70, 65, 66, 69, 68), (71, 70, 65, 66, 69), (71, 70), 0, (71, 70, 72)],
         [(72, 70, 65, 66, 24, 20, 19, 18, 36, 38, 0), (72, 70, 65, 66, 24, 20, 19, 18, 36, 38, 0, 1), (72, 70, 65, 66, 24, 20, 19, 18, 36, 38, 0, 2), (72, 70, 65, 66, 24, 20, 19, 18, 36, 38, 0, 1, 3), (72, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37, 9, 6, 4), (72, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37, 9, 8, 5), (72, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37, 9, 6), (72, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37, 9, 7), (72, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37, 9, 8), (72, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37, 9), (72, 70, 65, 66, 24, 20, 19, 18, 36, 10), (72, 70, 65, 66, 24, 20, 19, 18, 36, 10, 11), (72, 70, 65, 66, 24, 20, 19, 18, 16, 13, 10, 11, 12), (72, 70, 65, 66, 24, 20, 19, 18, 16, 13), (72, 70, 65, 66, 24, 20, 19, 18, 16, 13, 14), (72, 70, 65, 66, 24, 20, 19, 18, 16, 13, 10, 15), (72, 70, 65, 66, 24, 20, 19, 18, 16), (72, 70, 65, 66, 24, 20, 19, 18, 16, 17), (72, 70, 65, 66, 24, 20, 19, 18), (72, 70, 65, 66, 24, 20, 19), (72, 70, 65, 66, 24, 20), (72, 70, 65, 66, 24, 20, 21), (72, 70, 65, 66, 24, 20, 19, 23, 22), (72, 70, 65, 66, 24, 20, 19, 23), (72, 70, 65, 66, 24), (72, 70, 65, 66, 24, 26, 25), (72, 70, 65, 66, 24, 26), (72, 70, 65, 66, 24, 26, 27), (72, 70, 65, 66, 24, 26, 25, 28), (72, 70, 65, 57, 58, 59, 60, 29), (72, 70, 65, 57, 58, 59, 60, 29, 30), (72, 70, 65, 57, 58, 59, 60, 29, 30, 31), (72, 70, 65, 57, 58, 59, 60, 29, 30, 31, 32), (72, 70, 65, 57, 58, 59, 60, 29, 30, 33), (72, 70, 65, 57, 58, 59, 60, 29, 30, 31, 34), (72, 70, 65, 57, 58, 59, 60, 29, 30, 33, 35), (72, 70, 65, 66, 24, 20, 19, 18, 36), (72, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37), (72, 70, 65, 66, 24, 20, 19, 18, 36, 38), (72, 70, 65, 67, 48, 47, 46, 45, 39), (72, 70, 65, 57, 58, 59, 60, 29, 30, 31, 37, 40), (72, 70, 65, 57, 58, 59, 60, 29, 45, 44, 42, 41), (72, 70, 65, 57, 58, 59, 60, 29, 45, 44, 42), (72, 70, 65, 57, 58, 59, 60, 29, 45, 44, 43), (72, 70, 65, 57, 58, 59, 60, 29, 45, 44), (72, 70, 65, 57, 58, 59, 60, 29, 45), (72, 70, 65, 67, 48, 47, 46), (72, 70, 65, 67, 48, 47), (72, 70, 65, 67, 48), (72, 70, 65, 57, 58, 59, 49), (72, 70, 65, 57, 58, 59, 60, 50), (72, 70, 65, 67, 48, 47, 46, 51), (72, 70, 65, 67, 48, 52), (72, 70, 65, 67, 48, 47, 53), (72, 70, 65, 57, 58, 59, 60, 29, 30, 54), (72, 70, 65, 57, 55), (72, 70, 65, 57, 56), (72, 70, 65, 57), (72, 70, 65, 57, 58), (72, 70, 65, 57, 58, 59), (72, 70, 65, 57, 58, 59, 60), (72, 70, 65, 57, 58, 59, 60, 61), (72, 70, 65, 57, 58, 59, 62), (72, 70, 65, 57, 58, 63), (72, 70, 65, 57, 58, 64), (72, 70, 65), (72, 70, 65, 66), (72, 70, 65, 67), (72, 70, 65, 66, 69, 68), (72, 70, 65, 66, 69), (72, 70), (72, 70, 71), 0]
     ]
+<<<<<<< HEAD
     '''
     #500, 5, 10, 10
     
     AG = Genetics_Algorithm(200, 10, 15, 50, simple_graph, shortest_way_mat) #nb generations, nb agents, individus par population, nb nodes dans le graphe (= nb de gènes dans l'individu), output de compute_matrix
     start = time.time()
     res = AG.launch()
+=======
+    #500, 5, 10, 10
+    
+    AG = Genetics_Algorithm(100, 35, 20, 72, simple_graph, shortest_way_mat) #nb generations, nb agents, individus par population, nb nodes dans le graphe (= nb de gènes dans l'individu), output de compute_matrix
+    start = time.time()
+    res = AG.run_genetics_algorithm()
+>>>>>>> Algo genetique V1
     end = time.time()-start
     print("REs algo G:")
     for elem in res:
