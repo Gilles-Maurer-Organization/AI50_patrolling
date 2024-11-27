@@ -1,5 +1,6 @@
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, PARAMETERS_WINDOW_WIDTH
 from controllers.ScrollingListController import ScrollingListController
+from controllers.SimulationController import SimulationController
 from controllers.buttons.ButtonController import ButtonController
 from controllers.buttons.StartButtonController import StartButtonController
 from controllers.text_boxes.AlgorithmParametersController import AlgorithmParametersController
@@ -8,9 +9,9 @@ from views.ParametersView import ParametersView
 
 
 class ParametersController:
-    def __init__(self, screen, graph_controller, file_explorer_controller) -> None:
+    def __init__(self, screen, graph_controller, file_explorer_controller, simulation_controller: SimulationController) -> None:
         # Centralisation de l'état de simulation dans ParametersController
-        self.simulation_started = False
+        self.simulation_controller = simulation_controller
 
         # Création de la vue des paramètres avec un sous-écran
         self.parameters_view = ParametersView(
@@ -19,7 +20,7 @@ class ParametersController:
         # Initialisation des différents contrôleurs avec self passé à StartButtonController
         self.graph_controller = graph_controller
         self.button_controller = ButtonController(self.parameters_view, graph_controller, file_explorer_controller)
-        self.start_button_controller = StartButtonController(self.parameters_view, graph_controller, self)
+        self.start_button_controller = StartButtonController(self.parameters_view, graph_controller, simulation_controller)
         self.text_box_controller = TextBoxController(self.parameters_view)
         self.scrolling_list_controller = ScrollingListController(self.parameters_view)
         self.algorithm_parameters_controller = AlgorithmParametersController(self.parameters_view)
@@ -116,11 +117,3 @@ class ParametersController:
         else:
             self.disable_start_button()
 
-    def update_simulation(self):
-        for i, agent in enumerate(self.start_button_controller.agents):
-            agent.move()
-
-    def draw_simulation(self):
-        if self.simulation_started:
-            self.update_simulation()
-            self.graph_controller.graph_view.draw_simulation(self.start_button_controller.agents)

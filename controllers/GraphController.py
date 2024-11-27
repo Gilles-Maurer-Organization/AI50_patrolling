@@ -6,6 +6,7 @@ import pygame
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, NODE_RADIUS
 from controllers.EdgeController import EdgeController
 from controllers.NodeController import NodeController
+from models.Agent import Agent
 from models.Graph import Graph
 from services import IImageService
 from services.ICSVService import ICSVService
@@ -185,3 +186,9 @@ class GraphController:
 
     def graph_has_an_image(self) -> bool:
         return self.graph_view.has_an_image()
+    
+    def draw_simulation(self, agents: list[Agent]) -> None:
+        self.graph_view.draw_simulation(agents)
+    
+    def get_graph(self) -> Graph:
+        return self.graph
