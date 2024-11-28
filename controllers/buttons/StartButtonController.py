@@ -67,7 +67,6 @@ class StartButtonController(BaseButtonController):
             success = self._compute_store_and_save_graph_data()
             if success:
                 self._launch_algorithm()
-                self.graph_controller.raise_info('Algorithm launched')
             else:
                 self.graph_controller.raise_error_message('The graph must not have isolated subgraphs')
         
@@ -75,13 +74,11 @@ class StartButtonController(BaseButtonController):
             success = self._compute_store_and_save_graph_data()
             if success:
                 self._launch_algorithm()
-                self.graph_controller.raise_info('Algorithm launched')
             else:
                 self.graph_controller.raise_error_message('The graph must not have isolated subgraphs')
 
         elif self.graph_controller.are_complements_saved():
             self._launch_algorithm()
-            self.graph_controller.raise_info('Algorithm launched')
 
     def _compute_store_and_save_graph_data(self):
         complete_graph, shortest_paths = self.compute_complete_graph_and_shortest_paths()
@@ -102,6 +99,8 @@ class StartButtonController(BaseButtonController):
         # paths = selected_algorithm.launch()
         # passer paths à la simulation
         print("Launching algorithm with complete graph", selected_algorithm)
+    
+        #self.graph_controller.raise_message('Simulation started')
             
     def compute_complete_graph_and_shortest_paths(self):
         simple_graph, node_positions = self.graph_controller.graph.compute_matrix()

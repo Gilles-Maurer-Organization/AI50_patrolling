@@ -6,3 +6,6 @@ class ErrorPopupView(PopupView):
         super().__init__(screen, message)
         self._bg_color = Colors.POPUP_ERROR_COLOR.value
 
+        self._icon_path = "assets/popup/error.png"
+        self._load_icon()
+

@@ -6,3 +6,6 @@ class InfoPopupView(PopupView):
         super().__init__(screen, message)
         self._bg_color = Colors.POPUP_INFO_COLOR.value
 
+        self._icon_path = "assets/popup/information.png"
+        self._load_icon()
+

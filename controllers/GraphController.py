@@ -267,3 +267,10 @@ class GraphController:
         This method triggers an error popup with a specific message.
         """
         self.graph_view.show_info_popup(message)
+
+    
+    def raise_message(self, message: str) -> None:
+        """
+        This method triggers an error popup with a specific message.
+        """
+        self.graph_view.show_popup(message)

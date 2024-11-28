@@ -32,6 +32,6 @@ class Colors(Enum):
     AGENT_COLOR = (255, 0, 0)
 
     # Related to popup
-    POPUP_ERROR_COLOR = (245, 34, 45, 200)
-    POPUP_INFO_COLOR = (250, 140, 22, 200)
-    POPUP_COLOR = (82, 196, 26, 200)
+    POPUP_ERROR_COLOR = (245, 34, 45, 215)
+    POPUP_INFO_COLOR = (250, 140, 22, 215)
+    POPUP_COLOR = (82, 196, 26, 215)
