@@ -2,11 +2,10 @@ from constants.Colors import Colors
 from controllers.ScrollingListController import ScrollingListController
 from controllers.SimulationController import SimulationController
 from controllers.buttons.BaseButtonController import BaseButtonController
+from controllers.GraphController import GraphController
 from models.Button import Button
 from services.AStarService import AStarService
-from services.ICompleteGraphService import ICompleteGraphService
 from views.ButtonView import ButtonView
-from services.ICSVService import ICSVService
 
 class StartButtonController(BaseButtonController):
     def __init__(self,
@@ -22,6 +21,7 @@ class StartButtonController(BaseButtonController):
         self.csv_service = csv_service
         self._scrolling_list_controller = scrolling_list_controller
         self._simulation_controller = simulation_controller
+        self._scrolling_list_controller = scrolling_list_controller
 
         self.start_button = Button("Start simulation", self.start_action, enabled=False)
 

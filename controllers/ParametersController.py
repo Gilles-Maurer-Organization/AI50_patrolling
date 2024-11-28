@@ -5,8 +5,6 @@ from controllers.buttons.ButtonController import ButtonController
 from controllers.buttons.StartButtonController import StartButtonController
 from controllers.text_boxes.AlgorithmParametersController import AlgorithmParametersController
 from controllers.text_boxes.TextBoxController import TextBoxController
-from controllers.GraphController import GraphController
-from services.CompleteGraphService import CompleteGraphService
 from views.ParametersView import ParametersView
 
 
