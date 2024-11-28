@@ -1,12 +1,12 @@
 from controllers.text_boxes.BaseTextBoxController import BaseTextBoxController
-from models.algorithms.Algorithm import Algorithm
+from models.algorithms.AlgorithmModel import AlgorithmModel
 from views.text_boxes.AlgorithmParametersView import AlgorithmParametersView
 
 class AlgorithmParametersController(BaseTextBoxController):
     def __init__(self, parameters_view):
         super().__init__(parameters_view)
 
-    def handle_selected_algorithm(self, algorithm: Algorithm):
+    def handle_selected_algorithm(self, algorithm: AlgorithmModel):
         '''
         Cette méthode met à jour les paramètres de l'algorithme sélectionné et initialise les zones de texte correspondantes.
         '''

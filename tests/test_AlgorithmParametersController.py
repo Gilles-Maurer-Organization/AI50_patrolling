@@ -3,7 +3,7 @@ import pygame
 
 from unittest.mock import MagicMock, patch
 from controllers.text_boxes.AlgorithmParametersController import AlgorithmParametersController
-from models.algorithms.AntColonyAlgorithm import AntColonyAlgorithm
+from models.algorithms.AntColony import AntColony
 
 class TestAlgorithmParametersController(unittest.TestCase):
     @classmethod
@@ -12,7 +12,7 @@ class TestAlgorithmParametersController(unittest.TestCase):
         pygame.init()
 
     def test_default_parameters(self):
-        algorithm = AntColonyAlgorithm()
+        algorithm = AntColony()
         
         # We check if the value of the parameters are indeed
         # the one by default with the empty constructor 
@@ -22,7 +22,7 @@ class TestAlgorithmParametersController(unittest.TestCase):
         self.assertEqual(algorithm.parameters["Tau"].text_content, "0.2")
 
     def test_custom_parameters(self):
-        algorithm = AntColonyAlgorithm(alpha=0.5, beta=0.7)
+        algorithm = AntColony(alpha=0.5, beta=0.7)
         
         # We check if the parameters passed in the constructor are indeed
         # modified in the instantiation of the text boxes
@@ -38,7 +38,7 @@ class TestAlgorithmParametersController(unittest.TestCase):
         controller = AlgorithmParametersController(parameters_view=mock_parameters_view)
         
         # We create an instantiation of the ant colony algorithm class
-        algorithm = AntColonyAlgorithm()
+        algorithm = AntColony()
         
         # We call the method that we want to test
         controller.handle_selected_algorithm(algorithm)
@@ -51,7 +51,7 @@ class TestAlgorithmParametersController(unittest.TestCase):
         # text boxes must stay the same as before, and not duplicating
         self.assertEqual(len(controller.text_boxes), 4)
         
-        # We verify that the AntColonyAlgorithm class been instantiated with the good parameters
+        # We verify that the AntColony class been instantiated with the good parameters
         expected_calls = [
             unittest.mock.call(
                 mock_parameters_view.screen,

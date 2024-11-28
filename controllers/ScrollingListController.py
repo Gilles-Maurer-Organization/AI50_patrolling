@@ -4,10 +4,10 @@ from views.ScrollingListView import ScrollingListView
 
 from models.ScrollingList import ScrollingList
 
-from models.algorithms.Algorithm import Algorithm
-from models.algorithms.NaiveAlgorithm import NaiveAlgorithm
-from models.algorithms.EvolutionalAlgorithm import EvolutionalAlgorithm
-from models.algorithms.AntColonyAlgorithm import AntColonyAlgorithm
+from models.algorithms.AlgorithmModel import AlgorithmModel
+from models.algorithms.Naive import Naive
+from models.algorithms.Evolutional import Evolutional
+from models.algorithms.AntColony import AntColony
 
 import pygame
 
@@ -15,7 +15,7 @@ class ScrollingListController:
     def __init__(self, parameters_view) -> None:
         self.parameters_view = parameters_view
         self.scrolling_list = ScrollingList(
-            [NaiveAlgorithm(), EvolutionalAlgorithm(), AntColonyAlgorithm()]
+            [Naive(), Evolutional(), AntColony()]
         )
         self.scrolling_list_view = ScrollingListView(parameters_view.screen, 10, 110, 290, 40)
 
@@ -93,5 +93,5 @@ class ScrollingListController:
         self.scrolling_list_view.set_active(False)
         return False
 
-    def get_selected_algorithm(self) -> Algorithm:
+    def get_selected_algorithm(self) -> AlgorithmModel:
         return self.scrolling_list.get_selected_algorithm()
