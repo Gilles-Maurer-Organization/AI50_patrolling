@@ -1,4 +1,5 @@
 from constants.Colors import Colors
+from controllers.ScrollingListController import ScrollingListController
 from controllers.SimulationController import SimulationController
 from controllers.buttons.BaseButtonController import BaseButtonController
 from controllers.GraphController import GraphController
@@ -10,9 +11,18 @@ from views.ButtonView import ButtonView
 from services.ICSVService import ICSVService
 
 class StartButtonController(BaseButtonController):
-    def __init__(self, parameters_view, graph_controller, simulation_controller: SimulationController) -> None:
+    def __init__(self,
+                 parameters_view,
+                 graph_controller,
+                 simulation_controller: SimulationController,
+                 scrolling_list_controller: ScrollingListController,
+                 complete_graph_service: ICompleteGraphService,
+                 csv_service: ICSVService) -> None:
         super().__init__(parameters_view, graph_controller)
 
+        self.complete_graph_service = complete_graph_service
+        self.csv_service = csv_service
+        self._scrolling_list_controller = scrolling_list_controller
         self._simulation_controller = simulation_controller
 
         self.start_button = Button("Start simulation", self.start_action, enabled=False)
@@ -73,7 +83,7 @@ class StartButtonController(BaseButtonController):
         self.graph_controller.save_complements(complete_graph, shortest_paths)
 
     def _launch_algorithm(self):
-        selected_algorithm = self.parameters_controller.scrolling_list_controller.get_selected_algorithm()
+        selected_algorithm = self._scrolling_list_controller.get_selected_algorithm()
         
         # TODO: interface for all the algorithm that owns a launch() method, that all the algorithm implement
         # paths = selected_algorithm.launch()

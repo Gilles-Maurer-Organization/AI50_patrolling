@@ -19,7 +19,8 @@ class ViewController:
         self.parameters_controller = ParametersController(self.screen,
                                                           self.graph_controller,
                                                           self.file_explorer_controller,
-                                                          self.simulation_controller)
+                                                          self.simulation_controller,
+                                                          csv_service)
 
     def handle_actions(self, event) -> None:
         if not self.file_explorer_controller.is_file_explorer_opened():
