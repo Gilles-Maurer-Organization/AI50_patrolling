@@ -2,8 +2,6 @@ from constants.Colors import Colors
 from controllers.ScrollingListController import ScrollingListController
 from controllers.SimulationController import SimulationController
 from controllers.buttons.BaseButtonController import BaseButtonController
-from controllers.GraphController import GraphController
-from models.Agent import Agent
 from models.Button import Button
 from services.AStarService import AStarService
 from services.ICompleteGraphService import ICompleteGraphService
@@ -91,7 +89,6 @@ class StartButtonController(BaseButtonController):
         print("Launching algorithm with complete graph", selected_algorithm)
             
     def compute_complete_graph_and_shortest_paths(self):
-
         simple_graph, node_positions = self.graph_controller.graph.compute_matrix()
         complete_graph = self.complete_graph_service(
             simple_graph=simple_graph,
@@ -99,8 +96,6 @@ class StartButtonController(BaseButtonController):
             path_finding_service=AStarService
         ).get_complete_graph()
 
-        # TODO: Check if the gomplete graph is None, and if it is the case,
-        # create a pop-up to the user interface
         shortest_paths = {}
         for start in range(len(simple_graph)):
             for end in range(len(simple_graph)):

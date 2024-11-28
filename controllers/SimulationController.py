@@ -1,7 +1,6 @@
 from controllers.GraphController import GraphController
 from models.Agent import Agent
 
-
 class SimulationController:
     def __init__(self, graph_controller: GraphController) -> None:
         self._agents = None
