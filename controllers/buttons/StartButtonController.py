@@ -2,10 +2,12 @@ from constants.Colors import Colors
 from controllers.ScrollingListController import ScrollingListController
 from controllers.SimulationController import SimulationController
 from controllers.buttons.BaseButtonController import BaseButtonController
-from controllers.GraphController import GraphController
 from models.Button import Button
 from services.AStarService import AStarService
+from services.ICompleteGraphService import ICompleteGraphService
 from views.ButtonView import ButtonView
+from services.ICSVService import ICSVService
+
 
 class StartButtonController(BaseButtonController):
     def __init__(self,
@@ -93,6 +95,7 @@ class StartButtonController(BaseButtonController):
         return True
 
     def _launch_algorithm(self):
+        self.graph_controller.raise_info('Algorithm launched')
         selected_algorithm = self._scrolling_list_controller.get_selected_algorithm()
         
         # TODO: interface for all the algorithm that owns a launch() method, that all the algorithm implement
