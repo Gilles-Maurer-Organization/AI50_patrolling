@@ -4,13 +4,14 @@ import re
 import pygame
 
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, NODE_RADIUS
+from views.GraphView import GraphView
+from controllers.NodeController import NodeController
 from controllers.EdgeController import EdgeController
 from controllers.NodeController import NodeController
 from models.Agent import Agent
 from models.Graph import Graph
 from services import IImageService
 from services.ICSVService import ICSVService
-from views.GraphView import GraphView
 
 
 class GraphController:
@@ -23,6 +24,8 @@ class GraphController:
         self.csv_service = csv_service
         self.image_service = image_service
 
+        self.disable_mark = False
+
         # Initialize the view
         self.graph_view = GraphView(screen.subsurface((0, 0, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)))
 
@@ -33,6 +36,49 @@ class GraphController:
         # Load initial background image
         self.image_name = "image1.jpg"
         self.load_background_image(self.image_name)
+
+    def mark_graph_as_modified(func):
+        def wrapper(self, *args, **kwargs):
+            if not self.disable_mark:
+                result = func(self, *args, **kwargs)
+                self.graph.mark_as_modified()
+                return result
+            return func(self, *args, **kwargs)
+        return wrapper
+
+    @mark_graph_as_modified
+    def add_node(self, pos):
+        self.node_controller.add_node(pos)
+
+    @mark_graph_as_modified
+    def delete_node(self, node):
+        self.node_controller.delete_node(node)
+
+    @mark_graph_as_modified
+    def drag_node(self, pos):
+        self.node_controller.drag_node(pos)
+
+    @mark_graph_as_modified
+    def create_link(self, pos):
+        self.edge_controller.create_link(pos)
+
+    def select_node(self, node):
+        self.node_controller.select_node(node)
+        
+    def start_drag(self, pos):
+        self.node_controller.start_drag(pos)
+    
+    def end_drag(self):
+        self.node_controller.end_drag()
+
+    def clear_selection(self):
+        self.node_controller.clear_selection()
+
+    def is_graph_modified(self):
+        return self.graph.is_modified()
+    
+    def is_graph_empty(self):
+        return self.graph.is_empty()
 
     def load_background_image(self, image_name: str) -> None:
         """
@@ -52,6 +98,7 @@ class GraphController:
             print(f"Image {image_name} not found or could not be copied.")
             self.graph_view.set_background_image(None)
 
+
     def handle_event(self, event) -> None:
         """
         Handle user mouse events for graph interactions.
@@ -66,25 +113,25 @@ class GraphController:
                 self.handle_right_click(pos, node)
 
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-            self.node_controller.end_drag()
+            self.end_drag()
 
         if event.type == pygame.MOUSEMOTION and event.buttons[0]:
             if self.is_within_bounds(pos):
-                self.node_controller.drag_node(pos)
+                self.drag_node(pos)
 
     def handle_left_click(self, pos, node) -> None:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL] and node is not None:
-            self.node_controller.delete_node(node)
+            self.delete_node(node)
         else:
-            self.node_controller.clear_selection()
-            self.node_controller.start_drag(pos)
+            self.clear_selection()
+            self.start_drag(pos)
             if node is None and self.is_within_bounds(pos):
-                self.node_controller.add_node(pos)
+                self.add_node(pos)
 
     def handle_right_click(self, pos, node) -> None:
-        self.edge_controller.create_link(pos)
-        self.node_controller.select_node(node)
+        self.create_link(pos)
+        self.select_node(node)
 
     def is_within_bounds(self, pos) -> bool:
         return (NODE_RADIUS < pos[0] < GRAPH_WINDOW_WIDTH - NODE_RADIUS and
@@ -100,13 +147,11 @@ class GraphController:
         edges_matrix, nodes_list = self.graph.compute_matrix()
         self.csv_service.save(edges_matrix, nodes_list, self.image_name)
 
-    def load_graph(self, num_file) -> None:
-        edges_matrix, nodes_list = self.csv_service.load_from_num_file(num_file)
-        if edges_matrix and nodes_list:
-            self.graph.nodes = {i: coords for i, coords in enumerate(nodes_list)}
-            self.graph.edges = {(i, j) for i, row in enumerate(edges_matrix) for j, distance in enumerate(row) if distance > 0}
-            print("Edges matrix:", edges_matrix)
-            print("Nodes list:", nodes_list)
+    def save_complements(self, complete_graph, shortest_paths) -> None:
+        '''
+        This method saves the complete graph and shortest paths into the CSV file.
+        '''
+        self.csv_service.save_complements(complete_graph, shortest_paths, self.image_name)
 
     def clear_graph(self) -> None:
         self.graph.nodes.clear()
@@ -116,8 +161,9 @@ class GraphController:
         """
         Load a graph from a CSV file based on the file number, and update the graph with nodes and edges.
         """
-        edges_matrix, nodes_list = self.csv_service.load_from_num_file(file_number)
-        self._load_graph(edges_matrix, nodes_list)
+        edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths = self.csv_service.load_from_num_file(file_number)
+
+        self._load_graph(edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths)
 
     def import_graph_from_image(self, image_path) -> None:
         """
@@ -162,10 +208,11 @@ class GraphController:
 
         self.image_name = self.csv_service.get_image_name(csv_path).strip()
         self.load_background_image(self.image_name)
-        edges_matrix, nodes_list = self.csv_service.load(csv_path)
-        self._load_graph(edges_matrix, nodes_list)
+        edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths = self.csv_service.load(csv_path)
+        
+        self._load_graph(edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths)
 
-    def _load_graph(self, edges_matrix, nodes_list) -> None:
+    def _load_graph(self, edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths) -> None:
         """
         A helper method to load the nodes and edges into the graph, reducing duplication.
         """
@@ -179,6 +226,8 @@ class GraphController:
                         node1 = self.graph.nodes[i]
                         node2 = self.graph.nodes[j]
                         self.graph.add_edge(node1, node2)
+            self.store_complements_to_model(complete_adjacency_matrix, shortest_paths)
+
             self.update()
             print("Graph imported and displayed successfully.")
         else:
@@ -191,4 +240,14 @@ class GraphController:
         self.graph_view.draw_simulation(agents)
     
     def get_graph(self) -> Graph:
-        return self.graph
+        return self.graph    
+    def are_complements_saved(self):
+        return self.csv_service.are_complements_saved(self.image_name)
+
+    def store_complements_to_model(self, complete_adjacency_matrix, shortest_paths):
+        if complete_adjacency_matrix:
+            self.graph.set_complete_adjacency_matrix(complete_adjacency_matrix)
+            if not shortest_paths:
+                raise ValueError("Shortest paths are missing despite a complete adjacency matrix being present.")
+            else:
+                self.graph.set_shortest_paths(shortest_paths)

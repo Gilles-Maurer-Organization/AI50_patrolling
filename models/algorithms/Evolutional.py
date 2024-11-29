@@ -1,7 +1,7 @@
-from models.algorithms.Algorithm import Algorithm
+from models.algorithms.AlgorithmModel import AlgorithmModel
 from models.TextBox import TextBox
 
-class EvolutionalAlgorithm(Algorithm):
+class Evolutional(AlgorithmModel):
     def __init__(self, nb_iterations: int = 100, population_size: int = 10, nb_individuals: int = 10):
         super().__init__()
 

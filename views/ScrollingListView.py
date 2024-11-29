@@ -2,7 +2,7 @@ import pygame
 
 from constants.Colors import Colors
 from constants.Config import GRAPH_WINDOW_WIDTH
-from models.algorithms.Algorithm import Algorithm
+from models.algorithms.AlgorithmModel import AlgorithmModel
 
 
 class ScrollingListView:
@@ -28,7 +28,7 @@ class ScrollingListView:
         self.is_active = False
         self.options_rects = []
 
-    def draw(self, algorithms: list[Algorithm], selected_algorithm = None, has_an_algorithm_selected: bool = False) -> None:
+    def draw(self, algorithms: list[AlgorithmModel], selected_algorithm = None, has_an_algorithm_selected: bool = False) -> None:
         '''
         Cette méthode dessine les caractéristiques de la liste déroulante : header et options de la liste déroulante
         dans le cas où celle-ci est active (déroulée).
@@ -60,7 +60,7 @@ class ScrollingListView:
         text_rect = text.get_rect(center=(self.x + self.width / 2 - icon_to_draw.get_width() / 2, self.y + self.height / 2))
         self.screen.blit(text, text_rect)
 
-    def draw_options(self, algorithms: list[Algorithm]) -> None:
+    def draw_options(self, algorithms: list[AlgorithmModel]) -> None:
         '''
         Cette méthode affiche les options de la liste déroulante sous la tête de liste.
         '''

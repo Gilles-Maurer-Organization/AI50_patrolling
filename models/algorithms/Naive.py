@@ -1,6 +1,6 @@
-from models.algorithms.Algorithm import Algorithm
+from models.algorithms.AlgorithmModel import AlgorithmModel
 
-class NaiveAlgorithm(Algorithm):
+class Naive(AlgorithmModel):
     def __init__(self):
         super().__init__()
         self.parameters = {}

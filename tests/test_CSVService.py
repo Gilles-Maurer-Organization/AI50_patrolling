@@ -38,11 +38,11 @@ class TestCSVService(unittest.TestCase):
 
         # We define some random edges, nodes, image_path
         edges_matrix = [[0, 1], [1, 0]]
-        nodes_list = [(200, 100), (100, 200)]
+        nodes = {0 : (200, 100), 1 : (100, 200)}
         image_path = 'image2.jpg'
         
         # We call the save method to execute the functionality being tested
-        service.save(edges_matrix, nodes_list, image_path)
+        service.save(edges_matrix, nodes, image_path)
 
         # We assert that makedirs was called two times.
         # If not, it means that one directory has'nt been created: csv_files or references
@@ -82,14 +82,14 @@ class TestCSVService(unittest.TestCase):
 
         # We define some random edges, nodes, image_path
         edges_matrix = [[0, 1], [1, 0]]
-        nodes_list = [(200, 100), (100, 200)]
+        nodes = {0 : (200, 100), 1 : (100, 200)}
         image_path = 'image1.jpg'
 
         # We prepare a simulated content for the references.csv file
         mock_file.return_value.__iter__.return_value = iter([f"{image_path},graph_1.csv\n"])
         
         # We call the save method to execute the functionality being tested
-        service.save(edges_matrix, nodes_list, image_path)
+        service.save(edges_matrix, nodes, image_path)
 
         # We make sure that the initialize_directories method didn't create any folder
         self.assertEqual(mock_makedirs.call_count, 0, "No other directories must be created")
@@ -103,7 +103,7 @@ class TestCSVService(unittest.TestCase):
         # We verify that de services wrote Nodes, into the file
         handle.write.assert_any_call("Nodes,")
         # And we verify that for each node, the data writen is the correct one
-        for node in nodes_list:
+        for node in nodes.values():
             handle.write.assert_any_call(f'{node},')
         handle.write.assert_any_call("\n")
         
@@ -112,7 +112,7 @@ class TestCSVService(unittest.TestCase):
             handle.write.assert_any_call(",".join(str(cell) for cell in row) + "\n")
 
         # Finally, we verify the reference of the image
-        handle.write.assert_any_call(f'Image_ref,{image_path}')
+        handle.write.assert_any_call(f'Image_ref,{image_path}\n')
 
     @patch('builtins.open', new_callable=mock_open, read_data='image1.jpg,graph_1.csv\n')
     def test_find_csv_reference_found(self, mock_file):
@@ -150,6 +150,6 @@ class TestCSVService(unittest.TestCase):
         # We attempt to load data using index of 1, but the file doesn't exists in any case in the mock data.
         edges_matrix, nodes_list = service.load_from_num_file(1)
 
-        # We assert that both edges_matrix and nodes_list are None since the file does not exist.
+        # We assert that both edges_matrix and nodes are None since the file does not exist.
         self.assertIsNone(edges_matrix)
         self.assertIsNone(nodes_list)

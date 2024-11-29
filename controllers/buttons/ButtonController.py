@@ -1,5 +1,4 @@
 from constants.Colors import Colors
-from constants.Config import GRAPH_WINDOW_WIDTH
 
 from controllers.FileExplorerController import FileExplorerController
 from models.Button import Button

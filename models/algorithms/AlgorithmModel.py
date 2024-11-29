@@ -1,6 +1,4 @@
-from abc import ABC, abstractmethod
-
-class Algorithm:
+class AlgorithmModel:
     def __init__(self) -> None:
         '''
         This class is abstract and and serves as a base for other classes.

@@ -49,7 +49,7 @@ class NodeController:
             
             # On supprime les arêtes connectées
             for edge in edges_to_remove:
-                self.graph.edges.remove(edge)
+                del self.graph.edges[edge]
 
             # On supprime le noeud
             self.graph.nodes.remove(node)
@@ -68,6 +68,7 @@ class NodeController:
         '''
         Cette méthode termine le déplacement d'un noeud en supprimant sa référence.
         '''
+        self.graph.update_distances(self.dragging_node)
         self.dragging_node = None
 
     def drag_node(self, pos) -> None:
@@ -80,7 +81,6 @@ class NodeController:
         if self.dragging_node is not None:
             # On modifie les coordonnées du noeud que l'on déplace en fonction des coordonnées de la souris
             self.dragging_node.x, self.dragging_node.y = pos
-            
 
     def select_node(self, node: Node) -> None:
         '''

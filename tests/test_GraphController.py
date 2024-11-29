@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, MagicMock, patch
 
 import pygame
 
@@ -34,6 +34,8 @@ class TestGraphController(unittest.TestCase):
         self.graph_controller.graph_view = Mock(spec=GraphView)
         self.graph_controller.graph.nodes = []
         self.graph_controller.graph.edges = []
+
+        self.graph_controller._load_graph = MagicMock()
 
     def tearDown(self):
         # We quit pygame at the end of each test method
@@ -117,13 +119,13 @@ class TestGraphController(unittest.TestCase):
         # We configure the feedback of the load method of the CSV Service
         edges_matrix = [[0, 1], [1, 0]]
         nodes_list = [(50, 50), (100, 100)]
-        self.mock_csv_service.load_from_num_file.return_value = (edges_matrix, nodes_list)
+        complete_adjacency_matrix = []
+        shortest_paths = []
+        self.mock_csv_service.load_from_num_file.return_value = (edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths)
+
+        self.graph_controller.load_graph_from_csv(1)
         
-        # We call the load_graph() method 
-        self.graph_controller.load_graph(1)
-        
-        # We verify that the nodes of the graph have been loaded
-        self.assertEqual(self.graph_controller.graph.nodes, {0: (50, 50), 1: (100, 100)})
+        self.graph_controller._load_graph.assert_called_once_with(edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths)
 
     def test_clear_graph_remove_all_nodes_and_edges(self):
         # We create nodes

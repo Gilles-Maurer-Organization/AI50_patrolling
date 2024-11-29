@@ -5,11 +5,12 @@ from controllers.buttons.ButtonController import ButtonController
 from controllers.buttons.StartButtonController import StartButtonController
 from controllers.text_boxes.AlgorithmParametersController import AlgorithmParametersController
 from controllers.text_boxes.TextBoxController import TextBoxController
+from services.CompleteGraphService import CompleteGraphService
 from views.ParametersView import ParametersView
 
 
 class ParametersController:
-    def __init__(self, screen, graph_controller, file_explorer_controller, simulation_controller: SimulationController) -> None:
+    def __init__(self, screen, graph_controller, file_explorer_controller, simulation_controller: SimulationController, csv_service) -> None:
         # Centralisation de l'état de simulation dans ParametersController
         self.simulation_controller = simulation_controller
 
@@ -19,10 +20,17 @@ class ParametersController:
 
         # Initialisation des différents contrôleurs avec self passé à StartButtonController
         self.graph_controller = graph_controller
-        self.button_controller = ButtonController(self.parameters_view, graph_controller, file_explorer_controller)
-        self.start_button_controller = StartButtonController(self.parameters_view, graph_controller, simulation_controller)
+        self.button_controller = ButtonController(self.parameters_view,
+                                                  graph_controller,
+                                                  file_explorer_controller)
         self.text_box_controller = TextBoxController(self.parameters_view)
         self.scrolling_list_controller = ScrollingListController(self.parameters_view)
+        self.start_button_controller = StartButtonController(self.parameters_view,
+                                                             graph_controller,
+                                                             simulation_controller,
+                                                             self.scrolling_list_controller,
+                                                             CompleteGraphService,
+                                                             csv_service)
         self.algorithm_parameters_controller = AlgorithmParametersController(self.parameters_view)
 
         # Désactiver certains boutons si le graph n'a pas d'image
@@ -112,6 +120,7 @@ class ParametersController:
         if (
                 self.scrolling_list_controller.get_selected_algorithm() is not None
                 and self.text_box_controller.is_everything_filled()
+                and not self.graph_controller.is_graph_empty()
         ):
             self.enable_start_button()
         else:
