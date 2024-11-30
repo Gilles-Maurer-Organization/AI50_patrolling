@@ -11,3 +11,10 @@ class ICompleteGraphService(ABC):
         This method finds the shortest path between two nodes.
         '''
         pass
+
+    @abstractmethod
+    def get_complete_graph(self):
+        '''
+        This method returns the complete graph.
+        '''
+        pass
