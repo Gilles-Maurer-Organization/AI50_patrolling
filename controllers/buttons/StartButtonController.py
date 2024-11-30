@@ -1,38 +1,70 @@
 from constants.Colors import Colors
+from controllers.GraphController import GraphController
 from controllers.ScrollingListController import ScrollingListController
 from controllers.SimulationController import SimulationController
 from controllers.buttons.BaseButtonController import BaseButtonController
 from models.Button import Button
 from services.AStarService import AStarService
 from services.ICompleteGraphService import ICompleteGraphService
-from views.ButtonView import ButtonView
 from services.ICSVService import ICSVService
-
+from views.ButtonView import ButtonView
+from views.ParametersView import ParametersView
 
 class StartButtonController(BaseButtonController):
+    '''
+    This class manages the "Start simulation" button in the ParametersView and handles simulation-related actions.
+
+    Methods:
+        start_action() -> None:
+            Starts the simulation by initializing agents and launching the selected algorithm.
+        
+        _compute_store_and_save_graph_data() -> None:
+            Computes, stores, and saves the complete graph and shortest paths.
+        
+        _launch_algorithm() -> None:
+            Launches the selected algorithm and starts the simulation.
+        
+        compute_complete_graph_and_shortest_paths() -> Tuple[Dict, Dict]:
+            Computes the complete graph and shortest paths using A* algorithm.
+        
+        enable_start_button() -> None:
+            Enables the "Start simulation" button, allowing the user to start the simulation.
+        
+        disable_start_button() -> None:
+            Disables the "Start simulation" button, preventing the user from starting the simulation.
+        
+    Attributes:
+        _complete_graph_service (ICompleteGraphService): Service for computing the complete graph.
+        _csv_service (ICSVService): Service for handling CSV operations.
+        _scrolling_list_controller (ScrollingListController): Controller for managing the scrolling list view of algorithms.
+        _simulation_controller (SimulationController): Controller for handling simulation logic.
+        _start_button (Button): The "Start simulation" button.
+        _button_map (Dict[Button, ButtonView]): A map of Button objects to their corresponding ButtonView objects.
+        agents (List[Agent]): List of agents involved in the simulation.
+    '''
     def __init__(self,
-                 parameters_view,
-                 graph_controller,
+                 parameters_view: ParametersView,
+                 graph_controller: GraphController,
                  simulation_controller: SimulationController,
                  scrolling_list_controller: ScrollingListController,
                  complete_graph_service: ICompleteGraphService,
                  csv_service: ICSVService) -> None:
         super().__init__(parameters_view, graph_controller)
 
-        self.complete_graph_service = complete_graph_service
-        self.csv_service = csv_service
+        self._complete_graph_service = complete_graph_service
+        self._csv_service = csv_service
         self._scrolling_list_controller = scrolling_list_controller
         self._simulation_controller = simulation_controller
         self._scrolling_list_controller = scrolling_list_controller
 
-        self.start_button = Button("Start simulation", self.start_action, enabled=False)
+        self._start_button = Button("Start simulation", self.start_action, enabled=False)
 
         # Création de la map des boutons et leurs vues
-        self.button_map = {
-            self.start_button: ButtonView(
+        self._button_map = {
+            self._start_button: ButtonView(
                 parameters_view.screen,
-                self.start_button.text,
-                self.start_button.action,
+                self._start_button.text,
+                self._start_button.action,
                 160,
                 490,
                 140,
@@ -46,7 +78,9 @@ class StartButtonController(BaseButtonController):
         self.agents = []
 
     def start_action(self) -> None:
-        # Mock pour les agents
+        '''
+        Starts the simulation by initializing agents and launching the selected algorithm.
+        '''
         paths = [
             [0, 1, 2, 3, 4],  # Agent 1 fait le tour du pentagone
             [4, 3, 2, 1, 0],  # Agent 2 fait le tour inverse
@@ -54,10 +88,11 @@ class StartButtonController(BaseButtonController):
             [1, 3, 0],        # Agent 4 suit un autre chemin en étoile
             [2, 0, 3, 4, 1]   # Agent 5 suit un chemin en zigzag
         ]
-        # self.agents = [Agent(path, self.graph_controller.graph) for path in paths]
-        
+
+        # Initializing agents with predefined paths
         self._simulation_controller.initialize_agents(paths)
 
+        # Setting the simulation as started
         self._simulation_controller.set_simulation_started(True)
         
         #complete_graph_data = self.csv_service.find_csv_reference("path/to/image")
@@ -83,19 +118,22 @@ class StartButtonController(BaseButtonController):
             self._launch_algorithm()
 
     def _compute_store_and_save_graph_data(self):
+        '''
+        Computes, stores, and saves the complete graph and shortest paths.
+        '''
         complete_graph, shortest_paths = self.compute_complete_graph_and_shortest_paths()
         if not complete_graph:
             return False
         if not shortest_paths:
             raise ValueError('Shortest paths dictionnary is null while Complete Graph array exists.')
     
-        self.graph_controller.store_complements_to_model(complete_graph, shortest_paths)
+        self._graph_controller.store_complements_to_model(complete_graph, shortest_paths)
 
-        self.graph_controller.save_complements(complete_graph, shortest_paths)
+        self._graph_controller.save_complements(complete_graph, shortest_paths)
         return True
 
     def _launch_algorithm(self):
-        self.graph_controller.raise_info('Algorithm launched')
+        self._graph_controller.raise_info('Algorithm launched')
         selected_algorithm = self._scrolling_list_controller.get_selected_algorithm()
         
         # TODO: interface for all the algorithm that owns a launch() method, that all the algorithm implement
@@ -106,8 +144,15 @@ class StartButtonController(BaseButtonController):
         #self.graph_controller.raise_message('Simulation started')
             
     def compute_complete_graph_and_shortest_paths(self):
-        simple_graph, node_positions = self.graph_controller.graph.compute_matrix()
-        complete_graph = self.complete_graph_service(
+        '''
+        Computes the complete graph and shortest paths using the A* algorithm.
+
+        Returns:
+            complete_graph (Array): The complete graph with all paths.
+            shortest_paths (Dict): The shortest paths between all nodes.
+        '''
+        simple_graph, node_positions = self._graph_controller.graph.compute_matrix()
+        complete_graph = self._complete_graph_service(
             simple_graph=simple_graph,
             node_position=node_positions,
             path_finding_service=AStarService
@@ -122,19 +167,14 @@ class StartButtonController(BaseButtonController):
 
         return complete_graph, shortest_paths
 
-    def draw_simulation(self):
-        pass
-        if self.parameters_controller.simulation_started:
-            self.graph_controller.graph_view.draw_simulation(self.agents)
-
     def enable_start_button(self) -> None:
         '''
-        Active le bouton de démarrage de la simulation.
+        Enables the "Start simulation" button, allowing the user to start the simulation.
         '''
-        self.start_button.set_enabled(True)
+        self._start_button.set_enabled(True)
 
     def disable_start_button(self) -> None:
         '''
-        Désactive le bouton de démarrage de la simulation.
+        Disables the "Start simulation" button, preventing the user from starting the simulation.
         '''
-        self.start_button.set_enabled(False)
+        self._start_button.set_enabled(False)
