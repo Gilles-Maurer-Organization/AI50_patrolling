@@ -3,13 +3,14 @@ from typing import Optional
 import pygame
 
 from constants.Colors import Colors
-from constants.Config import NODE_RADIUS
+from constants.Config import NODE_RADIUS, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT
 from models.Agent import Agent
 from models.Graph import Graph
 from models.Node import Node
 from views.popup.PopupView import PopupView
 from views.popup.InfoPopupView import InfoPopupView
 from views.popup.ErrorPopupView import ErrorPopupView
+
 
 class GraphView:
     """
@@ -24,25 +25,49 @@ class GraphView:
         _background_image (Optional[pygame.Surface]): The background
             image for the graph view, or None if no background is set.
     """
-    def __init__(self, screen: pygame.Surface) -> None:
+    def __init__(self, screen) -> None:
         self._screen = screen
         self._background_image = None
-        self._popup = None
+        self._scaled_width = None
+        self._scaled_height = None
+        self._margin_left = 0
+        self._margin_top = 0
 
-    def set_background_image(
-        self,
-        background_image: Optional[pygame.Surface]
-    ) -> None:
-        """
-        Sets the background image for the view.
-
-        If None is passed, the background image will be cleared.
-
-        Args:
-            background_image (Optional[pygame.Surface]): The background
-                image for the graph view, or None to clear it.
-        """
+    def set_background_image(self, background_image):
+        """Set the background image for the view."""
+        # Store the image in an instance variable
         self._background_image = background_image
+
+        # Get the original dimensions of the image
+        original_width, original_height = self._background_image.get_width(), self._background_image.get_height()
+        window_ratio = GRAPH_WINDOW_WIDTH / GRAPH_WINDOW_HEIGHT
+        image_ratio = original_width / original_height
+
+        # Adjust the image to fit the window size
+        if image_ratio > window_ratio:
+            self._scaled_width = GRAPH_WINDOW_WIDTH
+            self._scaled_height = int(GRAPH_WINDOW_WIDTH / image_ratio)
+            self._margin_top = (GRAPH_WINDOW_HEIGHT - self._scaled_height) // 2
+            self._margin_left = 0
+        elif image_ratio < window_ratio:
+            self._scaled_height = GRAPH_WINDOW_HEIGHT
+            self._scaled_width = int(GRAPH_WINDOW_HEIGHT * image_ratio)
+            self._margin_left = (GRAPH_WINDOW_WIDTH - self._scaled_width) // 2
+            self._margin_top = 0
+
+        # Draw margins and render the image
+        margin_color = Colors.BLACK.value
+        self._screen.fill(margin_color)
+        # Scale the image and store it as the final background
+        self._background_image = pygame.transform.scale(self._background_image, (self._scaled_width, self._scaled_height))
+
+    def get_image_bounds(self):
+        return {
+            "scaled_width": self._scaled_width,
+            "scaled_height": self._scaled_height,
+            "margin_left": self._margin_left,
+            "margin_top": self._margin_top
+        }
 
     def draw_graph(
         self,
@@ -68,8 +93,9 @@ class GraphView:
         if self._background_image is None:
             self._screen.fill(Colors.WHITE.value)
         else:
-            self._screen.blit(self._background_image, (0, 0))
+            self._screen.blit(self._background_image, (self._margin_left, self._margin_top))
 
+        # Draw nodes
         for node in graph.nodes:
             color = self._get_node_color(node, selected_node, dragging_node)
             pygame.draw.circle(
