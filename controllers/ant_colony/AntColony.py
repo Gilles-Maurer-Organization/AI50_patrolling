@@ -57,14 +57,14 @@ class AntColony:
         Returns the path with the highest pheromone levels by following the most popular routes as determined by the ants.
     """
     
-    def __init__(self, evaporation_rate, alpha_parameter, beta_parameter, nb_agents, nb_colony, nb_iterations, Q, cost_matrix):
+    def __init__(self, evaporation_rate, alpha_parameter, beta_parameter, nb_agents, nb_colony, nb_iterations, pheromone_quantity, cost_matrix):
             self.evaporation_rate = evaporation_rate
             self.alpha_parameter = alpha_parameter
             self.beta_parameter = beta_parameter
             self.nb_ants = nb_agents
             self.nb_colony = nb_colony
             self.nb_iterations = nb_iterations
-            self.Q = Q
+            self.pheromone_quantity = pheromone_quantity
             self.cost_matrix = cost_matrix
 
     def get_length_path(self, ants_path):
@@ -133,7 +133,7 @@ class AntColony:
                 mask[ant_path[0],  ant_path[-1]] = True
 
                 # Set delta values where the ant travels using boolean masking, usiing Q
-                delta_t_pheromone_matrix[k_colony][k_ant][mask] += self.Q / length_path
+                delta_t_pheromone_matrix[k_colony][k_ant][mask] += self.pheromone_quantity / length_path
 
 
         # Sum of delta_pheromone_matrix for each ant, without evaporation np.sum, what come before is the evaporation term
@@ -202,7 +202,7 @@ class AntColony:
         # Return the first value of next_node_indices bacause it is the next_node chosen based of the random_number and cumulative_sum
         next_node = next_node_indices[0]
 
-        return next_node, prob
+        return next_node
 
     def get_start_nodes(self): 
         # Heuristique to find first node
@@ -216,7 +216,7 @@ class AntColony:
         rng = np.random.default_rng()
 
         for _ in range(self.nb_ants):
-            # Heuristique = random
+            # Heuristique is random
             random_node = autorize_nodes[rng.integers(len(autorize_nodes))]
             start_nodes.append(random_node)
             autorize_nodes.remove(random_node)
@@ -245,7 +245,7 @@ class AntColony:
                 current_node = current_nodes[ant]
                 
                 # Choose the next node based on the roulette wheel
-                next_node, prob_matrix = self.roulette_wheel(global_pheromone_matrix, current_node, tabou_list)
+                next_node = self.roulette_wheel(global_pheromone_matrix, current_node, tabou_list)
                 
                 current_nodes[ant] = next_node
                 
@@ -258,7 +258,7 @@ class AntColony:
                     break
         
         # Return the path for this colony
-        return ants_path, prob_matrix
+        return ants_path
 
         
     def launch(self):
@@ -287,8 +287,6 @@ class AntColony:
 
         # Initialize path length history
         path_length_history = []
-        probs_history = []
-        pheromone_history = []
 
         first_nodes = self.get_start_nodes()
 
@@ -300,8 +298,7 @@ class AntColony:
 
             # For each colony
             for colony in range(self.nb_colony):
-                ants_path, prob_history = self.colony_path(nb_nodes, global_pheromone_matrix, first_nodes)
-                probs_history.append(prob_history)
+                ants_path = self.colony_path(nb_nodes, global_pheromone_matrix, first_nodes)
                 global_ants_path[colony] = ants_path
 
                 path_length = self.get_length_path(global_ants_path[colony])
@@ -312,7 +309,6 @@ class AntColony:
 
             # Pheromone matrix updated after all ants have been relocated
             global_pheromone_matrix = self.get_pheromone_matrix(global_pheromone_matrix, global_ants_path)
-            pheromone_history.append(global_pheromone_matrix)
 
             #Check for convergence
             if self.check_convergence(path_length_history):
@@ -321,7 +317,7 @@ class AntColony:
         # Get the best path after all iterations
         best_path = self.get_best_path(global_ants_path)
         
-        return best_path, path_length_history, probs_history, pheromone_history
+        return best_path
 
     def check_convergence(self, path_length_history, n=10):
         """
@@ -345,8 +341,6 @@ class AntColony:
         return all(np.allclose(last_lengths, lengths, atol=1e-2) for lengths in recent_lengths[:-1])
 
 
-
-
     def get_best_path(self, global_ants_path):
         """
         Returns the path chosen based on the maximum pheromones on the nodes.
@@ -361,130 +355,3 @@ class AntColony:
                 best_len_path = len_path
 
         return global_ants_path[best_len_path_num]
-    
-
-# Visualisation
-def visualize_probability_evolution(probability_matrices, interval=100):
-    """
-    Visualize the evolution of the probability matrix as an animation.
-    
-    Arguments:
-    - probability_matrices: List of successive probability matrices.
-    - interval: Time in milliseconds between each display of the matrix.
-    """
-    fig, ax = plt.subplots(figsize=(8, 6))
-    heatmap = ax.imshow(probability_matrices[0], cmap="YlGnBu", vmin=0, vmax=1)
-    plt.colorbar(heatmap, ax=ax, label="Probability")
-    
-    def update(step):
-        ax.set_title(f"Step {step + 1} - Evolution of the Probability Matrix")
-        heatmap.set_data(probability_matrices[step])
-        
-        # Add values on the heatmap for each cell
-        ax.clear()
-        ax.imshow(probability_matrices[step], cmap="YlGnBu", vmin=0, vmax=1)
-        ax.set_title(f"Step {step + 1} - Evolution of the Probability Matrix")
-        
-        for i in range(probability_matrices[step].shape[0]):
-            for j in range(probability_matrices[step].shape[1]):
-                ax.text(j, i, f"{probability_matrices[step][i, j]:.2f}", 
-                        ha="center", va="center", color="black", fontsize=8)
-        
-        ax.set_xlabel("Destination Node")
-        ax.set_ylabel("Starting Node")
-        
-    plt.show()
-
-
-def visualize_pheromone_evolution(pheromone_matrices, interval=100):
-    """
-    Visualize the evolution of the pheromone matrix as an animation.
-    
-    Arguments:
-    - pheromone_matrices: List of successive pheromone matrices.
-    - interval: Time in milliseconds between each display of the matrix.
-    """
-    fig, ax = plt.subplots(figsize=(8, 6))
-    heatmap = ax.imshow(pheromone_matrices[0], cmap="YlOrBr", vmin=0, vmax=np.max(pheromone_matrices))
-    plt.colorbar(heatmap, ax=ax, label="Pheromone Level")
-    
-    def update(step):
-        ax.clear()  # Clear the axis for each step to avoid text overlap
-        ax.imshow(pheromone_matrices[step], cmap="YlOrBr", vmin=0, vmax=np.max(pheromone_matrices))
-        ax.set_title(f"Step {step + 1} - Evolution of Pheromones")
-        
-        # Add values on the heatmap for each cell
-        for i in range(pheromone_matrices[step].shape[0]):
-            for j in range(pheromone_matrices[step].shape[1]):
-                ax.text(j, i, f"{pheromone_matrices[step][i, j]:.2f}", 
-                        ha="center", va="center", color="black", fontsize=8)
-        
-        ax.set_xlabel("Destination Node")
-        ax.set_ylabel("Starting Node")
-    
-    plt.show()
-
-
-
-def plot_path_length_history(path_length_history):
-    """
-    Plot the path length history for each colony over the iterations.
-    
-    Parameters:
-    - path_length_history: list of lists containing path lengths for each colony at each iteration.
-    """
-    nb_iterations = len(path_length_history)
-    nb_colony = len(path_length_history[0]) if nb_iterations > 0 else 0
-    
-    # Plot path lengths for each colony
-    for colony in range(nb_colony):
-        lengths = [iteration[colony] for iteration in path_length_history]
-        plt.plot(range(nb_iterations), lengths, label=f"Colony {colony + 1}")
-
-    plt.xlabel("Iterations")
-    plt.ylabel("Path Length")
-    plt.title("Path Length History for Each Colony")
-    plt.legend()
-    plt.show()
-
-
-# Exemple of use of the class above
-if __name__ == "__main__":
-
-    # Exemple of cost matrix
-    cost_matrix = np.array([
-        [0, 2, 4, 5, 2, 6, 7, 5, 4, 6, 4, 5, 6, 7, 4],
-        [2, 0, 2, 3, 4, 5, 6, 7, 5, 4, 5, 6, 7, 4, 5],
-        [4, 2, 0, 2, 6, 4, 5, 6, 7, 5, 6, 7, 4, 5, 6],
-        [5, 3, 2, 0, 2, 6, 4, 5, 6, 7, 7, 4, 5, 6, 7],
-        [2, 4, 6, 2, 0, 5, 6, 7, 5, 4, 4, 5, 6, 7, 4],
-        [6, 5, 4, 6, 5, 0, 2, 4, 5, 2, 5, 6, 7, 4, 5],
-        [7, 6, 5, 4, 6, 2, 0, 2, 3, 4, 6, 7, 4, 5, 6],
-        [5, 7, 6, 5, 7, 4, 2, 0, 2, 6, 7, 4, 5, 6, 7],
-        [4, 5, 7, 6, 5, 5, 3, 2, 0, 2, 4, 5, 6, 7, 4],
-        [6, 4, 5, 7, 4, 2, 4, 6, 2, 0, 5, 6, 7, 4, 5],
-        [4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 0, 2, 4, 5, 2],
-        [5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 2, 0, 2, 3, 4],
-        [6, 7, 4, 5, 6, 7, 4, 5, 6, 7, 4, 2, 0, 2, 6],
-        [7, 4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 3, 2, 0, 2],
-        [4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 2, 4, 6, 2, 0]
-    ])
-        
-
-    # Evaporation rate between 0 and 1
-    evaporation_rate = 0.7
-    alpha_parameter = 1
-    beta_parameter = 2
-    nb_agents = 3  #Nb agent = nb fourmis
-    nb_colony = 3
-    nb_iterations = 1000
-    Q = 10
-
-    fourmis = AntColony(evaporation_rate, alpha_parameter, beta_parameter, nb_agents,nb_colony, nb_iterations, Q, cost_matrix)
-
-    # launch ant colony algorithm
-    final_path, history, prob_history, pheromone_history = fourmis.launch()
-    
-    print("Best path ", final_path)
-
-    plot_path_length_history(history)
