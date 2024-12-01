@@ -1,4 +1,5 @@
 import os
+import ast
 from pathlib import Path
 import re
 
@@ -59,7 +60,7 @@ class CSVService(ICSVService):
             f.write("Shortest paths,\n")
             f.writelines(shortest_paths_lines)
     
-    def are_complements_saved(self, image_name):
+    def are_complements_saved(self, image_name: str):
         csv_path = self.find_csv_reference(image_name)
 
         if csv_path is None:
@@ -162,9 +163,8 @@ class CSVService(ICSVService):
                 if len(parts) == 3:
                     start = int(parts[0])
                     end = int(parts[1])
-                    path_info = eval(parts[2])
-                    path, cost = path_info
-                    shortest_paths[(start, end)] = {"path": path, "cost": cost}
+                    path = ast.literal_eval(parts[2])
+                    shortest_paths[(start, end)] = path
 
         return edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths
 

@@ -14,7 +14,7 @@ class SimulationController:
         self._simulation_started = started
 
     def initialize_agents(self, paths: list[int]) -> None:
-        self._agents = [Agent(path, self._graph_controller.get_graph()) for path in paths]
+        self._agents = [Agent(path, self._graph_controller.graph) for path in paths]
     
     def update_simulation(self):
         for _, agent in enumerate(self._agents):

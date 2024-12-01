@@ -1,5 +1,3 @@
-from typing import Dict
-
 import pygame
 
 from constants.Config import GRAPH_WINDOW_WIDTH
@@ -10,7 +8,7 @@ from views.ButtonView import ButtonView
 
 
 class BaseButtonController:
-    '''
+    """
     This class is responsible for managing the buttons in the ParametersView and handling their events.
 
     It initializes the button views and associates them with the corresponding button actions. 
@@ -27,25 +25,25 @@ class BaseButtonController:
     Attributes:
         _parameters_view (ParametersView): The view that contains the buttons.
         _graph_controller (GraphController): The controller that manages the graph.
-        _button_map (Dict[Button, ButtonView]): A dictionary mapping Button objects to their corresponding ButtonView objects.
-    '''
+        _button_map (dict[Button, ButtonView]): A dictionary mapping Button objects to their corresponding ButtonView objects.
+    """
     def __init__(self,
                  parameters_view: ParametersView,
                  graph_controller: GraphController) -> None:
         self._parameters_view = parameters_view
         self._graph_controller = graph_controller
 
-        self._button_map: Dict[Button, ButtonView] = {}
+        self._button_map: dict[Button, ButtonView] = {}
 
     def draw_buttons(self) -> None:
-        '''
+        """
         Draws all the buttons on the view.
-        '''
+        """
         for button, button_view in self._button_map.items():
             button_view.draw(button.is_enabled())
 
     def handle_event(self, event: pygame.event.Event) -> None:
-        '''
+        """
         Handles the button click event.
 
         This method checks if the received event corresponds to a left mouse click. 
@@ -53,7 +51,7 @@ class BaseButtonController:
 
         Args:
             event: The Pygame event containing information about the mouse click.
-        '''
+        """
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
             for button, button_view in self._button_map.items():

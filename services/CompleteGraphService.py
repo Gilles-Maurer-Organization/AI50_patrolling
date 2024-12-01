@@ -15,13 +15,12 @@ class CompleteGraphService(ICompleteGraphService):
     '''
      
     def __init__(self,  simple_graph, node_position, path_finding_service : IPathFindingService): 
-        self.simple_graph = simple_graph
-        self.node_position = node_position
-        self.complete_graph = [[0 for _ in range(len(simple_graph))] for _ in range(len(simple_graph))]
-        self.shortest_way_matrix = [[[] for _ in range(len(simple_graph))] for _ in range(len(simple_graph))]
-        self.path_finding_service = path_finding_service
+        self._simple_graph = simple_graph
+        self._node_position = node_position
+        self._complete_graph = [[0 for _ in range(len(simple_graph))] for _ in range(len(simple_graph))]
+        self._shortest_way_matrix = [[[] for _ in range(len(simple_graph))] for _ in range(len(simple_graph))]
+        self._path_finding_service = path_finding_service
         self.create_complete_graph()
-
 
     def create_complete_graph(self): 
 
@@ -32,43 +31,43 @@ class CompleteGraphService(ICompleteGraphService):
         #                      [(1, 0), (1), (1, 2)], 
         #                      [(2, 1, 0), (2, 1), (2)]]
 
-        for i in range(len(self.simple_graph)): 
-            for j in range(i, len(self.simple_graph[i])):
+        for i in range(len(self._simple_graph)): 
+            for j in range(i, len(self._simple_graph[i])):
 
-                if self.simple_graph[i][j] == 0:
+                if self._simple_graph[i][j] == 0:
 
-                    path_finding_service = self.path_finding_service(self.simple_graph, self.node_position, i, j)
+                    path_finding_service = self._path_finding_service(self._simple_graph, self._node_position, i, j)
 
                     a_star_result = path_finding_service.find_path()
 
                     if a_star_result is None:
-                        self.complete_graph = None
+                        self._complete_graph = None
                         return
 
                     path, distance = a_star_result
                     
-                    self.complete_graph[i][j] = distance
-                    self.complete_graph[j][i] = distance
+                    self._complete_graph[i][j] = distance
+                    self._complete_graph[j][i] = distance
 
-                    self.shortest_way_matrix[i][j] = path
-                    self.shortest_way_matrix[j][i] = path.reverse()
+                    self._shortest_way_matrix[i][j] = path
+                    self._shortest_way_matrix[j][i] = path.reverse()
 
                 elif i != j: 
 
-                    self.complete_graph[i][j] = self.simple_graph[i][j]
-                    self.complete_graph[j][i] = self.simple_graph[i][j]
+                    self._complete_graph[i][j] = self._simple_graph[i][j]
+                    self._complete_graph[j][i] = self._simple_graph[i][j]
 
-                    self.shortest_way_matrix[i][j] = [i, j]
-                    self.shortest_way_matrix[j][i] = [j, i]
+                    self._shortest_way_matrix[i][j] = [i, j]
+                    self._shortest_way_matrix[j][i] = [j, i]
 
     def get_shortest_way(self, node1, node2): 
 
         # find the shortest way in the matrix 
-        return self.shortest_way_matrix[node1, node2]
+        return self._shortest_way_matrix[node1, node2]
 
-
-    def get_complete_graph(self): 
-        return self.complete_graph
+    @property
+    def complete_graph(self): 
+        return self._complete_graph
     
 
 def main():

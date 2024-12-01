@@ -7,7 +7,7 @@ from views.ParametersView import ParametersView
 from views.ButtonView import ButtonView
 
 class ButtonController(BaseButtonController):
-    '''
+    """
     This class manages the buttons (Save, Import, Clear) in the ParametersView, and handles their events.
 
     Methods:
@@ -31,8 +31,8 @@ class ButtonController(BaseButtonController):
         _save_button (Button): The Save button object.
         _import_button (Button): The Import button object.
         _clear_button (Button): The Clear button object.
-        _button_map (Dict[Button, ButtonView]): A map of Button objects to their corresponding ButtonView objects.
-    '''
+        _button_map (dict[Button, ButtonView]): A map of Button objects to their corresponding ButtonView objects.
+    """
     def __init__(self,
                  parameters_view: ParametersView,
                  graph_controller: GraphController,
@@ -81,34 +81,34 @@ class ButtonController(BaseButtonController):
         }
 
     def save_action(self) -> None:
-        '''
+        """
         Saves a graph to the computer when the Save button is clicked.
-        '''
+        """
         self._graph_controller.save_graph()
         print("Save action triggered")
 
     def import_action(self) -> None:
-        '''
+        """
         Imports a graph from the computer when the Import button is clicked.
-        '''
+        """
         self._file_explorer_controller.set_is_opened(True)
 
     def clear_action(self) -> None:
-        '''
+        """
         Clears the entire graph view when the Clear button is clicked.
-        '''
+        """
         self._graph_controller.clear_graph()
         # TODO: add an info popup
 
     def disable_clear_button(self) -> None:
-        '''
+        """
         Disables the Clear button, preventing the user from interacting with it.
-        '''
+        """
         self._clear_button.set_enabled(False)
         
     def disable_save_button(self) -> None:
-        '''
+        """
         Disables the Save button, preventing the user from interacting with it.
-        '''
+        """
         self._save_button.set_enabled(False)
         

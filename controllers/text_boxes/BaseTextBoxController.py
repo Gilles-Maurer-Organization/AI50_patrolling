@@ -1,5 +1,3 @@
-from typing import Dict
-
 import pygame
 
 from constants.Config import GRAPH_WINDOW_WIDTH
@@ -50,7 +48,7 @@ class BaseTextBoxController:
     """
     def __init__(self, parameters_view):
         self._parameters_view = parameters_view
-        self._text_boxes : Dict[TextBox, TextBoxView] = {}
+        self._text_boxes : dict[TextBox, TextBoxView] = {}
 
     def add_text_box(self, model, text_box_view):
         """

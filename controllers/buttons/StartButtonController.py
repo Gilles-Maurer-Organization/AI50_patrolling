@@ -11,7 +11,7 @@ from views.ButtonView import ButtonView
 from views.ParametersView import ParametersView
 
 class StartButtonController(BaseButtonController):
-    '''
+    """
     This class manages the "Start simulation" button in the ParametersView and handles simulation-related actions.
 
     Methods:
@@ -39,9 +39,9 @@ class StartButtonController(BaseButtonController):
         _scrolling_list_controller (ScrollingListController): Controller for managing the scrolling list view of algorithms.
         _simulation_controller (SimulationController): Controller for handling simulation logic.
         _start_button (Button): The "Start simulation" button.
-        _button_map (Dict[Button, ButtonView]): A map of Button objects to their corresponding ButtonView objects.
+        _button_map (dict[Button, ButtonView]): A map of Button objects to their corresponding ButtonView objects.
         agents (List[Agent]): List of agents involved in the simulation.
-    '''
+    """
     def __init__(self,
                  parameters_view: ParametersView,
                  graph_controller: GraphController,
@@ -77,9 +77,9 @@ class StartButtonController(BaseButtonController):
         self.agents = []
 
     def start_action(self) -> None:
-        '''
+        """
         Starts the simulation by initializing agents and launching the selected algorithm.
-        '''
+        """
         paths = [
             [0, 1, 2, 3, 4],  # Agent 1 fait le tour du pentagone
             [4, 3, 2, 1, 0],  # Agent 2 fait le tour inverse
@@ -110,18 +110,18 @@ class StartButtonController(BaseButtonController):
             self._launch_algorithm()
 
     def _compute_store_and_save_graph_data(self):
-        '''
+        """
         Computes, stores, and saves the complete graph and shortest paths.
-        '''
+        """
         complete_graph, shortest_paths = self.compute_complete_graph_and_shortest_paths()
         self._graph_controller.store_complements_to_model(complete_graph, shortest_paths)
 
         self._graph_controller.save_complements(complete_graph, shortest_paths)
 
     def _launch_algorithm(self):
-        '''
+        """
         Launches the selected algorithm and starts the simulation.
-        '''
+        """
         selected_algorithm = self._scrolling_list_controller.get_selected_algorithm()
         
         # TODO: interface for all the algorithm that owns a launch() method, that all the algorithm implement
@@ -130,14 +130,14 @@ class StartButtonController(BaseButtonController):
         print("Launching algorithm with complete graph", selected_algorithm)
             
     def compute_complete_graph_and_shortest_paths(self):
-        '''
+        """
         Computes the complete graph and shortest paths using the A* algorithm.
 
         Returns:
             complete_graph (Array): The complete graph with all paths.
-            shortest_paths (Dict): The shortest paths between all nodes.
-        '''
-        simple_graph, node_positions = self._graph_controller.graph.compute_matrix()
+            shortest_paths (dict): The shortest paths between all nodes.
+        """
+        simple_graph, node_positions = self._graph_controller._graph.compute_matrix()
         complete_graph = self._complete_graph_service(
             simple_graph=simple_graph,
             node_position=node_positions,
@@ -149,18 +149,18 @@ class StartButtonController(BaseButtonController):
             for end in range(len(simple_graph)):
                 if start != end:
                     a_star = AStarService(simple_graph, node_positions, start, end)
-                    shortest_paths[(start, end)] = a_star.find_path()       
+                    shortest_paths[(start, end)] = a_star.find_path()[0] # We don't want to store the cost 
 
         return complete_graph, shortest_paths
 
     def enable_start_button(self) -> None:
-        '''
+        """
         Enables the "Start simulation" button, allowing the user to start the simulation.
-        '''
+        """
         self._start_button.set_enabled(True)
 
     def disable_start_button(self) -> None:
-        '''
+        """
         Disables the "Start simulation" button, preventing the user from starting the simulation.
-        '''
+        """
         self._start_button.set_enabled(False)
