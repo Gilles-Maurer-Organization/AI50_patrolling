@@ -320,6 +320,7 @@ class AntColony:
 
         # Get the best path after all iterations
         best_path = self.get_best_path(global_ants_path)
+        
         return best_path, path_length_history, probs_history, pheromone_history
 
     def check_convergence(self, path_length_history, n=10):
