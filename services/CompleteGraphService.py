@@ -21,7 +21,6 @@ class CompleteGraphService(ICompleteGraphService):
         self._path_finding_service = path_finding_service
         self.create_complete_graph()
 
-
     def create_complete_graph(self): 
         for i in range(len(self._simple_graph)): 
             for j in range(i, len(self._simple_graph[i])):
@@ -56,6 +55,6 @@ class CompleteGraphService(ICompleteGraphService):
         # find the shortest way in the matrix 
         return self._shortest_way_matrix[node1, node2]
 
-
-    def get_complete_graph(self): 
+    @property
+    def complete_graph(self): 
         return self._complete_graph
