@@ -56,14 +56,37 @@ class AntColony:
     """
     
     def __init__(self, evaporation_rate, alpha_parameter, beta_parameter, nb_agents, nb_colony, nb_iterations, pheromone_quantity, cost_matrix):
-            self.evaporation_rate = evaporation_rate
-            self.alpha_parameter = alpha_parameter
-            self.beta_parameter = beta_parameter
-            self.nb_ants = nb_agents
-            self.nb_colony = nb_colony
-            self.nb_iterations = nb_iterations
-            self.pheromone_quantity = pheromone_quantity
-            self.cost_matrix = cost_matrix
+        # Validation of the parameters
+        if not (0 < evaporation_rate <= 1):
+            raise ValueError("The evaporation rate must be between 0 and 1 (exclusive for 0).")
+        if alpha_parameter <= 0:
+            raise ValueError("The alpha parameter must be greater than 0.")
+        if beta_parameter <= 0:
+            raise ValueError("The beta parameter must be greater than 0.")
+        if nb_agents <= 0:
+            raise ValueError("The number of agents must be greater than 0.")
+        if nb_colony <= 0:
+            raise ValueError("The number of colonies must be greater than 0.")
+        if nb_iterations <= 0:
+            raise ValueError("The number of iterations must be greater than 0.")
+        if pheromone_quantity <= 0:
+            raise ValueError("The pheromone quantity must be greater than 0.")
+        if not isinstance(cost_matrix, np.ndarray) or cost_matrix.ndim != 2:
+            raise ValueError("The cost matrix must be a 2-dimensional numpy array.")
+        if not all(len(row) == len(cost_matrix) for row in cost_matrix):
+            raise ValueError("The cost matrix must be square.")
+        if nb_agents > len(cost_matrix):
+            raise ValueError("The number of agents must not exceed the number of nodes in the cost matrix.")
+
+            
+        self.evaporation_rate = evaporation_rate
+        self.alpha_parameter = alpha_parameter
+        self.beta_parameter = beta_parameter
+        self.nb_ants = nb_agents
+        self.nb_colony = nb_colony
+        self.nb_iterations = nb_iterations
+        self.pheromone_quantity = pheromone_quantity
+        self.cost_matrix = cost_matrix
 
     def get_length_path(self, ants_path):
         """
@@ -105,7 +128,7 @@ class AntColony:
 
         # Creating delta_t_pheromone_matrix
         delta_t_pheromone_matrix = np.zeros((self.nb_colony, self.nb_ants, nb_node, nb_node), dtype=float)
-        for l in range(self.nb_ants):
+        for l in range(self.nb_colony):
             for k in range(self.nb_ants):
                 np.fill_diagonal(delta_t_pheromone_matrix[l][k], 0)
 
@@ -114,6 +137,9 @@ class AntColony:
             length_path = self.get_length_path(ants_path)
 
             for k_ant, ant_path in enumerate(ants_path):
+                # If the ant_path contain only 1 node (ie there are as many agents as node or more than half), then we pass
+                if len(ant_path) <= 1:
+                    break
                 mask = np.zeros((nb_node, nb_node), dtype=bool)
                 # Create a list of pairs (i_nodes, j_nodes) for each node in the ant's path
                 i_nodes = np.array(ant_path[:-1])
@@ -272,10 +298,6 @@ class AntColony:
         """
         # Get the number of nodes
         nb_nodes = self.cost_matrix.shape[0]
-
-        # If more agents than nodes then return error
-        if nb_nodes <= self.nb_ants:
-            raise IndexError("More agents than nodes in the graph.")
 
         # Pheromone matrix initialization
         global_pheromone_matrix = np.ones((nb_nodes, nb_nodes))
