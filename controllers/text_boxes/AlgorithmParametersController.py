@@ -1,5 +1,5 @@
 from controllers.text_boxes.BaseTextBoxController import BaseTextBoxController
-from models.algorithms.AlgorithmModel import AlgorithmModel
+from models.algorithms.IAlgorithmModel import IAlgorithmModel
 from views.ParametersView import ParametersView
 from views.text_boxes.AlgorithmParametersView import AlgorithmParametersView
 
@@ -21,7 +21,7 @@ class AlgorithmParametersController(BaseTextBoxController):
     def __init__(self, parameters_view: ParametersView):
         super().__init__(parameters_view)
 
-    def handle_selected_algorithm(self, algorithm: AlgorithmModel):
+    def handle_selected_algorithm(self, algorithm: IAlgorithmModel):
         """
         Updates the parameters view with text boxes for the selected algorithm's parameters.
 

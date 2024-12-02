@@ -163,4 +163,4 @@ class StartButtonController(BaseButtonController):
         """
         Disables the "Start simulation" button, preventing the user from starting the simulation.
         """
-        self._start_button.set_enabled(False)
+        self._start_button.enabled = False

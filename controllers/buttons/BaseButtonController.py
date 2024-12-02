@@ -40,7 +40,7 @@ class BaseButtonController:
         Draws all the buttons on the view.
         """
         for button, button_view in self._button_map.items():
-            button_view.draw(button.is_enabled())
+            button_view.draw(button.enabled)
 
     def handle_event(self, event: pygame.event.Event) -> None:
         """
@@ -55,7 +55,7 @@ class BaseButtonController:
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
             for button, button_view in self._button_map.items():
-                if button_view.is_hovered(mouse_pos) and button.is_enabled():
+                if button_view.is_hovered(mouse_pos) and button.enabled:
                     button.action()
         
         if event.type == pygame.MOUSEMOTION:

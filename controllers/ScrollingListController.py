@@ -3,7 +3,7 @@ import pygame
 from constants.Config import GRAPH_WINDOW_WIDTH
 
 from models.ScrollingList import ScrollingList
-from models.algorithms.AlgorithmModel import AlgorithmModel
+from models.algorithms.IAlgorithmModel import IAlgorithmModel
 from models.algorithms.AntColony import AntColony
 from models.algorithms.Evolutional import Evolutional
 from models.algorithms.Naive import Naive
@@ -52,8 +52,8 @@ class ScrollingListController:
         """
         Draws the scrolling list with available algorithms.
         """
-        algorithms = self._scrolling_list.get_algorithms()
-        selected_algorithm = self._scrolling_list.get_selected_algorithm()
+        algorithms = self._scrolling_list.algorithms
+        selected_algorithm = self._scrolling_list.selected_algorithm
 
         self._scrolling_list_view.draw(algorithms, selected_algorithm, self._scrolling_list.has_an_algorithm_selected())
 
@@ -124,10 +124,10 @@ class ScrollingListController:
         """
         self._scrolling_list_view.set_active(False)
         # Get available options from the model and check if a valid option was clicked
-        selected_option = self._scrolling_list_view.is_option_clicked(event, self._scrolling_list.get_algorithms())
+        selected_option = self._scrolling_list_view.is_option_clicked(event, self._scrolling_list.algorithms)
         # If a valid algorithm option was selected
         if selected_option:
-            self._scrolling_list.set_selected_algorithm(selected_option)
+            self._scrolling_list.selected_algorithm = selected_option
             self._scrolling_list_view.set_active(False)
             return True
         
@@ -135,8 +135,8 @@ class ScrollingListController:
         self._scrolling_list_view.set_active(False)
         return False
 
-    def get_selected_algorithm(self) -> AlgorithmModel:
+    def get_selected_algorithm(self) -> IAlgorithmModel:
         """
         Returns the currently selected algorithm from the scrolling list.
         """
-        return self._scrolling_list.get_selected_algorithm()
+        return self._scrolling_list.selected_algorithm

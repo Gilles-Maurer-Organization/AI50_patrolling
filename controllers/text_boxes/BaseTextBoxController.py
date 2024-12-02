@@ -67,11 +67,11 @@ class BaseTextBoxController:
                 self.handle_click(event, model, view)
 
             # Handle mouse hover event
-            if event.type == pygame.MOUSEMOTION and not model.is_active():
+            if event.type == pygame.MOUSEMOTION and not model.active:
                 self.handle_hover(event, view)
 
             # Handle keyboard input if the text box is active
-            if event.type == pygame.KEYDOWN and model.is_active():
+            if event.type == pygame.KEYDOWN and model.active:
                 self.handle_keyboard(event, model)
 
             # Update the view with the text content and state of the text box
@@ -85,10 +85,10 @@ class BaseTextBoxController:
         Activates the text box if clicked, otherwise deactivates it.
         """
         if self.is_text_box_hovered(event, view):
-            model.set_active(True)
+            model.active = True
             view.set_clicked()
         else:
-            model.set_active(False)
+            model.active = False
             view.set_normal()
 
     def handle_hover(self, event: pygame.event.Event, view: TextBoxView):
@@ -147,6 +147,6 @@ class BaseTextBoxController:
         Returns True if all text boxes are filled, False otherwise.
         """
         for model, _ in self._text_boxes.items():
-            if not model.is_filled():
+            if not model.filled:
                 return False
         return True
