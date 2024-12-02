@@ -22,14 +22,20 @@ class Graph:
         _modified: A flag indicating whether the graph has been modified.
 
     Methods:
-        mark_as_modified():
-            Marks the graph as modified if it has not been marked already.
+        nodes:
+            Returns all nodes.
+            
+        edges:
+            Returns all edges.
 
-        is_modified():
+        modified:
             Returns True if the graph has been modified, otherwise False.
 
-        is_empty():
+        empty:
             Returns True if the graph contains no nodes, otherwise False.
+
+        mark_as_modified():
+            Marks the graph as modified if it has not been marked already.
 
         update_distances(dragged_node):
             Updates the distances of the neighbors of a dragged node after a move.
@@ -60,7 +66,6 @@ class Graph:
         self._shortest_paths: dict[tuple[int, int], list[int]] = {}
         self._modified = False
 
-
     @property
     def nodes(self) -> list[Node]:
         """
@@ -74,6 +79,21 @@ class Graph:
         Getter for the edges attribute.
         """
         return self._edges
+    
+    @property
+    def modified(self) -> bool:
+        """
+        Returns True if the graph has been modified, otherwise False.
+        """
+        return self._modified
+    
+    @property
+    def empty(self) -> bool:
+        """
+        Returns True if the graph contains no nodes, otherwise False.
+        """
+        return not self._nodes
+    
 
     def mark_as_modified(self) -> None:
         """
@@ -83,18 +103,6 @@ class Graph:
             print("Graph Modified")
             self._modified = True
 
-    def is_modified(self) -> bool:
-        """
-        Returns True if the graph has been modified, otherwise False.
-        """
-        return self._modified
-    
-    def is_empty(self) -> bool:
-        """
-        Returns True if the graph contains no nodes, otherwise False.
-        """
-        return not self._nodes
-    
     def update_distances(self, dragged_node: Node) -> None:
         """
         Updates the distances of the neighbors of a dragged node after a move.
@@ -172,7 +180,6 @@ class Graph:
         nodes_list = {index: (node.x, node.y) for index, node in enumerate(self._nodes)}
         
         return edges_matrix, nodes_list
-    
 
     def set_shortest_paths(self, shortest_paths: dict[tuple[int, int], list[int]]) -> None:
         """

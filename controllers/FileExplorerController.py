@@ -53,7 +53,7 @@ class FileExplorerController:
         """
         This method sets the file explorer to opened.
         """
-        self._file_explorer.set_is_opened(is_opened)
+        self._file_explorer.opened = is_opened
 
     def draw_file_explorer(self) -> None:
         """
@@ -92,13 +92,13 @@ class FileExplorerController:
         This method closes the file explorer.
         """
         self._file_explorer_view._close_file_explorer()
-        self._file_explorer.set_is_opened(False)
+        self._file_explorer.opened = False
 
     def is_file_explorer_opened(self) -> bool:
         """
         This methods returns if the file explorer is opened or not.
         """
-        return self._file_explorer.is_opened()
+        return self._file_explorer.opened
 
     def _handle_close_button(self, event: pygame.event.Event) -> None:
         """
@@ -115,7 +115,7 @@ class FileExplorerController:
         if event.ui_element == self._file_explorer_view.file_explorer:
             file_path = event.text
             # We store the path into the file explorer model
-            self._file_explorer.set_path(file_path)
+            self._file_explorer.path = file_path
             if file_path.endswith('.csv'):
                 self._graph_controller.import_graph_from_csv(file_path)
             else:

@@ -243,7 +243,7 @@ class GraphController:
         Returns:
             bool: True if the graph is empty, otherwise False.
         """
-        return self._graph.is_empty()
+        return self._graph.empty
 
     def _load_background_image(self, image_name: str) -> None:
         """
