@@ -1,10 +1,9 @@
 import pygame
 
-from constants.Config import GRAPH_WINDOW_WIDTH
-from views.ParametersView import ParametersView
 from controllers.GraphController import GraphController
 from models.Button import Button
 from views.ButtonView import ButtonView
+from views.ParametersView import ParametersView
 
 
 class BaseButtonController:
@@ -53,15 +52,13 @@ class BaseButtonController:
             event: The Pygame event containing information about the mouse click.
         """
         if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
             for button, button_view in self._button_map.items():
-                if button_view.is_hovered(mouse_pos) and button.enabled:
+                if button_view.is_hovered(event) and button.enabled:
                     button.action()
         
         if event.type == pygame.MOUSEMOTION:
-            mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
             for button_view in self._button_map.values():
-                if button_view.is_hovered(mouse_pos):
+                if button_view.is_hovered(event):
                     button_view.set_hovered()
                 else:
                     button_view.set_normal()

@@ -64,7 +64,6 @@ class StartButtonController(BaseButtonController):
             self._start_button: ButtonView(
                 parameters_view.screen,
                 self._start_button.text,
-                self._start_button.action,
                 160,
                 490,
                 140,
@@ -174,7 +173,7 @@ class StartButtonController(BaseButtonController):
         """
         Enables the "Start simulation" button, allowing the user to start the simulation.
         """
-        self._start_button.set_enabled(True)
+        self._start_button.enabled = True
 
     def disable_start_button(self) -> None:
         """

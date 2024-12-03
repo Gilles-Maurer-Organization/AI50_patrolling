@@ -61,20 +61,13 @@ class FileExplorerController:
         """
         if self.is_file_explorer_opened():
             self._file_explorer_view.draw_file_explorer()
-            # We draw the file explorer on the screen
-            self._file_explorer_view.ui_manager.draw_ui(self._screen)
-
-            # We update the file explorer thanks to the manager with a frequency
-            clock = pygame.time.Clock()
-            time_delta = clock.tick(30)/1000.0
-            self._file_explorer_view.ui_manager.update(time_delta)
 
     def handle_event(self, event: pygame.event.Event) -> None:
         """
         This method handle the events sent to the file explorer.
         """
         # Processing of the events thanks to the UIManager
-        self._file_explorer_view.ui_manager.process_events(event)
+        self._file_explorer_view.process_events(event)
         
         # If the event is a user event
         if event.type == pygame.USEREVENT:

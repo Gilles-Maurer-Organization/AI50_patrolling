@@ -72,7 +72,8 @@ class ParametersController:
 
         # Creating the ParametersView with a specific subsurface
         self._parameters_view = ParametersView(
-            screen.subsurface((GRAPH_WINDOW_WIDTH, 0, PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)))
+            screen.subsurface((GRAPH_WINDOW_WIDTH, 0, PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
+        )
         
         # Initializing individual controllers
         self._graph_controller = graph_controller
@@ -96,15 +97,14 @@ class ParametersController:
 
     def draw_parameters(self) -> None:
         """
-        Draws all the parameters UI components: buttons, dropdown menus, text boxes, etc.
+        Draws all the parameters UI components: buttons, scrolling list, text boxes, etc.
         """
         self._parameters_view.draw()
-        self._parameters_view.draw_buttons(self._button_controller)
-        self._parameters_view.draw_start_button(self._start_button_controller)
-        self._parameters_view.draw_text_boxes(self._text_box_controller)
-        self._parameters_view.draw_algorithm_parameters(self._algorithm_parameters_controller)
-
-        self._parameters_view.draw_scrolling_list(self._scrolling_list_controller)
+        self._button_controller.draw_buttons()
+        self._start_button_controller.draw_buttons()
+        self._text_box_controller.draw_text_boxes()
+        self._algorithm_parameters_controller.draw_text_boxes()
+        self._scrolling_list_controller.draw_scrolling_list()
 
     def handle_events(self, event: pygame.event.Event) -> None:
         """
