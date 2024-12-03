@@ -50,7 +50,6 @@ class ButtonController(BaseButtonController):
             self._save_button: ButtonView(
                 parameters_view.screen,
                 self._save_button.text,
-                self._save_button.action,
                 10,
                 10,
                 90,
@@ -60,7 +59,6 @@ class ButtonController(BaseButtonController):
             self._import_button: ButtonView(
                 parameters_view.screen,
                 self._import_button.text,
-                self._import_button.action,
                 110,
                 10,
                 90,
@@ -70,7 +68,6 @@ class ButtonController(BaseButtonController):
             self._clear_button: ButtonView(
                 parameters_view.screen,
                 self._clear_button.text,
-                self._clear_button.action,
                 210,
                 10,
                 90,

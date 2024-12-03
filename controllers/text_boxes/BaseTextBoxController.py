@@ -117,7 +117,7 @@ class BaseTextBoxController:
         elif event.unicode.isdigit():
             model.add_character(event.unicode)
 
-    def is_text_box_text_completed(self, model) -> bool:
+    def is_text_box_text_completed(self, model: TextBox) -> bool:
         """
         Checks if the text box content is different from its default text.
         Returns True if completed, False otherwise.
@@ -130,9 +130,7 @@ class BaseTextBoxController:
         Returns True if the mouse is within the text box bounds, False otherwise.
         """
         mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
-        if text_box_view.text_box_rect:
-            return text_box_view.text_box_rect.collidepoint(mouse_pos)
-        return False
+        return text_box_view.is_hovered(mouse_pos)
 
     def draw_text_boxes(self):
         """

@@ -1,7 +1,5 @@
 import pygame
 
-from constants.Config import GRAPH_WINDOW_WIDTH
-
 from models.ScrollingList import ScrollingList
 from models.algorithms.IAlgorithmModel import IAlgorithmModel
 from models.algorithms.AntColony import AntColony
@@ -85,10 +83,7 @@ class ScrollingListController:
         Args:
             event: The Pygame event containing information about the mouse's coordinates.
         """
-        mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
-        if self._scrolling_list_view.scrolling_list_rect:
-            return self._scrolling_list_view.scrolling_list_rect.collidepoint(mouse_pos)
-        return False
+        return self._scrolling_list_view.is_hovered(event)
 
     def _handle_header_clicked(self) -> bool:
         """

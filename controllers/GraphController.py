@@ -234,7 +234,7 @@ class GraphController:
         Returns:
             bool: True if the graph has been modified, otherwise False.
         """
-        return self._graph.is_modified()
+        return self._graph.modified
     
     def is_graph_empty(self) -> bool:
         """
