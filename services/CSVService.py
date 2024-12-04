@@ -42,7 +42,7 @@ class CSVService(ICSVService):
     def _count_files(self) -> int:
         """
         Counts the number of CSV files in the CSV directory.
-        
+
         Returns:
             int: The number of CSV files in the directory.
         """
@@ -386,4 +386,3 @@ class CSVService(ICSVService):
                 if "Image_ref" in line:
                     return line.split(",")[1]
         return None
-
