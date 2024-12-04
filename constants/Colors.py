@@ -1,9 +1,10 @@
 from enum import Enum
 
 class Colors(Enum):
-    '''
-    Enumération permettant de définir les couleurs utilisés dans le programme (couleur des noeuds, couleur de sélection d'un noeud, couleur des liens, etc)
-    '''
+    """
+    Enumeration defining the colors used in the program (node colors,
+    node selection color, edge colors, etc.)
+    """
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
     NODE_COLOR = (204, 179, 149)
@@ -13,7 +14,7 @@ class Colors(Enum):
 
     LIGHT_GRAY = (248, 248, 248)
 
-    # Relatif aux boutons
+    # Related to buttons
     BUTTON = (241, 241, 241)
     BUTTON_HOVER = (226, 226, 226)
     BUTTON_GREEN = (155, 219, 162)
@@ -24,9 +25,9 @@ class Colors(Enum):
 
     BUTTON_DISABLED = (245, 235, 235)
 
-    # Relatif aux textbox
+    # Related to textboxes
     TEXT_BOX_TEXT = (166, 166, 166)
     TEXT_BOX_CLICKED = (220, 220, 220)
 
-    # Relatif aux agents
+    # Related to agents
     AGENT_COLOR = (255, 0, 0)

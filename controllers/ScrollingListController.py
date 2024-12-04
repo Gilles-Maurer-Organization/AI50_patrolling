@@ -11,40 +11,26 @@ from views.ScrollingListView import ScrollingListView
 
 class ScrollingListController:
     """
-    The ScrollingListController handles the logic and interaction of the scrolling list 
-    for selecting algorithms in the ParametersView.
+    The ScrollingListController handles the logic and interaction of
+    the scrolling list for selecting algorithms in the ParametersView.
 
     Attributes:
-        _scrolling_list (ScrollingList): The model containing the list of algorithms and their states.
-        _scrolling_list_view (ScrollingListView): The view responsible for rendering the scrolling list.
-
-    Methods:
-        draw_scrolling_list():
-            Draws the scrolling list with available algorithms.
-
-        handle_event(event):
-            Handles user interactions such as mouse clicks or movements for controlling the scrolling list.
-
-        _is_scrolling_list_header_hovered(event):
-            Checks if the mouse is hovering over the header of the scrolling list.
-
-        _handle_header_clicked():
-            Toggles the scrolling list between active (expanded) and inactive (collapsed) states when the header is clicked.
-
-        _handle_header_hovered(event):
-            Changes the appearance of the scrolling list header when hovered by the mouse.
-
-        _handle_scrolling_list_options(event):
-            Handles the selection of an algorithm from the scrolling list and updates the state accordingly.
-
-        get_selected_algorithm():
-            Returns the currently selected algorithm from the scrolling list.
+        _scrolling_list (ScrollingList): The model containing the list
+            of algorithms and their states.
+        _scrolling_list_view (ScrollingListView): The view responsible
+            for rendering the scrolling list.
     """
     def __init__(self, parameters_view: ParametersView) -> None:
         self._scrolling_list = ScrollingList(
             [Naive(), Evolutional(), AntColony()]
         )
-        self._scrolling_list_view = ScrollingListView(parameters_view.screen, 10, 110, 290, 40)
+        self._scrolling_list_view = ScrollingListView(
+            parameters_view.screen,
+            10,
+            110,
+            290,
+            40
+        )
 
     def draw_scrolling_list(self) -> None:
         """
@@ -53,21 +39,28 @@ class ScrollingListController:
         algorithms = self._scrolling_list.algorithms
         selected_algorithm = self._scrolling_list.selected_algorithm
 
-        self._scrolling_list_view.draw(algorithms, selected_algorithm, self._scrolling_list.has_an_algorithm_selected())
+        self._scrolling_list_view.draw(
+            algorithms,
+            selected_algorithm,
+            self._scrolling_list.has_an_algorithm_selected()
+        )
 
     def handle_event(self, event: pygame.event.Event) -> bool:
         """
         Checks if the mouse is hovering over the scrolling list header.
 
         Args:
-            event: The Pygame event containing information about mouse position.
+            event: The Pygame event containing information about mouse
+                position.
         """
         if event.type == pygame.MOUSEBUTTONDOWN:
-            # If the header is hovered, it means the user clicked on the scrolling list header
+            # If the header is hovered, it means the user clicked on the
+            # scrolling list header
             if self._is_scrolling_list_header_hovered(event):
                 return self._handle_header_clicked()
 
-            # Otherwise, check if the user clicked on the scrolling list options or outside of it
+            # Otherwise, check if the user clicked on the scrolling list
+            # options or outside of it
             elif self._scrolling_list_view.is_active:
                 return self._handle_scrolling_list_options(event)
         
@@ -76,18 +69,24 @@ class ScrollingListController:
             return self._handle_header_hovered(event)
         return False
     
-    def _is_scrolling_list_header_hovered(self, event: pygame.event.Event) -> None:
+    def _is_scrolling_list_header_hovered(
+        self,
+        event: pygame.event.Event
+    ) -> None:
         """
-        This method checks if the mouse is within the bounds of the scrolling list.
+        This method checks if the mouse is within the bounds of the
+        scrolling list.
 
         Args:
-            event: The Pygame event containing information about the mouse's coordinates.
+            event: The Pygame event containing information about the
+                mouse's coordinates.
         """
         return self._scrolling_list_view.is_hovered(event)
 
     def _handle_header_clicked(self) -> bool:
         """
-        Toggles the scrolling list between active (expanded) and inactive (collapsed) states.
+        Toggles the scrolling list between active (expanded) and
+        inactive (collapsed) states.
         """
         # if the scrolling list is already expanded:
         if self._scrolling_list_view.is_active:
@@ -99,10 +98,12 @@ class ScrollingListController:
     
     def _handle_header_hovered(self, event: pygame.event.Event) -> bool:
         """
-        Changes the appearance of the scrolling list header when hovered by the mouse.
+        Changes the appearance of the scrolling list header when
+        hovered by the mouse.
 
         Args:
-            event: The Pygame event containing information about mouse position.
+            event: The Pygame event containing information about mouse
+                position.
         """
         if not self._scrolling_list_view.is_active:
             if self._is_scrolling_list_header_hovered(event):
@@ -110,12 +111,16 @@ class ScrollingListController:
             else:
                 self._scrolling_list_view.set_normal()
 
-    def _handle_scrolling_list_options(self, event: pygame.event.Event) -> bool:
+    def _handle_scrolling_list_options(
+        self,
+        event: pygame.event.Event
+    ) -> bool:
         """
         Handles the selection of an algorithm from the scrolling list.
 
         Args:
-            event: The Pygame event containing information about mouse actions.
+            event: The Pygame event containing information about mouse
+                actions.
         """
         self._scrolling_list_view.set_active(False)
         # Get available options from the model and check if a valid option was clicked
@@ -132,6 +137,7 @@ class ScrollingListController:
 
     def get_selected_algorithm(self) -> IAlgorithmModel:
         """
-        Returns the currently selected algorithm from the scrolling list.
+        Returns the currently selected algorithm from the scrolling
+        list.
         """
         return self._scrolling_list.selected_algorithm

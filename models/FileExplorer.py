@@ -1,23 +1,13 @@
 class FileExplorer:
     """
-    This class represents a file explorer that manages the state of file selection and whether the file explorer is opened.
+    This class represents a file explorer that manages the state of
+    file selection and whether the file explorer is opened.
 
     Attributes:
-        path_selected (str or None): The path of the selected file, initially None if no file is selected.
-        opened (bool): The state of the file explorer, indicating whether it is opened or closed.
-
-    Methods:
-        opened:
-            Returns whether the file explorer is currently opened.
-        
-        path:
-            Returns the path of the selected file.
-        
-        opened (setter):
-            Sets the state of the file explorer (opened or closed).
-        
-        path (setter):
-            Sets the path of the selected file.
+        path_selected (str or None): The path of the selected file,
+            initially None if no file is selected.
+        opened (bool): The state of the file explorer, indicating
+            whether it is opened or closed.
     """
     def __init__(self):
         # Initially no file is selected
@@ -41,7 +31,8 @@ class FileExplorer:
         Returns the path of the selected file.
         
         Returns:
-            str: The path of the selected file. If no file is selected, returns None.
+            str: The path of the selected file. If no file is selected,
+                returns None.
         """
         return self._path_selected
     
@@ -51,7 +42,8 @@ class FileExplorer:
         Sets the state of the file explorer (opened or closed).
         
         Args:
-            opened (bool): The new state of the file explorer. True for opened, False for closed.
+            opened (bool): The new state of the file explorer. True for
+                opened, False for closed.
 
         Raises:
             ValueError: If the provided value is not a boolean.

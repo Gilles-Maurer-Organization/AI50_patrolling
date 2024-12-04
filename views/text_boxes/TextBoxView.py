@@ -4,25 +4,22 @@ from views.text_boxes.BaseTextBoxView import BaseTextBoxView
 
 class TextBoxView(BaseTextBoxView):
     """
-    This class is a specialized view for a text box that supports displaying
-    an optional icon alongside the text.
+    This class is a specialized view for a text box that supports
+    displaying an optional icon alongside the text.
 
     Attributes:
-        _icon (pygame.Surface or None): The icon image displayed in the text box, 
-            or None if no icon is specified.
-
-    Methods:
-        draw_text(surface):
-            Draws the text and optional icon in the text box.
+        _icon (pygame.Surface or None): The icon image displayed in the
+            text box, or None if no icon is specified.
     """
-    def __init__(self,
-                 screen: pygame.Surface,
-                 x: int,
-                 y: int,
-                 width: int,
-                 height: int,
-                 icon_path: str = None
-                 ) -> None:
+    def __init__(
+        self,
+        screen: pygame.Surface,
+        x: int,
+        y: int,
+        width: int,
+        height: int,
+        icon_path: str = None
+    ) -> None:
         super().__init__(screen, x, y, width, height)
         
         if icon_path:

@@ -3,19 +3,13 @@ from models.algorithms.IAlgorithmModel import IAlgorithmModel
 class KMeans(IAlgorithmModel):
     """
     The KMeans class implements the K-means clustering algorithm.
-    It inherits from the IAlgorithmModel interface and provides specific
-    parameters for the K-means algorithm.
+    It inherits from the IAlgorithmModel interface and provides
+    specific parameters for the K-means algorithm.
     
     Attributes:
-        _parameters (dict): A dictionary to store the parameters of the K-means algorithm.
-        _name (str): The name of the algorithm, "K-means".
-    
-    Methods:
-        parameters:
-            Returns the dictionary of parameters for the K-means algorithm.
-        
-        name:
-            Returns the name of the algorithm.
+        _parameters (dict): A dictionary to store the parameters of the
+            K-means algorithm.
+        _name (str): The name of the algorithm.
     """
     def __init__(self) -> None:
         self._parameters = {}
@@ -28,7 +22,8 @@ class KMeans(IAlgorithmModel):
         Returns the parameters for the K-means algorithm.
         
         Returns:
-            dict: A dictionary containing the parameters of the algorithm.
+            dict: A dictionary containing the parameters of the
+                algorithm.
         """
         return self._parameters
     

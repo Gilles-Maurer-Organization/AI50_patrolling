@@ -12,37 +12,50 @@ from services.ICSVService import ICSVService
 
 class ViewController:
     """
-    This class coordinates the different controllers and handles the overall drawing and event handling 
-    for the application. It manages the graph, parameters, file explorer, and simulation.
+    This class coordinates the different controllers and handles the
+    overall drawing and event handling for the application. It manages
+    the graph, parameters, file explorer, and simulation.
 
     Attributes:
-        _screen (pygame.Surface): The main screen for rendering the application.
-        _graph_controller (GraphController): The controller responsible for handling graph-related tasks.
-        _file_explorer_controller (FileExplorerController): The controller responsible for managing the file explorer.
-        _simulation_controller (SimulationController): The controller responsible for managing the simulation.
-        _parameters_controller (ParametersController): The controller responsible for managing the parameters interface.
-
-    Methods:
-        handle_actions(event):
-            Handles all events related to user actions such as clicks and key presses.
-        
-        draw():
-            Draws all views, including parameters, graph, and simulation.
+        _screen (pygame.Surface): The main screen for rendering the
+            application.
+        _graph_controller (GraphController): The controller responsible
+            for handling graph-related tasks.
+        _file_explorer_controller (FileExplorerController):
+            The controller responsible for managing the file explorer.
+        _simulation_controller (SimulationController): The controller
+            responsible for managing the simulation.
+        _parameters_controller (ParametersController): The controller
+            responsible for managing the parameters interface.
     """
     def __init__(self, csv_service: ICSVService, image_service: IImageService) -> None:
-        self._screen = pygame.display.set_mode((GRAPH_WINDOW_WIDTH + PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
-        self._graph_controller = GraphController(self._screen, csv_service, image_service)
-        self._file_explorer_controller = FileExplorerController(self._screen, self._graph_controller)
-        self._simulation_controller = SimulationController(self._graph_controller)
-        self._parameters_controller = ParametersController(self._screen,
-                                                          self._graph_controller,
-                                                          self._file_explorer_controller,
-                                                          self._simulation_controller,
-                                                          csv_service)
+        self._screen = pygame.display.set_mode(
+            (GRAPH_WINDOW_WIDTH + PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)
+            )
+        self._graph_controller = GraphController(
+            self._screen,
+            csv_service,
+            image_service
+        )
+        self._file_explorer_controller = FileExplorerController(
+            self._screen,
+            self._graph_controller
+        )
+        self._simulation_controller = SimulationController(
+            self._graph_controller
+        )
+        self._parameters_controller = ParametersController(
+            self._screen,
+            self._graph_controller,
+            self._file_explorer_controller,
+            self._simulation_controller,
+            csv_service
+        )
 
     def handle_actions(self, event) -> None:
         """
-        Handles all user actions, delegating to the appropriate controllers based on the event type.
+        Handles all user actions, delegating to the appropriate
+        controllers based on the event type.
 
         Args:
             event: The Pygame event that triggers the actions.
@@ -54,7 +67,9 @@ class ViewController:
 
     def draw(self) -> None:
         """
-        Draws all the necessary views, including the graph, parameters, and simulation on the screen.
+        Draws all the necessary views, including the graph, parameters,
+        and simulation on the screen.
+        
         Also handles drawing the file explorer if it is open.
         """
         self._parameters_controller.draw_parameters()

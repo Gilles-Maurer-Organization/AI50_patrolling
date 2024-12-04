@@ -2,64 +2,45 @@ import pygame
 
 from constants.Config import GRAPH_WINDOW_WIDTH
 from models.TextBox import TextBox
+from views.ParametersView import ParametersView
 from views.text_boxes.TextBoxView import TextBoxView
 
 class BaseTextBoxController:
     """
     This class is managing and handling multiple text boxes.
     
-    This class handles user interactions with text boxes, including mouse events,
-    keyboard input, and visual updates. It manages a collection of text boxes
-    and their associated views, ensuring that user interactions are reflected
-    in the model and the view.
+    This class handles user interactions with text boxes, including
+    mouse events, keyboard input, and visual updates. It manages a
+    collection of text boxes and their associated views, ensuring that
+    user interactions are reflected in the model and the view.
 
     Attributes:
-        _parameters_view: The parameters view associated with this controller.
-        _text_boxes: A dictionary mapping TextBox models to their corresponding TextBoxView instances.
-
-    Methods:
-        add_text_box(model, text_box_view):
-            Associates a TextBox model with its corresponding TextBoxView.
-
-        handle_event(event):
-            Handles events for all registered text boxes, including mouse clicks,
-            hover, and keyboard input.
-
-        handle_click(event, model, view):
-            Handles mouse click events on the text box and updates the model and view.
-
-        handle_hover(event, view):
-            Handles mouse hover events and updates the view accordingly.
-
-        handle_keyboard(event, model):
-            Handles keyboard input for active text boxes, such as typing and backspace.
-
-        is_text_box_text_completed(model):
-            Checks if the text content of the text box differs from the default text.
-
-        is_text_box_hovered(event, text_box_view):
-            Checks if the mouse is hovered over the text box.
-
-        draw_text_boxes():
-            Draws all registered text boxes on the screen.
-
-        is_everything_filled():
-            Checks if all the text boxes are filled with valid content.
+        _parameters_view: The parameters view associated with this
+            controller.
+        _text_boxes: A dictionary mapping TextBox models to their
+            corresponding TextBoxView instances.
     """
-    def __init__(self, parameters_view):
+    def __init__(self, parameters_view: ParametersView):
         self._parameters_view = parameters_view
         self._text_boxes : dict[TextBox, TextBoxView] = {}
 
-    def add_text_box(self, model, text_box_view):
+    def add_text_box(
+        self,
+        model: TextBox,
+        text_box_view: TextBoxView
+    ) -> None:
         """
-        Associates a TextBox model with its corresponding view (TextBoxView).
+        Associates a TextBox model with its corresponding view
+        (TextBoxView).
         """
         self._text_boxes[model] = text_box_view
 
-    def handle_event(self, event):
+    def handle_event(self, event: pygame.event.Event) -> None:
         """
         Handles events for all registered text boxes.
-        Handles mouse clicks, mouse hover, and keyboard inputs for active text boxes.
+
+        Handles mouse clicks, mouse hover, and keyboard inputs for
+        active text boxes.
         """
         for model, view in self._text_boxes.items():
             # Handle mouse click event
@@ -79,9 +60,15 @@ class BaseTextBoxController:
             # Update if the text box is completed (to change text color)
             view.set_text_completed(self.is_text_box_text_completed(model))
 
-    def handle_click(self, event, model: TextBox, view: TextBoxView):
+    def handle_click(
+        self,
+        event: pygame.event.Event,
+        model: TextBox,
+        view: TextBoxView
+    ) -> None:
         """
         Handles a click event on a text box.
+
         Activates the text box if clicked, otherwise deactivates it.
         """
         if self.is_text_box_hovered(event, view):
@@ -94,7 +81,9 @@ class BaseTextBoxController:
     def handle_hover(self, event: pygame.event.Event, view: TextBoxView):
         """
         Handles mouse hover event on a text box.
-        Changes the appearance of the text box based on whether it's hovered.
+
+        Changes the appearance of the text box based on whether it's
+        hovered.
         """
         if self.is_text_box_hovered(event, view):
             view.set_hovered()
@@ -104,9 +93,12 @@ class BaseTextBoxController:
     def handle_keyboard(self, event: pygame.event.Event, model: TextBox):
         """
         Handles keyboard input when the text box is active.
-        Processes backspace and digit input, updates the text box model accordingly.
+
+        Processes backspace and digit input, updates the text box model
+        accordingly.
         """
-        # If it is the first time the text box is being written to and the pressed key is valid (a digit), reset the default text
+        # If it is the first time the text box is being written to and
+        # the pressed key is valid (a digit), reset the default text
         if model.first_input and event.unicode.isdigit():
             model.reset()
 
@@ -119,15 +111,22 @@ class BaseTextBoxController:
 
     def is_text_box_text_completed(self, model: TextBox) -> bool:
         """
-        Checks if the text box content is different from its default text.
-        Returns True if completed, False otherwise.
+        Checks if the text box content is different from its default
+        text.
+
+        Returns:
+            bool: True if completed, False otherwise.
         """
         return model.default_text != model.text_content
 
     def is_text_box_hovered(self, event, text_box_view) -> bool:
         """
-        Checks if the mouse is hovered over the text box based on the mouse position.
-        Returns True if the mouse is within the text box bounds, False otherwise.
+        Checks if the mouse is hovered over the text box based on the
+        mouse position.
+
+        Returns:
+            bool: True if the mouse is within the text box bounds,
+                False otherwise.
         """
         mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
         return text_box_view.is_hovered(mouse_pos)
@@ -141,8 +140,11 @@ class BaseTextBoxController:
 
     def is_everything_filled(self) -> bool:
         """
-        Checks if all text boxes are filled (i.e., not using default text).
-        Returns True if all text boxes are filled, False otherwise.
+        Checks if all text boxes are filled (i.e., not using default
+        text).
+
+        Returns:
+            bool: True if all text boxes are filled, False otherwise.
         """
         for model, _ in self._text_boxes.items():
             if not model.filled:

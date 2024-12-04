@@ -6,22 +6,16 @@ from constants.Config import NODE_RADIUS
 
 class NodeController:
     """
-    This class represents a controller responsible for handling operations on nodes.
+    This class represents a controller responsible for handling
+    operations on nodes.
 
     Attributes:
-        _graph (Graph): A graph represented by nodes and edges, part of the Model.
-        _dragging_node (Node or None): A node that is currently being dragged.
-        _selected_node (Node or None): A node that is currently selected for operation.
-
-    Methods:
-        add_node(pos): Adds a node to the graph at the specified coordinates (x, y).
-        delete_node(node): Deletes the selected node and its associated edges from the graph.
-        start_drag(pos): Initializes the dragging operation by specifying the node to be moved.
-        end_drag(): Ends the dragging operation by resetting the dragged node and updating distances.
-        drag_node(pos): Moves the selected node based on the mouse cursor's position.
-        select_node(pos): Selects a node at the specified (x, y) coordinates.
-        clear_selection(): Deselects the currently selected node.
-        get_node_at_position(pos): Finds and returns the node at the specified coordinates.
+        _graph (Graph): A graph represented by nodes and edges, part of
+            the Model.
+        _dragging_node (Node or None): A node that is currently being
+            dragged.
+        _selected_node (Node or None): A node that is currently
+            selected for operation.
     """
     def __init__(self, graph: Graph) -> None:
         self._graph = graph
@@ -36,18 +30,21 @@ class NodeController:
     def selected_node(self) -> Node:
         return self._selected_node
 
-    def add_node(self, pos: tuple[int]) -> None:
+    def add_node(self, pos: tuple[int, int]) -> None:
         '''
-        Adds a new node to the graph at the given mouse click coordinates.
+        Adds a new node to the graph at the given mouse click
+        coordinates.
 
         Args:
-            pos (tuple of float): The coordinates of the mouse click (x, y).
+            pos (tuple of float): The coordinates of the mouse click
+                (x, y).
         '''
         self._graph.add_node(pos[0], pos[1])
     
     def delete_node(self, node: Node) -> None:
         '''
-        Deletes the specified node and its associated edges from the graph.
+        Deletes the specified node and its associated edges from the
+        graph.
 
         Args:
             node (Node): The node to be deleted.
@@ -55,7 +52,8 @@ class NodeController:
     
         if node is not None:  
             # Find and remove edges connected to the node
-            edges_to_remove = [edge for edge in self._graph.edges if edge[0] == node or edge[1] == node]
+            edges_to_remove = [edge for edge in self._graph.edges
+                               if edge[0] == node or edge[1] == node]
             
             for edge in edges_to_remove:
                 del self._graph.edges[edge]
@@ -64,13 +62,14 @@ class NodeController:
             self._graph.nodes.remove(node)
 
 
-    def start_drag(self, pos: tuple[int]) -> None:
+    def start_drag(self, pos: tuple[int, int]) -> None:
         '''
-        Starts the dragging operation by storing the node to be moved based
-        on the mouse click coordinates.
+        Starts the dragging operation by storing the node to be moved
+        based on the mouse click coordinates.
 
         Args:
-            pos (tuple of float): The coordinates of the mouse click (x, y).
+            pos (tuple of float): The coordinates of the mouse click
+                (x, y).
         '''
         self._dragging_node = self.get_node_at_position(pos)
 
@@ -82,12 +81,13 @@ class NodeController:
         self._graph.update_distances(self._dragging_node)
         self._dragging_node = None
 
-    def drag_node(self, pos: tuple[int]) -> None:
+    def drag_node(self, pos: tuple[int, int]) -> None:
         '''
         Moves the dragged node according to the current mouse position.
 
         Args:
-            pos (tuple of float): The current coordinates of the mouse cursor (x, y).
+            pos (tuple of float): The current coordinates of the mouse
+                cursor (x, y).
         '''
         if self._dragging_node is not None:
             # Update the node's position with the current mouse coordinates
@@ -107,23 +107,27 @@ class NodeController:
 
     def clear_selection(self) -> None:
         '''
-        Deselects the currently selected node. This method is called when the
-        user no longer wants to create a link between nodes.
+        Deselects the currently selected node. This method is called
+        when the user no longer wants to create a link between nodes.
         '''
         self._selected_node = None
 
-    def get_node_at_position(self, pos: tuple[int]):
+    def get_node_at_position(self, pos: tuple[int, int]):
         '''
-        Finds and returns the node located at the specified (x, y) coordinates
-        based on the user's mouse click.
+        Finds and returns the node located at the specified (x, y)
+        coordinates based on the user's mouse click.
 
         Args:
             pos (tuple of int): The mouse click coordinates (x, y).
 
         Returns:
-            Node: The node located at the specified coordinates, or None if no node is found.
+            Node: The node located at the specified coordinates, or
+                None if no node is found.
         '''
         for node in self._graph.nodes:
-            if math.sqrt((node.x - pos[0]) ** 2 + (node.y - pos[1]) ** 2) < NODE_RADIUS:
+            if (
+                math.sqrt((node.x - pos[0]) ** 2 + (node.y - pos[1]) ** 2)
+                < NODE_RADIUS
+            ):
                 return node
         return None

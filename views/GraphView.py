@@ -12,35 +12,14 @@ class GraphView:
     """
     This class represents the view of the graph.
 
-    It is responsible for displaying the graph, nodes, edges, and agents, as
-    well as managing the background image for the graph view.
+    It is responsible for displaying the graph, nodes, edges, and
+    agents, as well as managing the background image for the graph view.
 
     Attributes:
-        _screen (pygame.Surface): The surface on which the graph and other UI
-            elements are drawn.
-        _background_image (Optional[pygame.Surface]): The background image for
-            the graph view, or None if no background is set.
-
-    Methods:
-        set_background_image(background_image):
-            Sets the background image for the view or clears it if None.
-
-        draw_graph(graph, selected_node=None, dragging_node=None):
-            Draws the graph on the screen, including nodes and edges, with
-            optional highlighting for selected or dragging nodes.
-
-        _get_node_color(node, selected_node, dragging_node) -> pygame.Color:
-            Determines the color of a node based on its state
-            (selected, dragging, or default).
-
-        _draw_edges(graph) -> None:
-            Draws the edges between nodes in the graph.
-
-        draw_simulation(agents) -> None:
-            Draws each agent at its updated position.
-
-        has_an_image() -> bool:
-            Checks if a background image is set.
+        _screen (pygame.Surface): The surface on which the graph and
+            other UI elements are drawn.
+        _background_image (Optional[pygame.Surface]): The background
+            image for the graph view, or None if no background is set.
     """
     def __init__(self, screen: pygame.Surface) -> None:
         self._screen = screen
@@ -55,8 +34,8 @@ class GraphView:
         If None is passed, the background image will be cleared.
 
         Args:
-            background_image (Optional[pygame.Surface]): The background image
-                for the graph view, or None to clear it.
+            background_image (Optional[pygame.Surface]): The background
+                image for the graph view, or None to clear it.
         """
         self._background_image = background_image
 
@@ -68,15 +47,17 @@ class GraphView:
         """
         Draws the graph on the screen, including nodes and edges.
 
-        If a background image is set, it will be drawn first. Then, nodes are
-        drawn, with optional highlighting for selected or dragging nodes.
+        If a background image is set, it will be drawn first. Then,
+        nodes are drawn, with optional highlighting for selected or
+        dragging nodes.
 
         Args:
-            graph (Graph): The graph object containing nodes and edges to be
-                drawn.
-            selected_node (Node, optional): The node currently selected by the user.
-            dragging_node (Node, optional): The node currently being dragged by the
-                user.
+            graph (Graph): The graph object containing nodes and edges
+                to be drawn.
+            selected_node (Node, optional): The node currently selected
+                by the user.
+            dragging_node (Node, optional): The node currently being
+                dragged by the user.
         """
         if self._background_image is None:
             self._screen.fill(Colors.WHITE.value)
@@ -105,7 +86,8 @@ class GraphView:
         Args:
             node (Node): The node whose color is to be determined.
             selected_node (Node): The node that is currently selected.
-            dragging_node (Node): The node that is currently being dragged.
+            dragging_node (Node): The node that is currently being
+                dragged.
 
         Returns:
             pygame.Color: The color of the node.
@@ -138,7 +120,8 @@ class GraphView:
         Draws each agent at its updated position.
 
         Args:
-            agents (List[Agent]): A list of agents to be drawn on the screen.
+            agents (List[Agent]): A list of agents to be drawn on the
+                screen.
         """
         for agent in agents:
             pygame.draw.circle(self._screen,

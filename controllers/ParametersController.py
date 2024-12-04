@@ -17,78 +17,69 @@ from services.ICSVService import ICSVService
 
 class ParametersController:
     """
-    This class is responsible for managing the parameters section of the application interface. 
+    This class is responsible for managing the parameters section of
+    the application interface. 
 
     Attributes:
-        _simulation_controller (SimulationController): Controls the simulation process.
-        _parameters_view (ParametersView): The view that contains buttons, text boxes, and other UI elements.
-        _graph_controller (GraphController): Manages the graph-related operations and data.
-        _button_controller (ButtonController): Handles interactions with standard buttons.
-        _text_box_controller (TextBoxController): Handles interactions with text boxes in the UI.
-        _scrolling_list_controller (ScrollingListController): Manages the dropdown list interactions.
-        _start_button_controller (StartButtonController): Controls the start button functionality.
-        _algorithm_parameters_controller (AlgorithmParametersController): Handles interactions for algorithm parameters.
-
-    Methods:
-        __init__(screen, graph_controller, file_explorer_controller, simulation_controller, csv_service):
-            Initializes the ParametersController with all required dependencies.
-
-        draw_parameters():
-            Draws all the parameters UI components: buttons, dropdown menus, text boxes, etc.
-
-        handle_events(event):
-            Handles user interactions for each interactive component in the parameters section.
-
-        enable_start_button():
-            Enables the start button to initiate the simulation.
-
-        disable_start_button():
-            Disables the start button to prevent the simulation from starting.
-
-        _check_start_button_state():
-            Verifies the conditions for enabling or disabling the start button.
-
-        _handle_button(event):
-            Manages mouse click interactions on a button.
-
-        _handle_text_box(event):
-            Processes user interactions with text boxes.
-
-        _handle_scrolling_list(event):
-            Handles dropdown list events and updates related parameters.
-
-        _handle_algorithm_parameters(event):
-            Handles user interactions with algorithm-specific parameters.
+        _simulation_controller (SimulationController): Controls the
+            simulation process.
+        _parameters_view (ParametersView): The view that contains
+            buttons, text boxes, and other UI elements.
+        _graph_controller (GraphController): Manages the graph-related
+            operations and data.
+        _button_controller (ButtonController): Handles interactions
+            with standard buttons.
+        _text_box_controller (TextBoxController): Handles interactions
+            with text boxes in the UI.
+        _scrolling_list_controller (ScrollingListController): Manages
+            the dropdown list interactions.
+        _start_button_controller (StartButtonController): Controls the
+            start button functionality.
+        _algorithm_parameters_controller (AlgorithmParametersController):
+            Handles interactions for algorithm parameters.
     """
     
-    def __init__(self,
-                 screen: pygame.Surface,
-                 graph_controller: GraphController,
-                 file_explorer_controller: FileExplorerController,
-                 simulation_controller: SimulationController,
-                 csv_service: ICSVService) -> None:
-                 
+    def __init__(
+        self,
+        screen: pygame.Surface,
+        graph_controller: GraphController,
+        file_explorer_controller: FileExplorerController,
+        simulation_controller: SimulationController,
+        csv_service: ICSVService
+    ) -> None:
         self._simulation_controller = simulation_controller
 
         # Creating the ParametersView with a specific subsurface
         self._parameters_view = ParametersView(
-            screen.subsurface((GRAPH_WINDOW_WIDTH, 0, PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
+            screen.subsurface(
+                (GRAPH_WINDOW_WIDTH, 0, PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)
+            )
         )
         
         # Initializing individual controllers
         self._graph_controller = graph_controller
-        self._button_controller = ButtonController(self._parameters_view,
-                                                  graph_controller,
-                                                  file_explorer_controller)
-        self._text_box_controller = TextBoxController(self._parameters_view)
-        self._scrolling_list_controller = ScrollingListController(self._parameters_view)
-        self._start_button_controller = StartButtonController(self._parameters_view,
-                                                             graph_controller,
-                                                             simulation_controller,
-                                                             self._scrolling_list_controller,
-                                                             CompleteGraphService,
-                                                             csv_service)
-        self._algorithm_parameters_controller = AlgorithmParametersController(self._parameters_view)
+        self._button_controller = ButtonController(
+            self._parameters_view,
+            graph_controller,
+            file_explorer_controller
+        )
+        self._text_box_controller = TextBoxController(
+            self._parameters_view
+        )
+        self._scrolling_list_controller = ScrollingListController(
+            self._parameters_view
+        )
+        self._start_button_controller = StartButtonController(
+            self._parameters_view,
+            graph_controller,
+            simulation_controller,
+            self._scrolling_list_controller,
+            CompleteGraphService,
+            csv_service
+        )
+        self._algorithm_parameters_controller = AlgorithmParametersController(
+            self._parameters_view
+        )
 
         # Disabling certain buttons if the graph does not have an image
         if not graph_controller.graph_has_an_image():
@@ -97,7 +88,8 @@ class ParametersController:
 
     def draw_parameters(self) -> None:
         """
-        Draws all the parameters UI components: buttons, scrolling list, text boxes, etc.
+        Draws all the parameters UI components: buttons, scrolling
+        list, text boxes, etc.
         """
         self._parameters_view.draw()
         self._button_controller.draw_buttons()
@@ -108,10 +100,12 @@ class ParametersController:
 
     def handle_events(self, event: pygame.event.Event) -> None:
         """
-        Handles user interactions for each interactive component in the parameters section.
+        Handles user interactions for each interactive component in the
+        parameters section.
 
         Args:
-            event: The Pygame event containing interaction details (e.g., mouse clicks, key presses).
+            event: The Pygame event containing interaction details
+                (e.g., mouse clicks, key presses).
         """
         self._handle_button(event)
         self._handle_text_box(event)
@@ -124,7 +118,8 @@ class ParametersController:
         Handles mouse click interactions on buttons.
 
         Args:
-            event: The Pygame event containing information about mouse clicks.
+            event: The Pygame event containing information about mouse
+                clicks.
         """
         self._button_controller.handle_event(event)
         self._start_button_controller.handle_event(event)
@@ -134,7 +129,8 @@ class ParametersController:
         Handles events for the text boxes.
 
         Args:
-            event: The Pygame event containing user interaction details.
+            event: The Pygame event containing user interaction
+                details.
         """
         self._text_box_controller.handle_event(event)
 
@@ -143,7 +139,8 @@ class ParametersController:
         Handles events for the dropdown list.
 
         Args:
-            event: The Pygame event containing user interaction details.
+            event: The Pygame event containing user interaction
+                details.
         """
         is_algorithm_selected = self._scrolling_list_controller.handle_event(event)
         if is_algorithm_selected:
@@ -167,18 +164,20 @@ class ParametersController:
 
     def disable_start_button(self) -> bool:
         """
-        Disables the start button to prevent the simulation from starting.
+        Disables the start button to prevent the simulation from
+        starting.
         """
         self._start_button_controller.disable_start_button()
 
     def _check_start_button_state(self) -> None:
         """
-        Checks whether the start button should be enabled or disabled based on the current state of the UI.
+        Checks whether the start button should be enabled or disabled
+        based on the current state of the UI.
         """
         if (
-                self._scrolling_list_controller.get_selected_algorithm() is not None
-                and self._text_box_controller.is_everything_filled()
-                and not self._graph_controller.is_graph_empty()
+            self._scrolling_list_controller.get_selected_algorithm() is not None
+            and self._text_box_controller.is_everything_filled()
+            and not self._graph_controller.is_graph_empty()
         ):
             self.enable_start_button()
         else:

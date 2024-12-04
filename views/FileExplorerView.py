@@ -10,47 +10,30 @@ class FileExplorerView:
 
     It is responsible for managing and displaying the file explorer UI,
     handling its appearance, and controlling interactions with the file
-    selection dialog. This class uses pygame_gui to manage the UI elements
-    for browsing files, including selecting files and preventing file
-    deletion.
+    selection dialog. This class uses pygame_gui to manage the UI
+    elements for browsing files, including selecting files and
+    preventing file deletion.
 
     Attributes:
-        _screen (pygame.Surface): The surface on which the file explorer UI
-            is drawn.
-        _ui_manager (pygame_gui.UIManager): The UI manager responsible for
-            managing and updating UI elements.
-        _file_explorer (pygame_gui.windows.ui_file_dialog.UIFileDialog or None):
+        _screen (pygame.Surface): The surface on which the file
+            explorer UI is drawn.
+        _ui_manager (pygame_gui.UIManager): The UI manager responsible
+            for managing and updating UI elements.
+        _file_explorer (pygame_gui.windows.ui_file_dialog.UIFileDialog
+        or None):
             The file dialog instance used for file selection.
         _explorer_width (int): The width of the file explorer window.
         _explorer_height (int): The height of the file explorer window.
-        _rect (pygame.Rect or None): The rectangle defining the position and
-            size of the file explorer window.
-
-    Methods:
-        file_explorer:
-            Returns the current file explorer instance.
-
-        process_events(event):
-            Processes events related to the UI, such as user interactions with the file explorer.
-
-        draw_file_explorer():
-            Initializes and draws the file explorer on the screen.
-
-        _update_ui_manager():
-            Updates the UI manager with the frame time delta to handle animations and interactions.
-
-        _create_requirements():
-            Initializes the file explorer window if it hasn't been created yet, including defining its position and size.
-
-        _close_file_explorer():
-            Closes the file explorer if it is open and resets the reference to None.
-
-        _hide_delete_button():
-            Hides the delete button in the file explorer dialog to prevent users from deleting files.
+        _rect (pygame.Rect or None): The rectangle defining the
+            position and size of the file explorer window.
     """
     def __init__(self, screen: pygame.Surface) -> None:
         self._screen = screen
-        self._ui_manager = pygame_gui.UIManager((GRAPH_WINDOW_WIDTH + PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT), 'assets/theme.json')
+        self._ui_manager = pygame_gui.UIManager(
+            (GRAPH_WINDOW_WIDTH + PARAMETERS_WINDOW_WIDTH,
+             GRAPH_WINDOW_HEIGHT),
+            'assets/theme.json'
+        )
 
         self._file_explorer = None
         self._explorer_width = 300
@@ -88,8 +71,8 @@ class FileExplorerView:
 
     def _update_ui_manager(self) -> None:
         """
-        Updates the state of the UI manager (for animations, interactions,
-        etc.) with the frame time delta.
+        Updates the state of the UI manager (for animations,
+        interactions, etc.) with the frame time delta.
         """
         clock = pygame.time.Clock()
         time_delta = clock.tick(30)/1000.0
@@ -97,14 +80,17 @@ class FileExplorerView:
 
     def _create_requirements(self) -> None:
         """
-        Initializes and draws the file explorer UI on the screen if it isn't
-        already created.
+        Initializes and draws the file explorer UI on the screen if it
+        isn't already created.
         """
         if self._file_explorer is not None:
             return
 
         # Define the position and size of the file explorer window
-        self._rect = pygame.Rect((GRAPH_WINDOW_WIDTH, 0), (self._explorer_width, self._explorer_height))
+        self._rect = pygame.Rect(
+            (GRAPH_WINDOW_WIDTH, 0),
+            (self._explorer_width, self._explorer_height)
+        )
         # Center the file explorer window on the screen
         self._rect.center = self._screen.get_rect().center
 
@@ -125,8 +111,8 @@ class FileExplorerView:
 
     def _close_file_explorer(self) -> None:
         """
-        Closes the file explorer UI if it is open and resets the reference
-        to None.
+        Closes the file explorer UI if it is open and resets the
+        reference to None.
         """
         if self._file_explorer is not None:
             self._file_explorer.kill()

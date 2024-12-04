@@ -2,25 +2,15 @@ from models.algorithms.IAlgorithmModel import IAlgorithmModel
 
 class ScrollingList:
     """
-    This class manages a list of algorithms and tracks the selected algorithm.
+    This class manages a list of algorithms and tracks the selected
+    algorithm.
     
     Attributes:
-        _active (bool): A flag indicating whether the list is active or not.
+        _active (bool): A flag indicating whether the list is active or
+            not.
         _algorithms (list[IAlgorithmModel]): A list of algorithm models.
-        _selected_algorithm (IAlgorithmModel | None): The currently selected algorithm.
-    
-    Methods:
-        active:
-            Getter and setter for the 'active' attribute.
-        
-        algorithms:
-            Getter for the 'algorithms' attribute.
-        
-        selected_algorithm:
-            Getter and setter for the 'selected_algorithm' attribute.
-        
-        has_an_algorithm_selected:
-            Returns a boolean indicating whether a selection has been made.
+        _selected_algorithm (IAlgorithmModel | None): The currently
+            selected algorithm.
     """
     def __init__(self, algorithms: list[IAlgorithmModel]) -> None:
         self._active = False
@@ -56,7 +46,8 @@ class ScrollingList:
             algorithm (IAlgorithmModel): The new algorithm to be selected.
         """
         if not isinstance(algorithm, IAlgorithmModel):
-            raise ValueError("Selected algorithm must be an instance of IAlgorithmModel.")
+            raise ValueError("Selected algorithm must be an instance of \
+                             IAlgorithmModel.")
         self._selected_algorithm = algorithm
     
     def has_an_algorithm_selected(self) -> bool:
