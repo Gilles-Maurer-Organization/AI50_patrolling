@@ -8,6 +8,7 @@ from services.ICompleteGraphService import ICompleteGraphService
 from views.ButtonView import ButtonView
 from services.ICSVService import ICSVService
 
+
 class StartButtonController(BaseButtonController):
     def __init__(self,
                  parameters_view,
@@ -22,6 +23,7 @@ class StartButtonController(BaseButtonController):
         self.csv_service = csv_service
         self._scrolling_list_controller = scrolling_list_controller
         self._simulation_controller = simulation_controller
+        self._scrolling_list_controller = scrolling_list_controller
 
         self.start_button = Button("Start simulation", self.start_action, enabled=False)
 
@@ -64,29 +66,44 @@ class StartButtonController(BaseButtonController):
 
         if self.graph_controller.is_graph_modified():
             self.graph_controller.save_graph()
-            self._compute_store_and_save_graph_data()
-            self._launch_algorithm()
+            success = self._compute_store_and_save_graph_data()
+            if success:
+                self._launch_algorithm()
+            else:
+                self.graph_controller.raise_error_message('The graph must not have isolated subgraphs')
         
         elif not self.graph_controller.are_complements_saved():
-            self._compute_store_and_save_graph_data()
-            self._launch_algorithm()
+            success = self._compute_store_and_save_graph_data()
+            if success:
+                self._launch_algorithm()
+            else:
+                self.graph_controller.raise_error_message('The graph must not have isolated subgraphs')
 
         elif self.graph_controller.are_complements_saved():
             self._launch_algorithm()
 
     def _compute_store_and_save_graph_data(self):
         complete_graph, shortest_paths = self.compute_complete_graph_and_shortest_paths()
+        if not complete_graph:
+            return False
+        if not shortest_paths:
+            raise ValueError('Shortest paths dictionnary is null while Complete Graph array exists.')
+    
         self.graph_controller.store_complements_to_model(complete_graph, shortest_paths)
 
         self.graph_controller.save_complements(complete_graph, shortest_paths)
+        return True
 
     def _launch_algorithm(self):
+        self.graph_controller.raise_info('Algorithm launched')
         selected_algorithm = self._scrolling_list_controller.get_selected_algorithm()
         
         # TODO: interface for all the algorithm that owns a launch() method, that all the algorithm implement
         # paths = selected_algorithm.launch()
         # passer paths à la simulation
         print("Launching algorithm with complete graph", selected_algorithm)
+    
+        #self.graph_controller.raise_message('Simulation started')
             
     def compute_complete_graph_and_shortest_paths(self):
         simple_graph, node_positions = self.graph_controller.graph.compute_matrix()
