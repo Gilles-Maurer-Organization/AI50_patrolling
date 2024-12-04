@@ -7,15 +7,10 @@ class ParametersView:
     This class represents the parameters view of the application.
 
     Attributes:
-        _screen (pygame.Surface): The surface on which the view elements are
-            drawn.
+        _screen (pygame.Surface): The surface on which the view
+            elements are drawn.
         _background_color (pygame.Color): The background color of the
             parameters view.
-
-    Methods:
-        draw() -> None:
-            Renders the parameters view with the UI elements
-            (without specific elements).
     """
     def __init__(self, screen: pygame.Surface) -> None:
         self._screen = screen

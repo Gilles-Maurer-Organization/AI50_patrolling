@@ -7,80 +7,47 @@ from models.algorithms.IAlgorithmModel import IAlgorithmModel
 
 class ScrollingListView:
     """
-    This class represents a scrolling list view used for displaying selectable
-    algorithm options.
+    This class represents a scrolling list view used for displaying
+    selectable algorithm options.
     
-    It handles the rendering of the dropdown header, list options, and the
-    interaction state (active, hovered, clicked).
+    It handles the rendering of the dropdown header, list options, and
+    the interaction state (active, hovered, clicked).
     
     Attributes:
-        _screen (pygame.Surface): The screen where the view elements are
-            drawn.
-        _x (int): The x-coordinate of the top-left corner of the scrolling
-            list.
-        _y (int): The y-coordinate of the top-left corner of the scrolling
-            list.
+        _screen (pygame.Surface): The screen where the view elements
+            are drawn.
+        _x (int): The x-coordinate of the top-left corner of the
+            scrolling list.
+        _y (int): The y-coordinate of the top-left corner of the
+            scrolling list.
         _width (int): The width of the scrolling list.
         _height (int): The height of the scrolling list.
         _color (pygame.Color): The color of the scrolling list header.
-        _text_color (pygame.Color): The color of the text in the header.
-        _font (pygame.font.Font): The font used to render the text in the
+        _text_color (pygame.Color): The color of the text in the
+            header.
+        _font (pygame.font.Font): The font used to render the text in
+            the list.
+        _scrolling_list_rect (pygame.Rect): The rectangle representing
+            the area of the scrolling list.
+        _icon_path (str): Path to the icon image used for the scrolling
             list.
-        _scrolling_list_rect (pygame.Rect): The rectangle representing the
-            area of the scrolling list.
-        _icon_path (str): Path to the icon image used for the dropdown
-            indicator.
-        _icon (pygame.Surface): The image of the dropdown indicator icon.
+        _icon (pygame.Surface): The image of the dropdown indicator
+            icon.
         _flipped_icon (pygame.Surface): The flipped version of the icon
-            (for the dropdown).
-        _is_active (bool): Indicates whether the list is active (open) or not.
-        _options_rects (list[pygame.Rect]): A list of rectangles for the
-            options in the dropdown.
-
-    Methods:
-        draw(algorithms, selected_algorithm=None, has_an_algorithm_selected=False):
-            Renders the scrolling list with its header and options if active.
-        
-        _draw_list_header(selected_algorithm=None):
-            Renders the header of the scrolling list, showing the selected
-            algorithm name or a placeholder.
-        
-        _draw_options(algorithms: list[IAlgorithmModel]):
-            Renders the available options under the list header.
-        
-        _change_header_text_color():
-            Changes the header text color when an algorithm is selected.
-        
-        is_option_clicked(event, algorithms: list[str]):
-            Checks if an option in the list has been clicked and returns the
-            selected option.
-        
-        set_active(is_active: bool):
-            Sets the active (open) state of the dropdown list.
-        
-        set_selected_option(option: str):
-            Sets the selected option in the dropdown list.
-        
-        set_hovered():
-            Changes the state of the dropdown list to hovered.
-        
-        set_clicked():
-            Changes the state of the dropdown list to clicked.
-        
-        set_normal():
-            Changes the state of the dropdown list to normal
-            (neither hovered nor clicked).
-        
-        is_hovered(event: pygame.event.Event):
-            Checks if the dropdown list is hovered by the mouse.
+            (for the scrolling list).
+        _is_active (bool): Indicates whether the list is active (open)
+            or not.
+        _options_rects (list[pygame.Rect]): A list of rectangles for
+            the options in the scrolling list.
     """
-    def __init__(self,
-                 screen: pygame.Surface,
-                 x: int,
-                 y: int,
-                 width: int,
-                 height: int
-                 ) -> None:
+    def __init__(
+        self,
+        screen: pygame.Surface,
+        x: int,
+        y: int,
+        width: int,
+        height: int
+    ) -> None:
         self._screen = screen
         self._x = x
         self._y = y
@@ -109,20 +76,23 @@ class ScrollingListView:
     def is_active(self) -> bool:
         return self._is_active
 
-    def draw(self,
-             algorithms: list[IAlgorithmModel],
-             selected_algorithm: IAlgorithmModel = None,
-             has_an_algorithm_selected: bool = False
-             ) -> None:
+    def draw(
+        self,
+        algorithms: list[IAlgorithmModel],
+        selected_algorithm: IAlgorithmModel = None,
+        has_an_algorithm_selected: bool = False
+    ) -> None:
         """
-        Renders the dropdown list with its header and options if active.
+        Renders the dropdown list with its header and options if
+        active.
 
         Args:
-            algorithms (list[IAlgorithmModel]): A list of available algorithms.
-            selected_algorithm (IAlgorithmModel, optional): The selected
-                algorithm. Defaults to None.
-            has_an_algorithm_selected (bool, optional): Whether an algorithm
-                is selected. Defaults to False.
+            algorithms (list[IAlgorithmModel]): A list of available
+                algorithms.
+            selected_algorithm (IAlgorithmModel, optional): The
+                selected algorithm. Defaults to None.
+            has_an_algorithm_selected (bool, optional): Whether an
+                algorithm is selected. Defaults to False.
         """
         if has_an_algorithm_selected:
             self._change_header_text_color()
@@ -131,13 +101,13 @@ class ScrollingListView:
         if self._is_active:
             self._draw_options(algorithms)
     
-    def _draw_list_header(self, selected_algorithm = None):
+    def _draw_list_header(self, selected_algorithm: IAlgorithmModel = None):
         """
         Renders the header of the scrolling list.
 
         Args:
-            selected_algorithm (IAlgorithmModel, optional): The selected
-                algorithm. Defaults to None.
+            selected_algorithm (IAlgorithmModel, optional): The
+                selected algorithm. Defaults to None.
         """
         pygame.draw.rect(self._screen,
                          self._color,
@@ -212,12 +182,12 @@ class ScrollingListView:
 
         Args:
             event: The Pygame event containing mouse coordinates.
-            algorithms (list[str]): The list of available algorithms in the
-                model.
+            algorithms (list[str]): The list of available algorithms in
+                the model.
 
         Returns:
-            Union[None, str]: The name of the selected algorithm, or None if
-                no option is clicked.
+            Union[None, str]: The name of the selected algorithm, or
+                None if no option is clicked.
         """
 
         mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
@@ -276,7 +246,8 @@ class ScrollingListView:
             event: The Pygame event containing mouse coordinates.
 
         Returns:
-            bool: True if the dropdown list is hovered, False otherwise.
+            bool: True if the dropdown list is hovered, False
+                otherwise.
         """
         mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
         if self._scrolling_list_rect:

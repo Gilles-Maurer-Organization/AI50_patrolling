@@ -19,10 +19,11 @@ class GraphController:
     """
     This class manages the graph's operations and user interactions.
 
-    The GraphController is responsible for handling user input, managing the graph's 
-    model (nodes, edges), and updating the graphical view. It also integrates with 
-    CSV and image services to enable saving/loading graphs and importing images as 
-    graph backgrounds.
+    The GraphController is responsible for handling user input,
+    managing the graph's model (nodes, edges), and updating the
+    graphical view. It also integrates with CSV and image services to
+    enable saving/loading graphs and importing images as graph
+    backgrounds.
 
     Attributes:
         _graph: The graph model, representing nodes and edges.
@@ -30,91 +31,19 @@ class GraphController:
         _image_service: A service for handling image-related tasks.
         _graph_view: The view responsible for rendering the graph.
         _node_controller: The controller managing individual nodes.
-        _edge_controller: The controller managing edges and links between nodes.
-        _image_name: The name of the current background image for the graph.
-        _disable_mark: A flag to temporarily disable marking the graph as modified.
-
-    Methods:
-        mark_graph_as_modified(func):
-            Decorator to mark the graph as modified when certain operations are performed.
-
-        _add_node(pos):
-            Adds a new node to the graph at the specified position.
-
-        _delete_node(node):
-            Deletes the specified node from the graph.
-
-        _drag_node(pos):
-            Moves the currently dragged node to a new position.
-
-        _create_link(pos):
-            Creates a link between two nodes based on the specified position.
-
-        _select_node(node):
-            Selects the specified node in the graph.
-
-        _start_drag(pos):
-            Begins dragging a node from the specified position.
-
-        _end_drag():
-            Ends the current node dragging operation.
-
-        _clear_selection():
-            Clears the current node selection.
-
-        is_graph_modified():
-            Checks if the graph has been modified since the last save.
-
-        is_graph_empty():
-            Checks if the graph is empty (contains no nodes or edges).
-
-        _load_background_image(image_name):
-            Loads and sets a background image for the graph view.
-
-        handle_event(event):
-            Handles user input events such as mouse clicks and motions.
-
-        update():
-            Updates the graph view to reflect the current state of the model.
-
-        save_graph():
-            Saves the graph's structure (nodes and edges) to a CSV file.
-
-        save_complements(complete_graph, shortest_paths):
-            Saves additional data such as the complete graph and shortest paths.
-
-        clear_graph():
-            Clears all nodes and edges from the graph.
-
-        load_graph_from_csv(file_number):
-            Loads a graph's data from a CSV file by file number.
-
-        import_graph_from_image(image_path):
-            Imports a graph background from an image file and associates it with the graph.
-
-        import_graph_from_csv(csv_path):
-            Imports a graph's data from a specified CSV file.
-
-        _load_graph(edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths):
-            Loads a graph's structure and metadata into the model.
-
-        graph_has_an_image():
-            Checks if the graph currently has a background image.
-
-        draw_simulation(agents):
-            Draws a simulation of agents on the graph.
-
-        get_graph():
-            Returns the current graph model.
-
-        are_complements_saved():
-            Checks if complements (e.g., shortest paths) are saved for the graph.
-
-        store_complements_to_model(complete_adjacency_matrix, shortest_paths):
-            Stores complement data like adjacency matrices and shortest paths into the model.
+        _edge_controller: The controller managing edges and links
+            between nodes.
+        _image_name: The name of the current background image for the
+            graph.
+        _disable_mark: A flag to temporarily disable marking the graph
+            as modified.
     """
 
-    def __init__(self, screen: pygame.Surface, csv_service: ICSVService, image_service: IImageService) -> None:
+    def __init__(self,
+                 screen: pygame.Surface,
+                 csv_service: ICSVService,
+                 image_service: IImageService
+                 ) -> None:
         self._graph = Graph()
         self._csv_service = csv_service
         self._image_service = image_service
@@ -122,11 +51,14 @@ class GraphController:
         self._disable_mark = False
 
         # Initialize the view
-        self._graph_view = GraphView(screen.subsurface((0, 0, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)))
+        self._graph_view = GraphView(
+            screen.subsurface((0, 0, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
+        )
 
         # Initialize node and edge controllers
         self._node_controller = NodeController(self._graph)
-        self._edge_controller = EdgeController(self._graph, self._node_controller)
+        self._edge_controller = EdgeController(self._graph,
+                                               self._node_controller)
 
         # Load initial background image
         self._image_name = "image1.jpg"
@@ -144,7 +76,8 @@ class GraphController:
 
     def mark_graph_as_modified(func):
         """
-        Decorator to mark the graph as modified when a function makes changes.
+        Decorator to mark the graph as modified when a function makes
+        changes.
 
         Args:
             func: The function to be wrapped by the decorator.
@@ -158,12 +91,13 @@ class GraphController:
         return wrapper
 
     @mark_graph_as_modified
-    def _add_node(self, pos: tuple[int]) -> None:
+    def _add_node(self, pos: tuple[int, int]) -> None:
         """
         Adds a new node to the graph at a specified position.
 
         Args:
-            pos: A tuple representing the (x, y) coordinates of the new node.
+            pos: A tuple representing the (x, y) coordinates of the new
+                node.
         """
         self._node_controller.add_node(pos)
 
@@ -178,22 +112,24 @@ class GraphController:
         self._node_controller.delete_node(node)
 
     @mark_graph_as_modified
-    def _drag_node(self, pos: tuple[int]) -> None:
+    def _drag_node(self, pos: tuple[int, int]) -> None:
         """
         Drags the currently selected node to a new position.
 
         Args:
-            pos: A tuple representing the (x, y) coordinates of the new position.
+            pos: A tuple representing the (x, y) coordinates of the new
+                position.
         """
         self._node_controller.drag_node(pos)
 
     @mark_graph_as_modified
-    def _create_link(self, pos: tuple[int]) -> None:
+    def _create_link(self, pos: tuple[int, int]) -> None:
         """
         Creates a link between two nodes based on the given position.
 
         Args:
-            pos: A tuple representing the (x, y) position where the link is initiated.
+            pos: A tuple representing the (x, y) position where the
+                link is initiated.
         """
         self._edge_controller.create_link(pos)
 
@@ -206,12 +142,13 @@ class GraphController:
         """
         self._node_controller.select_node(node)
         
-    def _start_drag(self, pos: tuple[int]) -> None:
+    def _start_drag(self, pos: tuple[int, int]) -> None:
         """
         Starts the dragging operation for a node.
 
         Args:
-            pos: A tuple representing the initial (x, y) position of the drag.
+            pos: A tuple representing the initial (x, y) position of
+                the drag.
         """
         self._node_controller.start_drag(pos)
     
@@ -259,7 +196,10 @@ class GraphController:
         # Check if the image exists in the folder
         if self._image_service.check_if_image_exists(image_path):
             background_image = pygame.image.load(image_path)
-            background_image = pygame.transform.scale(background_image, (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT))
+            background_image = pygame.transform.scale(
+                background_image,
+                (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)
+            )
             self._graph_view.set_background_image(background_image)
         else:
             print(f"Image {image_name} not found or could not be copied.")
@@ -289,22 +229,30 @@ class GraphController:
             if self._is_within_bounds(pos):
                 self._drag_node(pos)
 
-    def _handle_left_click(self, pos: tuple[int], node: Node) -> None:
+    def _handle_left_click(self, pos: tuple[int, int], node: Node) -> None:
         """
         Handles a left-click event in the graph.
 
-        If the CTRL key is pressed and a node is selected, the node is deleted. 
+        If the CTRL key is pressed and a node is selected, the node is
+        deleted.
+
         Otherwise:
         - Clears any current node selection.
         - Starts dragging a node if a valid one exists.
-        - Adds a new node if none exists at the clicked position and the position is within bounds.
+        - Adds a new node if none exists at the clicked position and
+            the position is within bounds.
 
         Args:
-            pos: A tuple (x, y) representing the position of the mouse click.
+            pos: A tuple (x, y) representing the position of the mouse
+                click.
             node: The node located at the clicked position, if any.
         """
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL] and node is not None:
+        if (
+            keys[pygame.K_LCTRL]
+            or keys[pygame.K_RCTRL]
+            and node is not None
+            ):
             self._delete_node(node)
         else:
             self._clear_selection()
@@ -312,7 +260,7 @@ class GraphController:
             if node is None and self._is_within_bounds(pos):
                 self._add_node(pos)
 
-    def _handle_right_click(self, pos: tuple[int], node: Node) -> None:
+    def _handle_right_click(self, pos: tuple[int, int], node: Node) -> None:
         """
         Handles a right-click event in the graph.
 
@@ -321,13 +269,14 @@ class GraphController:
         - Selects the node at the clicked position, if any.
 
         Args:
-            pos: A tuple (x, y) representing the position of the mouse click.
+            pos: A tuple (x, y) representing the position of the mouse
+                click.
             node: The node located at the clicked position, if any.
         """
         self._create_link(pos)
         self._select_node(node)
 
-    def _is_within_bounds(self, pos: tuple[int]) -> bool:
+    def _is_within_bounds(self, pos: tuple[int, int]) -> bool:
         return (NODE_RADIUS < pos[0] < GRAPH_WINDOW_WIDTH - NODE_RADIUS and
                 NODE_RADIUS < pos[1] < GRAPH_WINDOW_HEIGHT - NODE_RADIUS)
 
@@ -335,7 +284,9 @@ class GraphController:
         """
         Updates the graph view to reflect the current state of the model.
         """
-        self._graph_view.draw_graph(self._graph, self._node_controller.selected_node, self._node_controller.dragging_node)
+        self._graph_view.draw_graph(self._graph,
+                                    self._node_controller.selected_node,
+                                    self._node_controller.dragging_node)
         self._graph_view.draw_popup()
 
     def save_graph(self) -> None:
@@ -347,9 +298,11 @@ class GraphController:
 
     def save_complements(self,
                          complete_graph: list[list[float]],
-                         shortest_paths: dict[tuple[int, int], list[int]]) -> None:
+                         shortest_paths: dict[tuple[int, int], list[int]]
+                         ) -> None:
         """
-        Saves additional data such as the complete graph and shortest paths.
+        Saves additional data such as the complete graph and shortest
+        paths.
 
         Args:
             complete_graph: The adjacency matrix representing the complete graph.
@@ -397,7 +350,8 @@ class GraphController:
 
         # if the image has no associated csv file, display it only
         if csv_path is None:
-            print(f"{image_name} not found in references.csv. Displaying image only.")
+            print(f"{image_name} not found in references.csv.\
+                  Displaying image only.")
             self.clear_graph()
             self.update()
             return
@@ -425,7 +379,10 @@ class GraphController:
         self._load_background_image(self._image_name)
         edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths = self._csv_service.load(csv_path)
         
-        self._load_graph(edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths)
+        self._load_graph(edges_matrix,
+                         nodes_list,
+                         complete_adjacency_matrix,
+                         shortest_paths)
 
     def _load_graph(self,
                     edges_matrix: list[list[float]],
@@ -438,7 +395,8 @@ class GraphController:
         Args:
             edges_matrix: The adjacency matrix of the graph.
             nodes_list: A list of nodes in the graph.
-            complete_adjacency_matrix: The complete adjacency matrix for the graph.
+            complete_adjacency_matrix: The complete adjacency matrix
+                for the graph.
             shortest_paths: The list of shortest paths.
         """
         if edges_matrix and nodes_list:
@@ -451,7 +409,8 @@ class GraphController:
                         node1 = self._graph.nodes[i]
                         node2 = self._graph.nodes[j]
                         self._graph.add_edge(node1, node2)
-            self.store_complements_to_model(complete_adjacency_matrix, shortest_paths)
+            self.store_complements_to_model(complete_adjacency_matrix,
+                                            shortest_paths)
 
             self.update()
             print("Graph imported and displayed successfully.")
@@ -478,7 +437,8 @@ class GraphController:
     
     def are_complements_saved(self):
         """
-        Checks if complements (e.g., shortest paths and complete graph) are saved for the graph.
+        Checks if complements (e.g., shortest paths and complete graph)
+        are saved for the graph.
 
         Returns:
             bool: True if complements are saved, otherwise False.
@@ -489,16 +449,20 @@ class GraphController:
                                    complete_adjacency_matrix: list[list[float]],
                                    shortest_paths: dict[tuple[int, int], list[int]]):
         """
-        Stores complement data like adjacency matrices and shortest paths into the model.
+        Stores complement data like adjacency matrices and shortest
+        paths into the model.
 
         Args:
-            complete_adjacency_matrix: The complete adjacency matrix for the graph.
-            shortest_paths: The list of shortest paths to store in the model.
+            complete_adjacency_matrix: The complete adjacency matrix
+                for the graph.
+            shortest_paths: The list of shortest paths to store in the
+                model.
         """
         if complete_adjacency_matrix:
             self._graph.set_complete_adjacency_matrix(complete_adjacency_matrix)
             if not shortest_paths:
-                raise ValueError("Shortest paths are missing despite a complete adjacency matrix being present.")
+                raise ValueError("Shortest paths are missing despite a \
+                                 complete adjacency matrix being present.")
             else:
                 self._graph.set_shortest_paths(shortest_paths)
 

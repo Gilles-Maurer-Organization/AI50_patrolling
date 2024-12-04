@@ -8,27 +8,29 @@ from views.ParametersView import ParametersView
 
 class BaseButtonController:
     """
-    This class is responsible for managing the buttons in the ParametersView and handling their events.
+    This class is responsible for managing the buttons in the
+    ParametersView and handling their events.
 
-    It initializes the button views and associates them with the corresponding button actions. 
-    The controller listens for mouse events such as clicks and hover motions, and it triggers the appropriate 
-    button actions based on user interaction.
+    It initializes the button views and associates them with the
+    corresponding button actions.
 
-    Methods:
-        draw_buttons() -> None:
-            Draws all the buttons onto the view.
-        
-        handle_event(event: pygame.event.Event) -> None:
-            Handles the mouse events, such as clicks and hover motions, triggering the corresponding button actions.
+    The controller listens for mouse events such as clicks and hover
+    motions, and it triggers the appropriate button actions based on
+    user interaction.
 
     Attributes:
-        _parameters_view (ParametersView): The view that contains the buttons.
-        _graph_controller (GraphController): The controller that manages the graph.
-        _button_map (dict[Button, ButtonView]): A dictionary mapping Button objects to their corresponding ButtonView objects.
+        _parameters_view (ParametersView): The view that contains the
+            buttons.
+        _graph_controller (GraphController): The controller that
+            manages the graph.
+        _button_map (dict[Button, ButtonView]): A dictionary mapping
+            Button objects to their corresponding ButtonView objects.
     """
-    def __init__(self,
-                 parameters_view: ParametersView,
-                 graph_controller: GraphController) -> None:
+    def __init__(
+        self,
+        parameters_view: ParametersView,
+        graph_controller: GraphController
+    ) -> None:
         self._parameters_view = parameters_view
         self._graph_controller = graph_controller
 
@@ -45,11 +47,15 @@ class BaseButtonController:
         """
         Handles the button click event.
 
-        This method checks if the received event corresponds to a left mouse click. 
-        If so, it triggers the action associated with the button clicked by the user.
+        This method checks if the received event corresponds to a left
+        mouse click. 
+        
+        If so, it triggers the action associated with the button
+        clicked by the user.
 
         Args:
-            event: The Pygame event containing information about the mouse click.
+            event: The Pygame event containing information about the
+                mouse click.
         """
         if event.type == pygame.MOUSEBUTTONDOWN:
             for button, button_view in self._button_map.items():

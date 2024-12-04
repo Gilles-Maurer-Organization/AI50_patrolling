@@ -4,60 +4,26 @@ from models.Node import Node
 
 class Graph:
     """
-    This class represents a graph with nodes and edges and provides various methods 
-    for graph manipulation such as adding nodes, calculating distances, and generating 
-    adjacency matrices.
+    This class represents a graph with nodes and edges and provides
+    various methods for graph manipulation such as adding nodes,
+    calculating distances, and generating adjacency matrices.
 
-    The Graph class allows you to manage nodes, edges, and compute matrices for the graph. 
-    It also provides functionality to store and update the shortest paths and modify 
-    distances between nodes.
+    The Graph class allows you to manage nodes, edges, and compute
+    matrices for the graph. 
+
+    It also provides functionality to store and update the shortest
+    paths and modify distances between nodes.
 
     Attributes:
         _nodes: A list of nodes in the graph.
-        _edges: A dictionary mapping pairs of nodes (edges) to
-                                    their corresponding distances.
-        _complete_adjacency_matrix: A complete adjacency matrix representing
-                                    the graph's connectivity.
-        _shortest_paths: A dictionary storing the shortest paths between nodes.
-        _modified: A flag indicating whether the graph has been modified.
-
-    Methods:
-        nodes:
-            Returns all nodes.
-            
-        edges:
-            Returns all edges.
-
-        modified:
-            Returns True if the graph has been modified, otherwise False.
-
-        empty:
-            Returns True if the graph contains no nodes, otherwise False.
-
-        mark_as_modified():
-            Marks the graph as modified if it has not been marked already.
-
-        update_distances(dragged_node):
-            Updates the distances of the neighbors of a dragged node after a move.
-
-        add_node(x, y):
-            Adds a new node to the graph at the specified coordinates.
-
-        add_edge(node1, node2):
-            Adds an edge between two nodes with the calculated distance.
-
-        distance(node1, node2):
-            Calculates the Euclidean distance between two nodes.
-
-        compute_matrix():
-            Generates the adjacency matrix and a dictionary mapping node indices 
-            to their coordinates.
-
-        set_shortest_paths():
-            Sets the shortest paths dictionary for the graph.
-
-        set_complete_adjacency_matrix(complete_adjacency_matrix):
-            Sets the complete adjacency matrix for the graph.
+        _edges: A dictionary mapping pairs of nodes (edges) to their
+            corresponding distances.
+        _complete_adjacency_matrix: A complete adjacency matrix
+            representing the graph's connectivity.
+        _shortest_paths: A dictionary storing the shortest paths
+            between nodes.
+        _modified: A flag indicating whether the graph has been
+            modified.
     """
     def __init__(self) -> None:
         self._nodes: list[Node] = []
@@ -105,11 +71,12 @@ class Graph:
 
     def update_distances(self, dragged_node: Node) -> None:
         """
-        Updates the distances of the neighbors of a dragged node after a move.
+        Updates the distances of the neighbors of a dragged node after
+        a move.
 
         Args:
-            dragged_node (Node): The node that has been dragged and whose neighbors' 
-                                  distances need to be updated.
+            dragged_node (Node): The node that has been dragged and
+            whose neighbors' distances need to be updated.
         """
         neighbors = set()
 
@@ -160,13 +127,19 @@ class Graph:
         x2, y2 = node2.x, node2.y
         return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
-    def compute_matrix(self) -> tuple[list[list[int]], dict[int, tuple[int, int]]]:
+    def compute_matrix(
+            self
+    ) -> tuple[
+        list[list[float]],
+        dict[int, tuple[int, int]]
+    ]:
         """
-        Generates the adjacency matrix and a dictionary mapping node indices 
-        to their coordinates.
+        Generates the adjacency matrix and a dictionary mapping node
+        indices to their coordinates.
 
         Returns:
-            tuple: A tuple containing the adjacency matrix and the nodes' list.
+            tuple: A tuple containing the adjacency matrix and the
+                nodes' list.
         """
         size = len(self._nodes)
 
@@ -177,30 +150,36 @@ class Graph:
             node2_index = self._nodes.index(node2)
             edges_matrix[node1_index][node2_index] = distance
 
-        nodes_list = {index: (node.x, node.y) for index, node in enumerate(self._nodes)}
+        nodes_list = {index: (node.x, node.y)
+                      for index, node in enumerate(self._nodes)}
         
         return edges_matrix, nodes_list
 
-    def set_shortest_paths(self, shortest_paths: dict[tuple[int, int], list[int]]) -> None:
+    def set_shortest_paths(
+        self,
+        shortest_paths: dict[tuple[int, int],list[int]]
+    ) -> None:
         """
         Sets the shortest paths dictionary for the graph.
 
         Args:
-            shortest_paths (dict[tuple[int, int], list[int]]): A dictionary where 
-                                                               the keys are node pairs and the 
-                                                               values are the shortest paths 
-                                                               between those nodes.
+            shortest_paths (dict[tuple[int, int], list[int]]):
+                A dictionary where the keys are node pairs and the
+                values are the shortest paths between those nodes.
         """
         self._shortest_paths = shortest_paths
 
-    def set_complete_adjacency_matrix(self, complete_adjacency_matrix: list[list[float]]) -> None:
+    def set_complete_adjacency_matrix(
+        self,
+        complete_adjacency_matrix: list[list[float]]
+    ) -> None:
         """
         Sets the complete adjacency matrix for the graph.
 
         Args:
-            complete_adjacency_matrix (list[list[float]]): The complete adjacency matrix 
-                                                           representing the connectivity 
-                                                           of the graph.
+            complete_adjacency_matrix (list[list[float]]): The complete
+                adjacency matrix representing the connectivity of the
+                graph.
         """
         self._complete_adjacency_matrix = complete_adjacency_matrix
 

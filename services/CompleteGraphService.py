@@ -2,32 +2,52 @@ from services.IPathFindingService import IPathFindingService
 from services.ICompleteGraphService import ICompleteGraphService
 
 class CompleteGraphService(ICompleteGraphService):
-    '''
-        Class permettant de gérer un graph complet à partir d'un graphe simple.
+    """
+        Class for managing a complete graph derived from a simple
+        graph.
 
-        Attributs : 
-            node_position : dictionnaire qui pour chaque sommet indique ses coordonnées
-            simple_graph : la matrice représentant les distances entre les sommets du graph simple 
-            complete_graph : la matrice représentant les distances entre les sommets du graph complet 
-
-            shortest_way_matrix : matrice qui pour chaque couple de sommet, indique le chemin à prendre pour aller de l'un à l'autre
-    '''
+        Attributes:
+            _node_position (dict): A dictionary mapping each node to its
+                coordinates.
+            _simple_graph (list[list[float]]): The adjacency matrix
+                representing distances between nodes in the simple
+                graph.
+            _complete_graph (list[list[float]]): The adjacency matrix
+                representing distances between nodes in the complete
+                graph.
+            _shortest_way_matrix (list[list[list[int]]]): A matrix that
+                specifies, for each pair of nodes, the path to take
+                from one to the other.
+            _path_finding_service (IPathFindingService): A service that
+                implements a function to find the shortest way between
+                two nodes.
+        """
      
-    def __init__(self,  simple_graph, node_position, path_finding_service : IPathFindingService): 
+    def __init__(
+        self,
+        simple_graph: list[list[float]],
+        node_position: dict[int, tuple[int, int]],
+        path_finding_service : IPathFindingService
+    ) -> None: 
         self._simple_graph = simple_graph
         self._node_position = node_position
-        self._complete_graph = [[0 for _ in range(len(simple_graph))] for _ in range(len(simple_graph))]
-        self._shortest_way_matrix = [[[] for _ in range(len(simple_graph))] for _ in range(len(simple_graph))]
+        self._complete_graph = [[0 for _ in range(len(simple_graph))]
+                                for _ in range(len(simple_graph))]
+        self._shortest_way_matrix = [[[] for _ in range(len(simple_graph))]
+                                     for _ in range(len(simple_graph))]
         self._path_finding_service = path_finding_service
         self.create_complete_graph()
 
-    def create_complete_graph(self): 
+    def create_complete_graph(self) -> None: 
         for i in range(len(self._simple_graph)): 
             for j in range(i, len(self._simple_graph[i])):
-
                 if self._simple_graph[i][j] == 0:
-
-                    path_finding_service = self._path_finding_service(self._simple_graph, self._node_position, i, j)
+                    path_finding_service = self._path_finding_service(
+                        self._simple_graph,
+                        self._node_position,
+                        i,
+                        j
+                    )
 
                     a_star_result = path_finding_service.find_path()
 
@@ -51,10 +71,19 @@ class CompleteGraphService(ICompleteGraphService):
                     self._shortest_way_matrix[i][j] = [i, j]
                     self._shortest_way_matrix[j][i] = [j, i]
 
-    def get_shortest_way(self, node1, node2): 
+    def get_shortest_way(self, node1, node2) -> list[int]: 
         # find the shortest way in the matrix 
         return self._shortest_way_matrix[node1, node2]
 
     @property
-    def complete_graph(self): 
+    def complete_graph(self) -> list[list[float]]: 
+        """
+        Returns the complete graph as an adjacency matrix.
+
+        This property provides access to the complete graph, where each
+        element in the matrix represents the distance between two nodes.
+
+        Returns:
+            list[list[float]]: The adjacency matrix of the complete graph.
+        """
         return self._complete_graph

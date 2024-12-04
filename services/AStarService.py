@@ -1,68 +1,92 @@
-
 import math
+
 from services.IPathFindingService import IPathFindingService
 
-class AStarService(IPathFindingService): 
+class AStarService(IPathFindingService):
+    """
+    This class implements the A* pathfinding algorithm.
 
-    def __init__(self, graph, node_position, start, end): 
-        self.graph = graph
-        self.node_position = node_position
-        self.start = start
-        self.end = end
+    Attributes:
+        _graph (list[list[float]]): The adjacency matrix representing the
+            graph.
+        _node_position (dict[int, tuple[int, int]]): The positions of the
+            nodes as (x, y) coordinates.
+        _start (int): The starting node for the pathfinding.
+        _end (int): The target node for the pathfinding.
+        _open_set (list[int]): A list of nodes to be evaluated by the
+            algorithm.
+        _came_from (dict[int, int]): A dictionary mapping nodes to
+            their predecessors in the path.
+        _g_score (dict[int, float]): The cost of the shortest path from
+            the start to each node.
+        _f_score (dict[int, float]): The estimated cost from the start
+            to the target through each node.
+    """
+    def __init__(
+        self,
+        graph: list[list[float]],
+        node_position: dict[int, tuple[int, int]],
+        start: int,
+        end: int
+    ) -> None: 
+        
+        self._graph = graph
+        self._node_position = node_position
+        self._start = start
+        self._end = end
 
-        self.open_set = []
-        self.camem_from = {}
-        self.g_score = {}
-        self.f_score = {}
+        self._open_set = []
+        self._came_from = {}
+        self._g_score = {}
+        self._f_score = {}
 
-        # si node position est une liste : for node in range(len(nodePosition))
-        for node in self.node_position.keys():
-            self.g_score[node] = math.inf
-            self.f_score[node] = math.inf
+        for node in self._node_position.keys():
+            self._g_score[node] = math.inf
+            self._f_score[node] = math.inf
 
-    def compute_h (self, node): 
-
+    def _compute_h (self, node): 
         # distance entre le noeud et la fin
-        (x1, y1) = self.node_position[node]
-        (x2, y2) = self.node_position[self.end]
+        (x1, y1) = self._node_position[node]
+        (x2, y2) = self._node_position[self._end]
 
         return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
     
-    def reconstruct_path(self, current): 
+    def _reconstruct_path(self, current): 
         total_path = [current]
-        while current in self.camem_from.keys(): 
-            current = self.camem_from[current]
+        while current in self._came_from.keys(): 
+            current = self._came_from[current]
             total_path.insert(0, current)
 
         return total_path
     
 
     def find_path(self):
-        open_set = [self.start]  
+        open_set = [self._start]  
 
-        self.g_score[self.start] = 0 
-        self.f_score[self.start] = self.compute_h(self.start)
+        self._g_score[self._start] = 0 
+        self._f_score[self._start] = self._compute_h(self._start)
 
         while len(open_set) > 0:
 
             current = open_set[0]
             for node in open_set: 
-                if self.f_score[node] < self.f_score[current]: 
+                if self._f_score[node] < self._f_score[current]: 
                     current = node
 
-            if current == self.end: 
-                return (self.reconstruct_path(current), self.g_score[current])
+            if current == self._end: 
+                return (self._reconstruct_path(current),
+                        self._g_score[current])
 
             open_set.remove(current)
 
-            for i in range(len(self.graph[current])): 
-                if self.graph[current][i] > 0: 
-                    tentative_g_score = self.g_score[current] + self.graph[current][i]
+            for i in range(len(self._graph[current])): 
+                if self._graph[current][i] > 0: 
+                    tentative_g_score = self._g_score[current] + self._graph[current][i]
 
-                    if tentative_g_score < self.g_score[i]: 
-                        self.camem_from[i] = current
-                        self.g_score[i] = tentative_g_score
-                        self.f_score[i] = tentative_g_score + self.compute_h(i)
+                    if tentative_g_score < self._g_score[i]: 
+                        self._came_from[i] = current
+                        self._g_score[i] = tentative_g_score
+                        self._f_score[i] = tentative_g_score + self._compute_h(i)
                         if i not in open_set: 
                             open_set.append(i)
 

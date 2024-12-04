@@ -8,40 +8,29 @@ from views.FileExplorerView import FileExplorerView
 
 class FileExplorerController:
     """
-    This class is responsible for controlling the behavior of the file explorer, managing its view and model.
+    This class is responsible for controlling the behavior of the file
+    explorer, managing its view and model.
 
-    This class handles the logic for opening/closing the file explorer, drawing the file explorer on the screen,
-    handling user events (such as file selection or closing the file explorer), and updating the file explorer's state.
+    This class handles the logic for opening/closing the file explorer,
+    drawing the file explorer on the screen, handling user events
+    (such as file selection or closing the file explorer), and updating
+    the file explorer's state.
 
     Attributes:
-        _screen (pygame.Surface): The surface on which the file explorer is drawn.
-        _graph_controller (GraphController): The controller of the graph.
-        _file_explorer (FileExplorer): The model of the file explorer that holds data such as file's path.
-        _file_explorer_view (FileExplorerView): The view of the file explorer that manages its drawing.
-
-    Methods:
-        set_is_opened(is_opened) -> None:
-            Sets the file explorer's opened state (True for opened, False for closed).
-        
-        draw_file_explorer() -> None:
-            Draws the file explorer on the screen if it is opened.
-        
-        handle_event(event) -> None:
-            Processes events related to the file explorer, including button presses and file selection.
-
-        _close_file_explorer() -> None:
-            Closes the file explorer and updates its state.
-
-        is_file_explorer_opened() -> bool:
-            Returns whether the file explorer is currently opened.
-
-        _handle_close_button(event) -> None:
-            Handles the close button event to close the file explorer.
-
-        _handle_select_file(event) -> None:
-            Handles file selection, storing the selected file path in the model.
+        _screen (pygame.Surface): The surface on which the file
+            explorer is drawn.
+        _graph_controller (GraphController): The controller of the
+            graph.
+        _file_explorer (FileExplorer): The model of the file explorer
+            that holds data such as file's path.
+        _file_explorer_view (FileExplorerView): The view of the file
+            explorer that manages its drawing.
     """
-    def __init__(self, screen: pygame.Surface, graph_controller: GraphController):
+    def __init__(
+        self,
+        screen: pygame.Surface,
+        graph_controller: GraphController
+    ) -> None:
         self._screen = screen
         self._graph_controller = graph_controller
         
@@ -57,7 +46,8 @@ class FileExplorerController:
 
     def draw_file_explorer(self) -> None:
         """
-        This method draws the file explorer, only if the file explorer is opened.
+        This method draws the file explorer, only if the file explorer
+        is opened.
         """
         if self.is_file_explorer_opened():
             self._file_explorer_view.draw_file_explorer()
@@ -72,7 +62,10 @@ class FileExplorerController:
         # If the event is a user event
         if event.type == pygame.USEREVENT:
             # We check if this is a button pressed
-            if hasattr(event, 'ui_object_id') and event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+            if (
+                hasattr(event, 'ui_object_id')
+                and event.user_type == pygame_gui.UI_BUTTON_PRESSED
+                ):
                 # If this is the case, we handle the close condition
                 self._handle_close_button(event)
             # If this is a UI_FILE_DIALOG_PATH_PICKED event, it means that
@@ -98,12 +91,16 @@ class FileExplorerController:
         This method checks if the button clicked is the close button.
         """
         # If this is the case, we close the file explorer
-        if event.ui_object_id == '#file_dialog.#close_button' or event.ui_object_id == '#file_dialog.#cancel_button':
+        if (
+            event.ui_object_id == '#file_dialog.#close_button'
+            or event.ui_object_id == '#file_dialog.#cancel_button'
+            ):
             self._close_file_explorer()
 
     def _handle_select_file(self, event: pygame.event.Event) -> None:
         """
-        This method selects and stores the path of the file selected by the user.
+        This method selects and stores the path of the file selected by
+        the user.
         """
         if event.ui_element == self._file_explorer_view.file_explorer:
             file_path = event.text

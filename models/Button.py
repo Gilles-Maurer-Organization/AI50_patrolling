@@ -1,36 +1,29 @@
 class Button:
     """
-    This class represents a Button with a text label, an action, and an enabled state.
+    This class represents a Button with a text label, an action, and an
+    enabled state.
     
     Attributes:
         _text (str): The text displayed on the button.
-        _action (callable): The action to execute when the button is clicked.
-        _enabled (bool): The state of the button, either enabled or disabled.
-    
-    Methods:
-        click():
-            Executes the associated action when the button is clicked, if defined.
-        
-        enabled:
-            Getter for the enabled/disabled state of the button.
-        
-        text:
-            Getter for the text displayed on the button.
-        
-        action:
-            Getter for the action associated with the button.
-        
-        enabled (setter): 
-            Setter for the enabled/disabled state of the button. Raises an error if the value is not a boolean.
+        _action (callable): The action to execute when the button is
+            clicked.
+        _enabled (bool): The state of the button, either enabled or
+            disabled.
     """
-    def __init__(self, text: str, action: callable = None, enabled = True) -> None:
+    def __init__(
+        self,
+        text: str,
+        action: callable = None,
+        enabled: bool = True
+    ) -> None:
         self._text = text
         self._action = action
         self._enabled = enabled
 
     def click(self) -> None:
         """
-        Executes the action associated with the button if it is defined.
+        Executes the action associated with the button if it is
+        defined.
 
         This method is called when the button is clicked.
         """
@@ -63,7 +56,8 @@ class Button:
         Gets the action associated with the button.
 
         Returns:
-            callable: The action to be executed when the button is clicked.
+            callable: The action to be executed when the button is
+                clicked.
         """
         return self._action
 
@@ -73,7 +67,8 @@ class Button:
         Sets the enabled state of the button.
 
         Args:
-            enabled (bool): The state to set for the button (True for enabled, False for disabled).
+            enabled (bool): The state to set for the button (True for
+                enabled, False for disabled).
         
         Raises:
             ValueError: If the provided value is not a boolean.

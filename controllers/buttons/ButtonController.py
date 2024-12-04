@@ -8,35 +8,24 @@ from views.ButtonView import ButtonView
 
 class ButtonController(BaseButtonController):
     """
-    This class manages the buttons (Save, Import, Clear) in the ParametersView, and handles their events.
-
-    Methods:
-        save_action() -> None:
-            Handles the action triggered by clicking the Save button, saving the graph.
-        
-        import_action() -> None:
-            Handles the action triggered by clicking the Import button, opening the file explorer.
-        
-        clear_action() -> None:
-            Handles the action triggered by clicking the Clear button, clearing the graph.
-        
-        disable_clear_button() -> None:
-            Disables the Clear button, preventing the user from interacting with it.
-        
-        disable_save_button() -> None:
-            Disables the Save button, preventing the user from interacting with it.
+    This class manages the buttons (Save, Import, Clear) in the
+    ParametersView, and handles their events.
 
     Attributes:
-        _file_explorer_controller (FileExplorerController): The controller managing file exploration for imports.
+        _file_explorer_controller (FileExplorerController): The
+            controller managing file exploration for imports.
         _save_button (Button): The Save button object.
         _import_button (Button): The Import button object.
         _clear_button (Button): The Clear button object.
-        _button_map (dict[Button, ButtonView]): A map of Button objects to their corresponding ButtonView objects.
+        _button_map (dict[Button, ButtonView]): A map of Button objects
+            to their corresponding ButtonView objects.
     """
-    def __init__(self,
-                 parameters_view: ParametersView,
-                 graph_controller: GraphController,
-                 file_explorer_controller: FileExplorerController) -> None:
+    def __init__(
+        self,
+        parameters_view: ParametersView,
+        graph_controller: GraphController,
+        file_explorer_controller: FileExplorerController
+    ) -> None:
         super().__init__(parameters_view, graph_controller)
 
         self._file_explorer_controller = file_explorer_controller
@@ -86,7 +75,8 @@ class ButtonController(BaseButtonController):
 
     def import_action(self) -> None:
         """
-        Imports a graph from the computer when the Import button is clicked.
+        Imports a graph from the computer when the Import button is
+        clicked.
         """
         self._file_explorer_controller.set_is_opened(True)
 
@@ -99,13 +89,15 @@ class ButtonController(BaseButtonController):
 
     def disable_clear_button(self) -> None:
         """
-        Disables the Clear button, preventing the user from interacting with it.
+        Disables the Clear button, preventing the user from interacting
+        with it.
         """
         self._clear_button.set_enabled(False)
         
     def disable_save_button(self) -> None:
         """
-        Disables the Save button, preventing the user from interacting with it.
+        Disables the Save button, preventing the user from interacting
+        with it.
         """
         self._save_button.set_enabled(False)
         

@@ -12,43 +12,32 @@ from views.ParametersView import ParametersView
 
 class StartButtonController(BaseButtonController):
     """
-    This class manages the "Start simulation" button in the ParametersView and handles simulation-related actions.
+    This class manages the "Start simulation" button in the
+    ParametersView and handles simulation-related actions.
 
-    Methods:
-        start_action() -> None:
-            Starts the simulation by initializing agents and launching the selected algorithm.
-        
-        _compute_store_and_save_graph_data() -> None:
-            Computes, stores, and saves the complete graph and shortest paths.
-        
-        _launch_algorithm() -> None:
-            Launches the selected algorithm and starts the simulation.
-        
-        compute_complete_graph_and_shortest_paths() -> Tuple[Dict, Dict]:
-            Computes the complete graph and shortest paths using A* algorithm.
-        
-        enable_start_button() -> None:
-            Enables the "Start simulation" button, allowing the user to start the simulation.
-        
-        disable_start_button() -> None:
-            Disables the "Start simulation" button, preventing the user from starting the simulation.
-        
     Attributes:
-        _complete_graph_service (ICompleteGraphService): Service for computing the complete graph.
-        _csv_service (ICSVService): Service for handling CSV operations.
-        _scrolling_list_controller (ScrollingListController): Controller for managing the scrolling list view of algorithms.
-        _simulation_controller (SimulationController): Controller for handling simulation logic.
+        _complete_graph_service (ICompleteGraphService): Service for
+            computing the complete graph.
+        _csv_service (ICSVService): Service for handling CSV
+            operations.
+        _scrolling_list_controller (ScrollingListController):
+            Controller for managing the scrolling list view of algorithms.
+        _simulation_controller (SimulationController):
+            Controller for handling simulation logic.
         _start_button (Button): The "Start simulation" button.
-        _button_map (dict[Button, ButtonView]): A map of Button objects to their corresponding ButtonView objects.
+        _button_map (dict[Button, ButtonView]): A map of Button objects
+            to their corresponding ButtonView objects.
         agents (List[Agent]): List of agents involved in the simulation.
     """
-    def __init__(self,
-                 parameters_view: ParametersView,
-                 graph_controller: GraphController,
-                 simulation_controller: SimulationController,
-                 scrolling_list_controller: ScrollingListController,
-                 complete_graph_service: ICompleteGraphService,
-                 csv_service: ICSVService) -> None:
+    def __init__(
+        self,
+        parameters_view: ParametersView,
+        graph_controller: GraphController,
+        simulation_controller: SimulationController,
+        scrolling_list_controller: ScrollingListController,
+        complete_graph_service: ICompleteGraphService,
+        csv_service: ICSVService
+    ) -> None:
         super().__init__(parameters_view, graph_controller)
 
         self._complete_graph_service = complete_graph_service
@@ -57,7 +46,9 @@ class StartButtonController(BaseButtonController):
         self._simulation_controller = simulation_controller
         self._scrolling_list_controller = scrolling_list_controller
 
-        self._start_button = Button("Start simulation", self.start_action, enabled=False)
+        self._start_button = Button("Start simulation",
+                                    self.start_action,
+                                    enabled=False)
 
         # Création de la map des boutons et leurs vues
         self._button_map = {
@@ -78,7 +69,8 @@ class StartButtonController(BaseButtonController):
 
     def start_action(self) -> None:
         """
-        Starts the simulation by initializing agents and launching the selected algorithm.
+        Starts the simulation by initializing agents and launching the
+        selected algorithm.
         """
         paths = [
             [0, 1, 2, 3, 4],  # Agent 1 fait le tour du pentagone
@@ -98,22 +90,22 @@ class StartButtonController(BaseButtonController):
         #if complete_graph_data:
         #    pass
 
-        if self.graph_controller.is_graph_modified():
-            self.graph_controller.save_graph()
+        if self._graph_controller.is_graph_modified():
+            self._graph_controller.save_graph()
             success = self._compute_store_and_save_graph_data()
             if success:
                 self._launch_algorithm()
             else:
-                self.graph_controller.raise_error_message('The graph must not have isolated subgraphs')
+                self._graph_controller.raise_error_message('The graph must not have isolated subgraphs')
         
-        elif not self.graph_controller.are_complements_saved():
+        elif not self._graph_controller.are_complements_saved():
             success = self._compute_store_and_save_graph_data()
             if success:
                 self._launch_algorithm()
             else:
                 self.graph_controller.raise_error_message('The graph must not have isolated subgraphs')
 
-        elif self.graph_controller.are_complements_saved():
+        elif self._graph_controller.are_complements_saved():
             self._launch_algorithm()
 
     def _compute_store_and_save_graph_data(self):
@@ -138,9 +130,9 @@ class StartButtonController(BaseButtonController):
         self._graph_controller.raise_info('Algorithm launched')
         selected_algorithm = self._scrolling_list_controller.get_selected_algorithm()
         
-        # TODO: interface for all the algorithm that owns a launch() method, that all the algorithm implement
-        # paths = selected_algorithm.launch()
-        # passer paths à la simulation
+        # TODO: interface for all the algorithm that owns a launch() method,
+        # that all the algorithm implement
+        
         print("Launching algorithm with complete graph", selected_algorithm)
     
         #self.graph_controller.raise_message('Simulation started')
@@ -158,25 +150,31 @@ class StartButtonController(BaseButtonController):
             simple_graph=simple_graph,
             node_position=node_positions,
             path_finding_service=AStarService
-        ).get_complete_graph()
+        ).complete_graph
 
         shortest_paths = {}
         for start in range(len(simple_graph)):
             for end in range(len(simple_graph)):
                 if start != end:
-                    a_star = AStarService(simple_graph, node_positions, start, end)
-                    shortest_paths[(start, end)] = a_star.find_path()[0] # We don't want to store the cost 
+                    a_star = AStarService(simple_graph,
+                                          node_positions,
+                                          start,
+                                          end)
+                    # We don't want to store the cost
+                    shortest_paths[(start, end)] = a_star.find_path()[0] 
 
         return complete_graph, shortest_paths
 
     def enable_start_button(self) -> None:
         """
-        Enables the "Start simulation" button, allowing the user to start the simulation.
+        Enables the "Start simulation" button, allowing the user to
+        start the simulation.
         """
         self._start_button.enabled = True
 
     def disable_start_button(self) -> None:
         """
-        Disables the "Start simulation" button, preventing the user from starting the simulation.
+        Disables the "Start simulation" button, preventing the user
+        from starting the simulation.
         """
         self._start_button.enabled = False
