@@ -92,12 +92,12 @@ class ButtonController(BaseButtonController):
         Disables the Clear button, preventing the user from interacting
         with it.
         """
-        self._clear_button.set_enabled(False)
+        self._clear_button.enabled = False
         
     def disable_save_button(self) -> None:
         """
         Disables the Save button, preventing the user from interacting
         with it.
         """
-        self._save_button.set_enabled(False)
+        self._save_button.enabled = False
         

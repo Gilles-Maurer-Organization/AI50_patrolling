@@ -29,9 +29,10 @@ class GraphView:
         self._background_image = None
         self._popup = None
 
-    def set_background_image(self,
-                             background_image: Optional[pygame.Surface]
-                             ) -> None:
+    def set_background_image(
+        self,
+        background_image: Optional[pygame.Surface]
+    ) -> None:
         """
         Sets the background image for the view.
 
@@ -43,11 +44,12 @@ class GraphView:
         """
         self._background_image = background_image
 
-    def draw_graph(self,
-                   graph: Graph,
-                   selected_node: Node = None,
-                   dragging_node: Node = None
-                   ) -> None:
+    def draw_graph(
+        self,
+        graph: Graph,
+        selected_node: Node = None,
+        dragging_node: Node = None
+    ) -> None:
         """
         Draws the graph on the screen, including nodes and edges.
 
@@ -80,16 +82,25 @@ class GraphView:
         self._draw_edges(graph)
 
     def draw_popup(self):
+        """
+        Draws the currently active popup on the screen, if any.
+
+        If a popup is set, it will be displayed and its expiration will
+        be checked to determine if it should be dismissed.
+
+        This method ensures that popups are rendered and managed
+        properly during the application's update cycle.
+        """
         if self._popup:
             self._popup.show()
             self._popup.check_popup_expiration()
 
-
-    def _get_node_color(self,
-                        node: Node,
-                        selected_node: Node,
-                        dragging_node: Node
-                        ) -> None:
+    def _get_node_color(
+        self,
+        node: Node,
+        selected_node: Node,
+        dragging_node: Node
+    ) -> None:
         """
         Determines the color of a node based on its state.
 
@@ -119,11 +130,13 @@ class GraphView:
         for edge in graph.edges:
             start_node = edge[0]
             end_node = edge[1]
-            pygame.draw.line(self._screen,
-                             Colors.EDGE_COLOR.value,
-                             (start_node.x, start_node.y),
-                             (end_node.x, end_node.y),
-                             3)
+            pygame.draw.line(
+                self._screen,
+                Colors.EDGE_COLOR.value,
+                (start_node.x, start_node.y),
+                (end_node.x, end_node.y),
+                3
+            )
 
     def draw_simulation(self, agents: list[Agent]) -> None:
         """
@@ -134,10 +147,12 @@ class GraphView:
                 screen.
         """
         for agent in agents:
-            pygame.draw.circle(self._screen,
-                               Colors.AGENT_COLOR.value,
-                               (int(agent.x), int(agent.y)),
-                               5)
+            pygame.draw.circle(
+                self._screen,
+                Colors.AGENT_COLOR.value,
+                (int(agent.x), int(agent.y)),
+                5
+            )
 
     def has_an_image(self) -> bool:
         """
@@ -150,25 +165,35 @@ class GraphView:
     
     def show_error_popup(self, message: str) -> None:
         """
-        This method shows an Error Popup
+        Shows an Error Popup
         """
         popup_view = ErrorPopupView(self._screen, message)
         self._show_pop_up_type(popup_view)
 
     def show_info_popup(self, message: str) -> None:
         """
-        This method shows an Info Popup
+        Shows an Info Popup
         """
         popup_view = InfoPopupView(self._screen, message)
         self._show_pop_up_type(popup_view)
     
     def show_popup(self, message: str) -> None:
         """
-        This method shows a Popup
+        Shows a Popup
         """
         popup_view = PopupView(self._screen, message)
         self._show_pop_up_type(popup_view)
 
     def _show_pop_up_type(self, popup: PopupView) -> None:
+        """
+        Sets and starts a popup of a specific type.
+
+        This method initializes the popup, allowing it to be displayed
+        and managed within the view. It replaces any currently active
+        popup with the new one.
+
+        Args:
+            popup (PopupView): The popup instance to be displayed.
+        """
         self._popup = popup
         self._popup.start_popup()
