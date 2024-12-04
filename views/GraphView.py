@@ -152,21 +152,21 @@ class GraphView:
         """
         This method shows an Error Popup
         """
-        popup_view = ErrorPopupView(self.screen, message)
+        popup_view = ErrorPopupView(self._screen, message)
         self._show_pop_up_type(popup_view)
 
     def show_info_popup(self, message: str) -> None:
         """
         This method shows an Info Popup
         """
-        popup_view = InfoPopupView(self.screen, message)
+        popup_view = InfoPopupView(self._screen, message)
         self._show_pop_up_type(popup_view)
     
     def show_popup(self, message: str) -> None:
         """
         This method shows a Popup
         """
-        popup_view = PopupView(self.screen, message)
+        popup_view = PopupView(self._screen, message)
         self._show_pop_up_type(popup_view)
 
     def _show_pop_up_type(self, popup: PopupView) -> None:
