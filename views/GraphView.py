@@ -2,11 +2,15 @@ import pygame
 from models.Graph import Graph
 from constants.Colors import Colors
 from constants.Config import NODE_RADIUS
+from views.popup.PopupView import PopupView
+from views.popup.InfoPopupView import InfoPopupView
+from views.popup.ErrorPopupView import ErrorPopupView
 
 class GraphView:
     def __init__(self, screen) -> None:
         self.screen = screen
         self.background_image = None
+        self._popup = None
 
     def set_background_image(self, background_image):
         """Set the background image for the view."""
@@ -26,6 +30,12 @@ class GraphView:
             pygame.draw.circle(self.screen, color, (node.x, node.y), NODE_RADIUS)
 
         self.draw_edges(graph)
+
+    def draw_popup(self):
+        if self._popup:
+            self._popup.show()
+            self._popup.check_popup_expiration()
+
 
     def get_node_color(self, node, selected_node, dragging_node):
         """Determine the color of a node based on its state."""
@@ -51,3 +61,28 @@ class GraphView:
     def has_an_image(self) -> bool:
         """Check if a background image is set."""
         return self.background_image is not None
+    
+    def show_error_popup(self, message: str) -> None:
+        """
+        This method shows an Error Popup
+        """
+        popup_view = ErrorPopupView(self.screen, message)
+        self._show_pop_up_type(popup_view)
+
+    def show_info_popup(self, message: str) -> None:
+        """
+        This method shows an Info Popup
+        """
+        popup_view = InfoPopupView(self.screen, message)
+        self._show_pop_up_type(popup_view)
+    
+    def show_popup(self, message: str) -> None:
+        """
+        This method shows a Popup
+        """
+        popup_view = PopupView(self.screen, message)
+        self._show_pop_up_type(popup_view)
+
+    def _show_pop_up_type(self, popup: PopupView) -> None:
+        self._popup = popup
+        self._popup.start_popup()
