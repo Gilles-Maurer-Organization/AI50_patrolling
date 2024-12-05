@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Union
 
+from models.GraphData import GraphData
+from models.GraphDataComplements import GraphDataComplements
+
 class ICSVService(ABC):
     @abstractmethod
     def save(self, edges_matrix, nodes_list, filename):
@@ -9,8 +12,7 @@ class ICSVService(ABC):
     @abstractmethod
     def save_complements(
         self,
-        complete_graph: list[list[float]],
-        shortest_paths: dict[tuple[int, int], list[int]],
+        graph_data_complements: GraphDataComplements,
         image_name: str
     ) -> None:
         pass
@@ -22,37 +24,18 @@ class ICSVService(ABC):
     def load_from_num_file(
         self,
         num_file: int
-    ) -> tuple[
-        list[list[float]],
-        list[tuple[int, int]],
-        list[list[float]],
-        dict[tuple[int, int], list[int]]
-    ]:
+    ) -> GraphData:
         pass
 
     @abstractmethod
     def load(
         self,
         file_path: str
-    ) -> tuple[
-        list[list[float]],
-        list[tuple[int, int]],
-        list[list[float]],
-        dict[tuple[int, int], list[int]]
-    ]:
+    ) -> GraphData:
         pass
 
     @abstractmethod
     def find_csv_reference(self, image_name: str) -> Union[None, str]:
-        pass
-
-    @abstractmethod
-    def save_complements(
-        self,
-        complete_graph: list[list[float]],
-        shortest_paths: dict[tuple[int, int], list[int]],
-        image_name: str
-    ) -> None:
         pass
 
     @abstractmethod
