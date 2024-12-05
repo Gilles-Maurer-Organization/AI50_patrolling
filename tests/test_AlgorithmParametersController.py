@@ -16,18 +16,18 @@ class TestAlgorithmParametersController(unittest.TestCase):
         
         # We check if the value of the parameters are indeed
         # the one by default with the empty constructor 
-        self.assertEqual(algorithm.parameters["Alpha"].text_content, "0.1")
-        self.assertEqual(algorithm.parameters["Beta"].text_content, "0.6")
-        self.assertEqual(algorithm.parameters["Rho"].text_content, "0.5")
-        self.assertEqual(algorithm.parameters["Tau"].text_content, "0.2")
+        self.assertEqual(algorithm.parameters["Alpha"]._text_content, "0.1")
+        self.assertEqual(algorithm.parameters["Beta"]._text_content, "0.6")
+        self.assertEqual(algorithm.parameters["Rho"]._text_content, "0.5")
+        self.assertEqual(algorithm.parameters["Tau"]._text_content, "0.2")
 
     def test_custom_parameters(self):
         algorithm = AntColony(alpha=0.5, beta=0.7)
         
         # We check if the parameters passed in the constructor are indeed
         # modified in the instantiation of the text boxes
-        self.assertEqual(algorithm.parameters["Alpha"].text_content, "0.5")
-        self.assertEqual(algorithm.parameters["Beta"].text_content, "0.7")
+        self.assertEqual(algorithm.parameters["Alpha"]._text_content, "0.5")
+        self.assertEqual(algorithm.parameters["Beta"]._text_content, "0.7")
 
     @patch('controllers.text_boxes.AlgorithmParametersController.AlgorithmParametersView')
     def test_handle_selected_algorithm(self, mockAlgorithmParametersView):
@@ -43,13 +43,13 @@ class TestAlgorithmParametersController(unittest.TestCase):
         # We call the method that we want to test
         controller.handle_selected_algorithm(algorithm)
         # We check if the number of text boxes is equal to 4 (for the ant colony algorithm)
-        self.assertEqual(len(controller.text_boxes), 4)
+        self.assertEqual(len(controller._text_boxes), 4)
 
         # We verify that the self.text_boxes.clear() method was called:
         controller.handle_selected_algorithm(algorithm)
         # In fact, if we call the handle_selected_algorithm() method again, the number of
         # text boxes must stay the same as before, and not duplicating
-        self.assertEqual(len(controller.text_boxes), 4)
+        self.assertEqual(len(controller._text_boxes), 4)
         
         # We verify that the AntColony class been instantiated with the good parameters
         expected_calls = [

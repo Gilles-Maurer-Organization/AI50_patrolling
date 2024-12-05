@@ -16,43 +16,45 @@ class TestFileExplorerController(unittest.TestCase):
         self.graph_controller = Mock(spec=GraphController)
         self.controller = FileExplorerController(self.screen, self.graph_controller)
         
-        self.controller.file_explorer_view = MagicMock(spec=FileExplorerView)
-        self.controller.file_explorer = MagicMock(spec=FileExplorer)
-        self.controller.file_explorer_view.ui_manager = MagicMock(spec=UIManager)
+        self.controller._file_explorer_view = MagicMock(spec=FileExplorerView)
+        self.controller._file_explorer = MagicMock(spec=FileExplorer)
+        self.controller._file_explorer_view.ui_manager = MagicMock(spec=UIManager)
 
-        self.controller.file_explorer_view.close_file_explorer = MagicMock()
+        self.controller._file_explorer.opened = False
+
+        self.controller._file_explorer_view.close_file_explorer = MagicMock()
 
     def test_initial_state(self):
-        # We mock the return of the is_opened method of the method to false
-        self.controller.file_explorer.is_opened.return_value = False
+        # We assert that the initial state of the file explorer is set to
+        # opened = False
+        self.assertFalse(self.controller._file_explorer.opened)
         # We assert that the file_explorer is not opened
         self.assertFalse(self.controller.is_file_explorer_opened())
 
     def test_open_file_explorer(self):
         # We set the dialog to opened
+        self.controller._file_explorer.opened = MagicMock()
         self.controller.set_is_opened(True)
-        # We verify that the set_is_opened() method was called with a opened condition
-        self.controller.file_explorer.set_is_opened.assert_called_with(True)
+        # We verify that the opened variable is set to True
+        self.assertTrue(self.controller._file_explorer.opened)
         
-        # We mock the return of the is_opened() method of the model to true
-        self.controller.file_explorer.is_opened.return_value = True
-
         # We assert that the file dialog is opened
         self.assertTrue(self.controller.is_file_explorer_opened())
 
     def test_close_file_explorer(self):
         # We mock the methods that are called in the close_file_explorer() method
-        self.controller.file_explorer_view._close_file_explorer = MagicMock()
-        self.controller.file_explorer.set_is_opened = MagicMock()
+        self.controller._file_explorer_view._close_file_explorer = MagicMock()
+
+        self.controller._file_explorer.opened = MagicMock()
 
         # We test our function
         self.controller._close_file_explorer()
 
         # We verify that the close_file_explorer() of the view was called
-        self.controller.file_explorer_view._close_file_explorer.assert_called_once()
+        self.controller._file_explorer_view._close_file_explorer.assert_called_once()
 
-        # We verify that the set_is_opened() of the model was called
-        self.controller.file_explorer.set_is_opened.assert_called_with(False)
+        # We verify that the opened variable is set to False
+        self.assertFalse(self.controller._file_explorer.opened)
     
     def test_handle_event_close_button(self):
         # We create a new Magic Mock of an event
@@ -84,38 +86,38 @@ class TestFileExplorerController(unittest.TestCase):
         event.text = 'path/to/the/file.csv'
 
         # We create a new mock of our file dialog
-        self.controller.file_explorer_view.file_explorer = MagicMock()
+        self.controller._file_explorer_view.file_explorer = MagicMock()
         self.controller._close_file_explorer = MagicMock()
         
-        event.ui_element = self.controller.file_explorer_view.file_explorer
+        event.ui_element = self.controller._file_explorer_view.file_explorer
 
         # We call our event
         self.controller.handle_event(event)
 
-        # We check that the set_path method was called with the good path
-        self.controller.file_explorer.set_path.assert_called_with('path/to/the/file.csv')
+        # We check that the path equalt to the good path
+        self.assertEqual(self.controller._file_explorer.path, 'path/to/the/file.csv')
 
         # We check that the close_file_explorer() method was called
         self.controller._close_file_explorer.assert_called_once()
     
     def test_draw_file_explorer_when_opened(self):
         # We say that the file explorer is opened
-        self.controller.file_explorer.is_opened.return_value = True
+        self.controller._file_explorer.opened = True
 
         # We test the method
         self.controller.draw_file_explorer()
 
         # We check that the draw_file_explorer() method of the view was called
-        self.controller.file_explorer_view.draw_file_explorer.assert_called_once()
+        self.controller._file_explorer_view.draw_file_explorer.assert_called_once()
     
     def test_draw_file_explorer_when_closed(self):
         # We simulate that the file explorer is closed
-        self.controller.file_explorer.is_opened.return_value = False
+        self.controller._file_explorer.opened = False
         # We test the method
         self.controller.draw_file_explorer()
 
         # We verify that the draw_file_explorer() method of the view was not called
-        self.controller.file_explorer_view.draw_file_explorer.assert_not_called()
+        self.controller._file_explorer_view.draw_file_explorer.assert_not_called()
 
     def tearDown(self):
         pygame.quit()

@@ -30,8 +30,8 @@ class TestGraphController(unittest.TestCase):
 
         # We instantiate our GraphController that we want to test
         self.graph_controller = GraphController(screen=self.screen, csv_service=self.mock_csv_service, image_service=self.image_service)
-        self.graph_controller.graph = Mock(spec=Graph)
-        self.graph_controller.graph_view = Mock(spec=GraphView)
+        self.graph_controller._graph = Mock(spec=Graph)
+        self.graph_controller._graph_view = Mock(spec=GraphView)
         self.graph_controller.graph.nodes = []
         self.graph_controller.graph.edges = []
 
@@ -50,13 +50,13 @@ class TestGraphController(unittest.TestCase):
 
         # We configure the return of the get_node_at_position to None in order
         # to simulate an empty space when the mouse is clicked
-        self.graph_controller.node_controller.get_node_at_position.return_value = None
+        self.graph_controller._node_controller.get_node_at_position.return_value = None
         
         # We call the method
         self.graph_controller.handle_event(event)
         
         # We verify that the add_node method has been called with the good position
-        self.graph_controller.node_controller.add_node.assert_called_once_with(mock_get_pos())
+        self.graph_controller._node_controller.add_node.assert_called_once_with(mock_get_pos())
 
     # We simulate the pygame.mouse.get_pos() method to return a (50, 50) position
     @patch('pygame.mouse.get_pos', return_value=(50, 50))
@@ -67,13 +67,13 @@ class TestGraphController(unittest.TestCase):
 
         # We configure the return of the get_node_at_position to a Mock in order
         # to simulate that a node is selected when clicking
-        self.graph_controller.node_controller.get_node_at_position.return_value = Mock()
+        self.graph_controller._node_controller.get_node_at_position.return_value = Mock()
         
         # We call the method
         self.graph_controller.handle_event(event)
         
         # We verify that the start_drag method has been called with the good position
-        self.graph_controller.node_controller.start_drag.assert_called_once_with(mock_get_pos())
+        self.graph_controller._node_controller.start_drag.assert_called_once_with(mock_get_pos())
 
     
     @patch('pygame.mouse.get_pos', return_value=(50, 50))
@@ -84,13 +84,13 @@ class TestGraphController(unittest.TestCase):
 
         # We configure the return of the get_node_at_position to a Mock in order
         # to simulate a node is handled by the right click
-        self.graph_controller.node_controller.get_node_at_position.return_value = Mock()
+        self.graph_controller._node_controller.get_node_at_position.return_value = Mock()
         
         # We call the method
         self.graph_controller.handle_event(event)
         
         # We verify that the start_drag method has been called with the good position
-        self.graph_controller.edge_controller.create_link.assert_called_once_with(mock_get_pos())
+        self.graph_controller._edge_controller.create_link.assert_called_once_with(mock_get_pos())
     
     def test_handle_event_end_drag(self):
         # We set the event to a mouse button up and button=1 in order to indicate
@@ -101,7 +101,7 @@ class TestGraphController(unittest.TestCase):
         self.graph_controller.handle_event(event)
         
         # We verify that the end_drag method has been called
-        self.graph_controller.node_controller.end_drag.assert_called_once_with()
+        self.graph_controller._node_controller.end_drag.assert_called_once_with()
 
     def test_save_graph_calls_csv_service_save(self):
         # We configurate a fictive feedback for the compute_matrix() method
@@ -113,7 +113,7 @@ class TestGraphController(unittest.TestCase):
         self.graph_controller.save_graph()
         
         # We verify that the CSV Service has been called with the good parameters
-        self.mock_csv_service.save.assert_called_once_with(edges_matrix, nodes_list, self.graph_controller.image_name)
+        self.mock_csv_service.save.assert_called_once_with(edges_matrix, nodes_list, self.graph_controller._image_name)
 
     def test_load_graph_calls_csv_service_load(self):
         # We configure the feedback of the load method of the CSV Service
@@ -152,11 +152,11 @@ class TestGraphController(unittest.TestCase):
     def test_graph_has_an_image(self):
         # We verify that he graph_has_an_image() method returns true when the
         # graph_view has an image
-        self.graph_controller.graph_view.has_an_image.return_value = True
+        self.graph_controller._graph_view.has_an_image.return_value = True
         self.assertTrue(self.graph_controller.graph_has_an_image())
 
     def test_graph_has_no_image(self):
         # We verify that he graph_has_an_image() method returns false when the
         # graph_view has no image
-        self.graph_controller.graph_view.has_an_image.return_value = False
+        self.graph_controller._graph_view.has_an_image.return_value = False
         self.assertFalse(self.graph_controller.graph_has_an_image())
