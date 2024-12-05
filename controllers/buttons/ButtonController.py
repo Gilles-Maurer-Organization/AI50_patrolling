@@ -1,46 +1,62 @@
 from constants.Colors import Colors
-
 from controllers.FileExplorerController import FileExplorerController
-from models.Button import Button
+from controllers.GraphController import GraphController
 from controllers.buttons.BaseButtonController import BaseButtonController
+from models.Button import Button
+from views.ParametersView import ParametersView
 from views.ButtonView import ButtonView
 
 class ButtonController(BaseButtonController):
-    def __init__(self, parameters_view, graph_controller, file_explorer_controller: FileExplorerController) -> None:
+    """
+    This class manages the buttons (Save, Import, Clear) in the
+    ParametersView, and handles their events.
+
+    Attributes:
+        _file_explorer_controller (FileExplorerController): The
+            controller managing file exploration for imports.
+        _save_button (Button): The Save button object.
+        _import_button (Button): The Import button object.
+        _clear_button (Button): The Clear button object.
+        _button_map (dict[Button, ButtonView]): A map of Button objects
+            to their corresponding ButtonView objects.
+    """
+    def __init__(
+        self,
+        parameters_view: ParametersView,
+        graph_controller: GraphController,
+        file_explorer_controller: FileExplorerController
+    ) -> None:
         super().__init__(parameters_view, graph_controller)
 
-        self.file_explorer_controller = file_explorer_controller
+        self._file_explorer_controller = file_explorer_controller
 
-        self.save_button = Button("Save", self.save_action)
-        self.import_button = Button("Import", self.import_action)
-        self.clear_button = Button("Clear", self.clear_action)
+        self._save_button = Button("Save", self.save_action)
+        self._import_button = Button("Import", self.import_action)
+        self._clear_button = Button("Clear", self.clear_action)
 
-        # Création de la map des boutons et leurs vues
-        self.button_map = {
-            self.save_button: ButtonView(
+        # Creation of the button map and their models/views associated
+        self._button_map = {
+            self._save_button: ButtonView(
                 parameters_view.screen,
-                self.save_button.text,
-                self.save_button.action,
+                self._save_button.text,
                 10,
                 10,
                 90,
                 40,
                 icon_path='assets/save.png'
             ),
-            self.import_button: ButtonView(
+            self._import_button: ButtonView(
                 parameters_view.screen,
-                self.import_button.text,
-                self.import_button.action,
+                self._import_button.text,
                 110,
                 10,
                 90,
                 40,
                 icon_path='assets/import.png'
             ),
-            self.clear_button: ButtonView(
+            self._clear_button: ButtonView(
                 parameters_view.screen,
-                self.clear_button.text,
-                self.clear_button.action,
+                self._clear_button.text,
                 210,
                 10,
                 90,
@@ -51,29 +67,37 @@ class ButtonController(BaseButtonController):
         }
 
     def save_action(self) -> None:
-        '''
-        Cette méthode sauvegarde un graphe sur l'ordinateur lorsque le bouton Save est cliqué.
-        '''
-        self.graph_controller.save_graph()
+        """
+        Saves a graph to the computer when the Save button is clicked.
+        """
+        self._graph_controller.save_graph()
         print("Save action triggered")
 
     def import_action(self) -> None:
-        '''
-        Cette méthode importe un graphe depuis l'ordinateur lorsque le bouton Import est cliqué.
-        '''
-        #self.graph_controller.load_graph(1)
-        self.file_explorer_controller.set_is_opened(True)
+        """
+        Imports a graph from the computer when the Import button is
+        clicked.
+        """
+        self._file_explorer_controller.set_is_opened(True)
 
     def clear_action(self) -> None:
-        '''
-        Cette méthode nettoie l'intégralité de la vue du graphe lorsque le bouton Clear est cliqué.
-        '''
-        self.graph_controller.clear_graph()
-        print("Clear action triggered")
+        """
+        Clears the entire graph view when the Clear button is clicked.
+        """
+        self._graph_controller.clear_graph()
+        # TODO: add an info popup
 
     def disable_clear_button(self) -> None:
-        self.clear_button.set_enabled(False)
+        """
+        Disables the Clear button, preventing the user from interacting
+        with it.
+        """
+        self._clear_button.enabled = False
         
     def disable_save_button(self) -> None:
-        self.save_button.set_enabled(False)
+        """
+        Disables the Save button, preventing the user from interacting
+        with it.
+        """
+        self._save_button.enabled = False
         
