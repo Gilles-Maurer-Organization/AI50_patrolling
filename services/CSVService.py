@@ -4,6 +4,8 @@ from pathlib import Path
 import re
 from typing import Union
 
+from models.GraphData import GraphData
+from models.GraphDataComplements import GraphDataComplements
 from services.ICSVService import ICSVService
 
 class CSVService(ICSVService):
@@ -87,8 +89,7 @@ class CSVService(ICSVService):
 
     def save_complements(
         self,
-        complete_graph: list[list[float]],
-        shortest_paths: dict[tuple[int, int], list[int]],
+        graph_data_complements: GraphDataComplements,
         image_name: str
     ) -> None:
         """
@@ -96,10 +97,9 @@ class CSVService(ICSVService):
         file.
 
         Args:
-            complete_graph (List[List[float]]): The complete adjacency
-                matrix of the graph.
-            shortest_paths (Dict[Tuple[int, int], List[int]]): A
-                dictionary of shortest paths between node pairs.
+            graph_data_complements (GraphDataComplements): The
+                complements of the Graph such as the complete
+                adjacency matrix and the shortest paths
             image_name (str): The name of the image associated with the
                 graph.
         """
@@ -111,11 +111,12 @@ class CSVService(ICSVService):
         file_path = os.path.join(self._csv_folder_path, csv_path)
         
         complete_graph_lines = [
-            ",".join(map(str, row)) + "\n" for row in complete_graph
+            ",".join(map(str, row)) + "\n"
+            for row in graph_data_complements.complete_adjacency_matrix
         ]
         shortest_paths_lines = [
             ",".join(map(str, (start, end, path))) +"\n"
-            for (start, end), path in shortest_paths.items()
+            for (start, end), path in graph_data_complements.shortest_paths.items()
         ]
 
         with open(file_path, mode='a', newline='') as f:
@@ -226,12 +227,7 @@ class CSVService(ICSVService):
     def _parse_csv_file(
         self,
         file_path: str
-    ) -> tuple[
-        list[list[float]],
-        list[tuple[int, int]],
-        list[list[float]],
-        dict[tuple[int, int], list[int]]
-    ]:
+    ) -> GraphData:
         """
         Parses a CSV file to extract nodes, adjacency matrix, and
         complement data such as complete adjacency matrix and shortest
@@ -241,7 +237,7 @@ class CSVService(ICSVService):
             file_path (str): Path to the CSV file.
         
         Returns:
-            Tuple containing:
+            GraphData: Containing:
                 - List of adjacency matrix rows
                 - List of node positions (x, y)
                 - List of complete graph adjacency matrix
@@ -310,22 +306,18 @@ class CSVService(ICSVService):
                     path = ast.literal_eval(parts[2])
                     shortest_paths[(start, end)] = path
 
-        return (
-            edges_matrix,
-            nodes_list,
-            complete_adjacency_matrix,
-            shortest_paths
+        return GraphData(
+            shortest_paths = shortest_paths,
+            nodes_list=nodes_list,
+            adjacency_matrix=edges_matrix,
+            complete_adjacency_matrix=complete_adjacency_matrix
         )
+            
 
     def load_from_num_file(
         self,
         num_file: int
-    ) -> tuple[
-        list[list[float]],
-        list[tuple[int, int]],
-        list[list[float]],
-        dict[tuple[int, int], list[int]]
-    ]:
+    ) -> GraphData:
         """
         Loads graph data from a CSV file identified by its number.
 
@@ -334,7 +326,7 @@ class CSVService(ICSVService):
                 load.
         
         Returns:
-            Tuple containing:
+            GraphData: Containing:
                 - List of adjacency matrix rows
                 - List of node positions (x, y)
                 - List of complete graph adjacency matrix
@@ -349,12 +341,7 @@ class CSVService(ICSVService):
     def load(
         self,
         file_path: str
-    ) -> tuple[
-        list[list[float]],
-        list[tuple[int, int]],
-        list[list[float]],
-        dict[tuple[int, int], list[int]]
-    ]:
+    ) -> GraphData:
         """
         Loads graph data from a specified CSV file path.
 
@@ -363,7 +350,7 @@ class CSVService(ICSVService):
 
             
         Returns:
-            Tuple containing:
+            GraphData: Containing:
                 - List of adjacency matrix rows
                 - List of node positions (x, y)
                 - List of complete graph adjacency matrix
