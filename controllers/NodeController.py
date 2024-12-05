@@ -1,111 +1,133 @@
 import math
 from models.Node import Node
+from models.Graph import Graph
 
 from constants.Config import NODE_RADIUS
 
 class NodeController:
-    '''
-    Classe représentant un controlleur qui se charge des opérations sur les noeuds.
+    """
+    This class represents a controller responsible for handling
+    operations on nodes.
 
-    Attributs:
-        graph (Graph): Un graph représenté par des noeuds et liens, côté Model
+    Attributes:
+        _graph (Graph): A graph represented by nodes and edges, part of
+            the Model.
+        _dragging_node (Node or None): A node that is currently being
+            dragged.
+        _selected_node (Node or None): A node that is currently
+            selected for operation.
+    """
+    def __init__(self, graph: Graph) -> None:
+        self._graph = graph
+        self._dragging_node = None
+        self._selected_node = None
 
-    Méthodes:
-        add_node(pos): Ajoute un noeud sur le graphe à partir d'un jeu de coordonnées (x, y).
-        start_drag(pos): Initialise le déplacement en spécifiant le noeud qui est voué à être déplacé grâce à un jeu de coordonnées (x, y).
-        end_drag(pos): Termine le déplacement en supprimant la spécification du noeud déplacé.
-        drag_node(pos): Déplace le noeud grâce à la position (x, y) spécifiée par la souris de l'utilisateur.
-        select_node(pos): Sélectionne un noeud par rapport à une position (x, y) spécifiée à la souris par l'utilisateur.
-        clear_selection(pos): Supprime la référence du noeud sélectionné.
-        get_node_at_position(pos): Cherche la référence d'un noeud en comparant ses coordonnées avec des coordonnées (x, y) spécifiées par la souris de l'utilisateur.
-    '''
-    def __init__(self, graph) -> None:
-        self.graph = graph
-        self.dragging_node = None
-        self.selected_node = None
+    @property
+    def dragging_node(self) -> Node:
+        return self._dragging_node
+    
+    @property
+    def selected_node(self) -> Node:
+        return self._selected_node
 
-    def add_node(self, pos) -> None:
+    def add_node(self, pos: tuple[int, int]) -> None:
         '''
-        Cette méthode ajoute un nouveau noeud dans le graphe.
+        Adds a new node to the graph at the given mouse click
+        coordinates.
 
         Args:
-            pos (tuple de float): Coordonnées du clic de la souris
+            pos (tuple of float): The coordinates of the mouse click
+                (x, y).
         '''
-        self.graph.add_node(pos[0], pos[1])
+        self._graph.add_node(pos[0], pos[1])
     
     def delete_node(self, node: Node) -> None:
         '''
-        Cette méthode supprime le noeud sélectionné par l'utilisateur ainsi que
-        les liaisons (edges) liés au noeud en question.
+        Deletes the specified node and its associated edges from the
+        graph.
 
         Args:
-            node (Node): Noeud à supprimer
+            node (Node): The node to be deleted.
         '''
-        
-        # On vérifie que le noeud existe
+    
         if node is not None:  
-            # On cherche toutes les arêtes connectées au noeud
-            edges_to_remove = [edge for edge in self.graph.edges if edge[0] == node or edge[1] == node]
+            # Find and remove edges connected to the node
+            edges_to_remove = [edge for edge in self._graph.edges
+                               if edge[0] == node or edge[1] == node]
             
-            # On supprime les arêtes connectées
             for edge in edges_to_remove:
-                del self.graph.edges[edge]
+                del self._graph.edges[edge]
 
-            # On supprime le noeud
-            self.graph.nodes.remove(node)
+            # Remove the node itself
+            self._graph.nodes.remove(node)
 
 
-    def start_drag(self, pos) -> None:
+    def start_drag(self, pos: tuple[int, int]) -> None:
         '''
-        Cette méthode initialise le déplacement d'un noeud en stockant sa référence.
+        Starts the dragging operation by storing the node to be moved
+        based on the mouse click coordinates.
 
         Args:
-            pos (tuple de float): Coordonnées du clic de la souris
+            pos (tuple of float): The coordinates of the mouse click
+                (x, y).
         '''
-        self.dragging_node = self.get_node_at_position(pos)
+        self._dragging_node = self.get_node_at_position(pos)
 
     def end_drag(self) -> None:
         '''
-        Cette méthode termine le déplacement d'un noeud en supprimant sa référence.
+        Ends the dragging operation by resetting the dragged node and
+        updating the graph's distances.
         '''
-        self.graph.update_distances(self.dragging_node)
-        self.dragging_node = None
+        self._graph.update_distances(self._dragging_node)
+        self._dragging_node = None
 
-    def drag_node(self, pos) -> None:
+    def drag_node(self, pos: tuple[int, int]) -> None:
         '''
-        Cette méthode se charge du déplacement d'un noeud à l'aide de la position du curseur de la souris.
+        Moves the dragged node according to the current mouse position.
 
         Args:
-            pos (tuple de float): Coordonnées du curseur de la souris
+            pos (tuple of float): The current coordinates of the mouse
+                cursor (x, y).
         '''
-        if self.dragging_node is not None:
-            # On modifie les coordonnées du noeud que l'on déplace en fonction des coordonnées de la souris
-            self.dragging_node.x, self.dragging_node.y = pos
+        if self._dragging_node is not None:
+            # Update the node's position with the current mouse coordinates
+            self._dragging_node.x, self._dragging_node.y = pos
 
     def select_node(self, node: Node) -> None:
         '''
-        Cette méthode sélectionne un noeud grâce aux coordonnées (x, y) de la souris (s'il existe), destiné à créer des liens entre les noeuds.
+        Selects a node for linking based on its coordinates (x, y).
 
         Args:
-            node (Node): Noeud sélectionné
+            node (Node): The node to be selected for linking.
         '''
         if node is not None:
-            # Si le noeud, dont les coordonnées du clic de la souris a été réalisé, existe, alors on le récupère
-            self.selected_node = node
+            self._selected_node = node
         else:
-            self.selected_node = None
+            self._selected_node = None
 
     def clear_selection(self) -> None:
         '''
-        Cette méthode désélectionne le noeud actuellement sélectionné. Elle est appelée lorsque l'utilisateur ne souhaite plus établir de lien entre deux noeuds.
+        Deselects the currently selected node. This method is called
+        when the user no longer wants to create a link between nodes.
         '''
-        self.selected_node = None
+        self._selected_node = None
 
-    def get_node_at_position(self, pos):
+    def get_node_at_position(self, pos: tuple[int, int]):
         '''
-        Cette méthode retourne le noeud correspondant aux coordonnées du clic de l'utilisateur. Le nœud est identifié par ses coordonnées qui correspondent à celles du clic effectué.
+        Finds and returns the node located at the specified (x, y)
+        coordinates based on the user's mouse click.
+
+        Args:
+            pos (tuple of int): The mouse click coordinates (x, y).
+
+        Returns:
+            Node: The node located at the specified coordinates, or
+                None if no node is found.
         '''
-        for node in self.graph.nodes:
-            if math.sqrt((node.x - pos[0]) ** 2 + (node.y - pos[1]) ** 2) < NODE_RADIUS:
+        for node in self._graph.nodes:
+            if (
+                math.sqrt((node.x - pos[0]) ** 2 + (node.y - pos[1]) ** 2)
+                < NODE_RADIUS
+            ):
                 return node
         return None

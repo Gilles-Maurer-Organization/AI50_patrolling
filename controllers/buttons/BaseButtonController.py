@@ -1,41 +1,70 @@
-from constants.Config import GRAPH_WINDOW_WIDTH
 import pygame
 
-class BaseButtonController:
-    def __init__(self, parameters_view, graph_controller) -> None:
-        self.parameters_view = parameters_view
-        self.graph_controller = graph_controller
+from controllers.GraphController import GraphController
+from models.Button import Button
+from views.ButtonView import ButtonView
+from views.ParametersView import ParametersView
 
-        # Création de la map des boutons et leurs vues
-        self.button_map = {}
+
+class BaseButtonController:
+    """
+    This class is responsible for managing the buttons in the
+    ParametersView and handling their events.
+
+    It initializes the button views and associates them with the
+    corresponding button actions.
+
+    The controller listens for mouse events such as clicks and hover
+    motions, and it triggers the appropriate button actions based on
+    user interaction.
+
+    Attributes:
+        _parameters_view (ParametersView): The view that contains the
+            buttons.
+        _graph_controller (GraphController): The controller that
+            manages the graph.
+        _button_map (dict[Button, ButtonView]): A dictionary mapping
+            Button objects to their corresponding ButtonView objects.
+    """
+    def __init__(
+        self,
+        parameters_view: ParametersView,
+        graph_controller: GraphController
+    ) -> None:
+        self._parameters_view = parameters_view
+        self._graph_controller = graph_controller
+
+        self._button_map: dict[Button, ButtonView] = {}
 
     def draw_buttons(self) -> None:
-        '''
-        Cette méthode dessine l'intégralité des boutons sur la vue.
-        '''
-        for button, button_view in self.button_map.items():
-            button_view.draw(button.is_enabled())
+        """
+        Draws all the buttons on the view.
+        """
+        for button, button_view in self._button_map.items():
+            button_view.draw(button.enabled)
 
-    def handle_event(self, event) -> None:
-        '''
-        Gère l'événement de clic sur les boutons.
+    def handle_event(self, event: pygame.event.Event) -> None:
+        """
+        Handles the button click event.
 
-        Cette méthode vérifie si l'événement reçu correspond à un clic gauche de souris. 
-        Si tel est le cas, elle déclenche l'action associée au bouton sur lequel l'utilisateur a cliqué.
+        This method checks if the received event corresponds to a left
+        mouse click. 
+        
+        If so, it triggers the action associated with the button
+        clicked by the user.
 
         Args:
-            event: L'événement Pygame contenant des informations sur le clic de souris.
-        '''
+            event: The Pygame event containing information about the
+                mouse click.
+        """
         if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
-            for button, button_view in self.button_map.items():
-                if button_view.is_hovered(mouse_pos) and button.is_enabled():
+            for button, button_view in self._button_map.items():
+                if button_view.is_hovered(event) and button.enabled:
                     button.action()
         
         if event.type == pygame.MOUSEMOTION:
-            mouse_pos = (event.pos[0] - GRAPH_WINDOW_WIDTH, event.pos[1])
-            for button_view in self.button_map.values():
-                if button_view.is_hovered(mouse_pos):
+            for button_view in self._button_map.values():
+                if button_view.is_hovered(event):
                     button_view.set_hovered()
                 else:
                     button_view.set_normal()

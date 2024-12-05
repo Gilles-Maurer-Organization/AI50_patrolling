@@ -1,126 +1,183 @@
+import pygame
+
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, PARAMETERS_WINDOW_WIDTH
+from controllers.FileExplorerController import FileExplorerController
+from controllers.GraphController import GraphController
 from controllers.ScrollingListController import ScrollingListController
 from controllers.SimulationController import SimulationController
 from controllers.buttons.ButtonController import ButtonController
 from controllers.buttons.StartButtonController import StartButtonController
 from controllers.text_boxes.AlgorithmParametersController import AlgorithmParametersController
 from controllers.text_boxes.TextBoxController import TextBoxController
-from services.CompleteGraphService import CompleteGraphService
 from views.ParametersView import ParametersView
+
+from services.CompleteGraphService import CompleteGraphService
+from services.ICSVService import ICSVService
 
 
 class ParametersController:
-    def __init__(self, screen, graph_controller, file_explorer_controller, simulation_controller: SimulationController, csv_service) -> None:
-        # Centralisation de l'état de simulation dans ParametersController
-        self.simulation_controller = simulation_controller
+    """
+    This class is responsible for managing the parameters section of
+    the application interface. 
 
-        # Création de la vue des paramètres avec un sous-écran
-        self.parameters_view = ParametersView(
-            screen.subsurface((GRAPH_WINDOW_WIDTH, 0, PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)))
+    Attributes:
+        _simulation_controller (SimulationController): Controls the
+            simulation process.
+        _parameters_view (ParametersView): The view that contains
+            buttons, text boxes, and other UI elements.
+        _graph_controller (GraphController): Manages the graph-related
+            operations and data.
+        _button_controller (ButtonController): Handles interactions
+            with standard buttons.
+        _text_box_controller (TextBoxController): Handles interactions
+            with text boxes in the UI.
+        _scrolling_list_controller (ScrollingListController): Manages
+            the dropdown list interactions.
+        _start_button_controller (StartButtonController): Controls the
+            start button functionality.
+        _algorithm_parameters_controller (AlgorithmParametersController):
+            Handles interactions for algorithm parameters.
+    """
+    
+    def __init__(
+        self,
+        screen: pygame.Surface,
+        graph_controller: GraphController,
+        file_explorer_controller: FileExplorerController,
+        simulation_controller: SimulationController,
+        csv_service: ICSVService
+    ) -> None:
+        self._simulation_controller = simulation_controller
 
-        # Initialisation des différents contrôleurs avec self passé à StartButtonController
-        self.graph_controller = graph_controller
-        self.button_controller = ButtonController(self.parameters_view,
-                                                  graph_controller,
-                                                  file_explorer_controller)
-        self.text_box_controller = TextBoxController(self.parameters_view)
-        self.scrolling_list_controller = ScrollingListController(self.parameters_view)
-        self.start_button_controller = StartButtonController(self.parameters_view,
-                                                             graph_controller,
-                                                             simulation_controller,
-                                                             self.scrolling_list_controller,
-                                                             CompleteGraphService,
-                                                             csv_service)
-        self.algorithm_parameters_controller = AlgorithmParametersController(self.parameters_view)
+        # Creating the ParametersView with a specific subsurface
+        self._parameters_view = ParametersView(
+            screen.subsurface(
+                (GRAPH_WINDOW_WIDTH, 0, PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)
+            )
+        )
+        
+        # Initializing individual controllers
+        self._graph_controller = graph_controller
+        self._button_controller = ButtonController(
+            self._parameters_view,
+            graph_controller,
+            file_explorer_controller
+        )
+        self._text_box_controller = TextBoxController(
+            self._parameters_view
+        )
+        self._scrolling_list_controller = ScrollingListController(
+            self._parameters_view
+        )
+        self._start_button_controller = StartButtonController(
+            self._parameters_view,
+            graph_controller,
+            simulation_controller,
+            self._scrolling_list_controller,
+            CompleteGraphService,
+            csv_service
+        )
+        self._algorithm_parameters_controller = AlgorithmParametersController(
+            self._parameters_view
+        )
 
-        # Désactiver certains boutons si le graph n'a pas d'image
+        # Disabling certain buttons if the graph does not have an image
         if not graph_controller.graph_has_an_image():
-            self.button_controller.disable_clear_button()
-            self.button_controller.disable_save_button()
+            self._button_controller.disable_clear_button()
+            self._button_controller.disable_save_button()
 
     def draw_parameters(self) -> None:
-        '''
-        Cette méthode dessine les paramètres de la vue de paramètres: boutons, menus déroulants.
-        '''
-        self.parameters_view.draw()
-        self.parameters_view.draw_buttons(self.button_controller)
-        self.parameters_view.draw_start_button(self.start_button_controller)
-        self.parameters_view.draw_text_boxes(self.text_box_controller)
-        self.parameters_view.draw_algorithm_parameters(self.algorithm_parameters_controller)
+        """
+        Draws all the parameters UI components: buttons, scrolling
+        list, text boxes, etc.
+        """
+        self._parameters_view.draw()
+        self._button_controller.draw_buttons()
+        self._start_button_controller.draw_buttons()
+        self._text_box_controller.draw_text_boxes()
+        self._algorithm_parameters_controller.draw_text_boxes()
+        self._scrolling_list_controller.draw_scrolling_list()
 
-        # Dessin de la liste déroulante pour être au premier plan
-        self.parameters_view.draw_scrolling_list(self.scrolling_list_controller)
-
-    def handle_events(self, event) -> None:
-        '''
-        Gère les événements pour chaque composant interactif de l'interface.
-        '''
-        self.handle_button(event)
-        self.handle_text_box(event)
-        self.handle_scrolling_list(event)
-        self.handle_algorithm_parameters(event)
-        self.check_start_button_state()
-
-    def handle_button(self, event) -> None:
-        '''
-        Gère les interactions de clic de souris sur un bouton.
+    def handle_events(self, event: pygame.event.Event) -> None:
+        """
+        Handles user interactions for each interactive component in the
+        parameters section.
 
         Args:
-            event: L'événement Pygame contenant des informations sur le clic de souris.
-        '''
-        self.button_controller.handle_event(event)
-        self.start_button_controller.handle_event(event)
+            event: The Pygame event containing interaction details
+                (e.g., mouse clicks, key presses).
+        """
+        self._handle_button(event)
+        self._handle_text_box(event)
+        self._handle_scrolling_list(event)
+        self._handle_algorithm_parameters(event)
+        self._check_start_button_state()
 
-    def handle_text_box(self, event) -> None:
-        '''
-        Gère les événements sur une text box.
-
-        Args:
-            event: L'événement Pygame contenant des informations concernant l'interaction de l'utilisateur.
-        '''
-        self.text_box_controller.handle_event(event)
-
-    def handle_scrolling_list(self, event) -> None:
-        '''
-        Gère les événements sur la liste déroulante.
+    def _handle_button(self, event: pygame.event.Event) -> None:
+        """
+        Handles mouse click interactions on buttons.
 
         Args:
-            event: L'événement Pygame contenant des informations sur l'interaction de l'utilisateur.
-        '''
-        is_algorithm_selected = self.scrolling_list_controller.handle_event(event)
+            event: The Pygame event containing information about mouse
+                clicks.
+        """
+        self._button_controller.handle_event(event)
+        self._start_button_controller.handle_event(event)
+
+    def _handle_text_box(self, event: pygame.event.Event) -> None:
+        """
+        Handles events for the text boxes.
+
+        Args:
+            event: The Pygame event containing user interaction
+                details.
+        """
+        self._text_box_controller.handle_event(event)
+
+    def _handle_scrolling_list(self, event: pygame.event.Event) -> None:
+        """
+        Handles events for the dropdown list.
+
+        Args:
+            event: The Pygame event containing user interaction
+                details.
+        """
+        is_algorithm_selected = self._scrolling_list_controller.handle_event(event)
         if is_algorithm_selected:
-            selected_algorithm = self.scrolling_list_controller.get_selected_algorithm()
-            self.algorithm_parameters_controller.handle_selected_algorithm(selected_algorithm)
+            selected_algorithm = self._scrolling_list_controller.get_selected_algorithm()
+            self._algorithm_parameters_controller.handle_selected_algorithm(selected_algorithm)
 
-    def handle_algorithm_parameters(self, event) -> None:
-        '''
-        Gère les événements pour les paramètres de l'algorithme.
+    def _handle_algorithm_parameters(self, event: pygame.event.Event) -> None:
+        """
+        Handles events related to algorithm parameters.
 
         Args:
-            event: L'événement Pygame contenant des informations sur l'interaction de l'utilisateur.
-        '''
-        self.algorithm_parameters_controller.handle_event(event)
+            event: The Pygame event containing interaction details.
+        """
+        self._algorithm_parameters_controller.handle_event(event)
 
     def enable_start_button(self) -> bool:
-        '''
-        Active le bouton de démarrage de la simulation.
-        '''
-        self.start_button_controller.enable_start_button()
+        """
+        Enables the start button to initiate the simulation.
+        """
+        self._start_button_controller.enable_start_button()
 
     def disable_start_button(self) -> bool:
-        '''
-        Désactive le bouton de démarrage de la simulation.
-        '''
-        self.start_button_controller.disable_start_button()
+        """
+        Disables the start button to prevent the simulation from
+        starting.
+        """
+        self._start_button_controller.disable_start_button()
 
-    def check_start_button_state(self) -> None:
-        '''
-        Vérifie si le bouton de démarrage doit être activé ou non.
-        '''
+    def _check_start_button_state(self) -> None:
+        """
+        Checks whether the start button should be enabled or disabled
+        based on the current state of the UI.
+        """
         if (
-                self.scrolling_list_controller.get_selected_algorithm() is not None
-                and self.text_box_controller.is_everything_filled()
-                and not self.graph_controller.is_graph_empty()
+            self._scrolling_list_controller.get_selected_algorithm() is not None
+            and self._text_box_controller.is_everything_filled()
+            and not self._graph_controller.is_graph_empty()
         ):
             self.enable_start_button()
         else:

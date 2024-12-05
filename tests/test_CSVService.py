@@ -16,7 +16,7 @@ class TestCSVService(unittest.TestCase):
         # We create an instance of the CSVService class.
         service = CSVService()
         # We call the count_files method to get the number of files.
-        count = service.count_files()
+        count = service._count_files()
 
         # Finally, we assert that the count of files is equal to 2.
         self.assertEqual(count, 2)
@@ -50,16 +50,16 @@ class TestCSVService(unittest.TestCase):
         self.assertEqual(mock_makedirs.call_count, 2)
 
         # We get the number of CSV files.
-        nb_files = service.count_files()
+        nb_files = service._count_files()
         # We generate the path for the new CSV file.
         csv_path = f"graph_{nb_files + 1}.csv"
 
         # We check if the references file was opened for writing.
         # The mock_exists is now turned to true in order to enter to the open condition
-        mock_file.assert_any_call(service.references_file_path, 'w')
+        mock_file.assert_any_call(service._references_file_path, 'w')
 
         # And then we check if the new CSV file was opened for writing.
-        mock_file.assert_any_call(os.path.join(service.csv_folder_path, csv_path), 'w')
+        mock_file.assert_any_call(os.path.join(service._csv_folder_path, csv_path), 'w')
 
         # We get the handle for the mocked file.
         handle = mock_file()
@@ -95,7 +95,7 @@ class TestCSVService(unittest.TestCase):
         self.assertEqual(mock_makedirs.call_count, 0, "No other directories must be created")
 
         # We check if the write_csv_information method was called in order to change graph_1.csv
-        mock_file.assert_any_call(os.path.join(service.csv_folder_path, "graph_1.csv"), 'w')
+        mock_file.assert_any_call(os.path.join(service._csv_folder_path, "graph_1.csv"), 'w')
 
         # We get the handle for the mocked file.
         handle = mock_file()
