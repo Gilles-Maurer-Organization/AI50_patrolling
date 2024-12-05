@@ -6,6 +6,7 @@ import pygame
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT
 from controllers.GraphController import GraphController
 from models.Graph import Graph
+from models.GraphData import GraphData
 from models.Node import Node
 from services.ICSVService import ICSVService
 from services.IImageService import IImageService
@@ -121,11 +122,19 @@ class TestGraphController(unittest.TestCase):
         nodes_list = [(50, 50), (100, 100)]
         complete_adjacency_matrix = []
         shortest_paths = []
-        self.mock_csv_service.load_from_num_file.return_value = (edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths)
+        graph_data = GraphData(
+                shortest_paths=shortest_paths,
+                nodes_list=nodes_list,
+                complete_adjacency_matrix=complete_adjacency_matrix,
+                adjacency_matrix=edges_matrix
+            )
+        self.mock_csv_service.load_from_num_file.return_value = (
+            graph_data
+        )
 
         self.graph_controller.load_graph_from_csv(1)
         
-        self.graph_controller._load_graph.assert_called_once_with(edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths)
+        self.graph_controller._load_graph.assert_called_once_with(graph_data)
 
     def test_clear_graph_remove_all_nodes_and_edges(self):
         # We create nodes

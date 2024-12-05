@@ -4,6 +4,7 @@ from controllers.ScrollingListController import ScrollingListController
 from controllers.SimulationController import SimulationController
 from controllers.buttons.BaseButtonController import BaseButtonController
 from models.Button import Button
+from models.GraphData import GraphData
 from services.AStarService import AStarService
 from services.ICompleteGraphService import ICompleteGraphService
 from services.ICSVService import ICSVService
@@ -112,15 +113,15 @@ class StartButtonController(BaseButtonController):
         """
         Computes, stores, and saves the complete graph and shortest paths.
         """
-        complete_graph, shortest_paths = self.compute_complete_graph_and_shortest_paths()
-        if not complete_graph:
+        graph_data = self.compute_complete_graph_and_shortest_paths()
+        if not graph_data.adjacency_matrix:
             return False
-        if not shortest_paths:
+        if not graph_data.shortest_paths:
             raise ValueError('Shortest paths dictionnary is null while Complete Graph array exists.')
     
-        self._graph_controller.store_complements_to_model(complete_graph, shortest_paths)
+        self._graph_controller.store_complements_to_model(graph_data.complements)
 
-        self._graph_controller.save_complements(complete_graph, shortest_paths)
+        self._graph_controller.save_complements(graph_data.complements)
         return True
 
     def _launch_algorithm(self):
@@ -139,11 +140,13 @@ class StartButtonController(BaseButtonController):
             
     def compute_complete_graph_and_shortest_paths(self):
         """
-        Computes the complete graph and shortest paths using the A* algorithm.
+        Computes the complete graph and shortest paths using the A*
+        algorithm.
 
         Returns:
-            complete_graph (Array): The complete graph with all paths.
-            shortest_paths (dict): The shortest paths between all nodes.
+            GraphData: An instanciation of GraphData class containing
+                all the data about shortest paths, adjacency matrix,
+                complete adjacency matrix and nodes list.
         """
         simple_graph, node_positions = self._graph_controller._graph.compute_matrix()
         complete_graph = self._complete_graph_service(
@@ -163,7 +166,12 @@ class StartButtonController(BaseButtonController):
                     # We don't want to store the cost
                     shortest_paths[(start, end)] = a_star.find_path()[0] 
 
-        return complete_graph, shortest_paths
+        return GraphData(
+            adjacency_matrix=simple_graph,
+            nodes_list=node_positions,
+            complete_adjacency_matrix=complete_graph,
+            shortest_paths=shortest_paths
+        )
 
     def enable_start_button(self) -> None:
         """

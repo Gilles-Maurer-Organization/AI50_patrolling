@@ -9,6 +9,8 @@ from controllers.EdgeController import EdgeController
 from controllers.NodeController import NodeController
 from models.Agent import Agent
 from models.Graph import Graph
+from models.GraphData import GraphData
+from models.GraphDataComplements import GraphDataComplements
 from models.Node import Node
 from views.GraphView import GraphView
 
@@ -296,19 +298,23 @@ class GraphController:
         edges_matrix, nodes_list = self._graph.compute_matrix()
         self._csv_service.save(edges_matrix, nodes_list, self._image_name)
 
-    def save_complements(self,
-                         complete_graph: list[list[float]],
-                         shortest_paths: dict[tuple[int, int], list[int]]
-                         ) -> None:
+    def save_complements(
+        self,
+        graph_data_complements: GraphDataComplements
+    ) -> None:
         """
         Saves additional data such as the complete graph and shortest
         paths.
 
         Args:
-            complete_graph: The adjacency matrix representing the complete graph.
-            shortest_paths: A list of shortest paths between nodes.
+            graph_data_complements (GraphDataComplements): The
+                complements of the Graph such as the complete
+                adjacency matrix and the shortest paths
         """
-        self._csv_service.save_complements(complete_graph, shortest_paths, self._image_name)
+        self._csv_service.save_complements(
+            graph_data_complements,
+            self._image_name
+        )
 
     def clear_graph(self) -> None:
         """
@@ -324,9 +330,9 @@ class GraphController:
         Args:
             file_number: The number of the CSV file to load.
         """
-        edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths = self._csv_service.load_from_num_file(file_number)
+        graph_data = self._csv_service.load_from_num_file(file_number)
 
-        self._load_graph(edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths)
+        self._load_graph(graph_data)
 
     def import_graph_from_image(self, image_path: str) -> None:
         """
@@ -377,40 +383,32 @@ class GraphController:
 
         self._image_name = self._csv_service.get_image_name(csv_path).strip()
         self._load_background_image(self._image_name)
-        edges_matrix, nodes_list, complete_adjacency_matrix, shortest_paths = self._csv_service.load(csv_path)
+        graph_data = self._csv_service.load(csv_path)
         
-        self._load_graph(edges_matrix,
-                         nodes_list,
-                         complete_adjacency_matrix,
-                         shortest_paths)
+        self._load_graph(graph_data)
 
-    def _load_graph(self,
-                    edges_matrix: list[list[float]],
-                    nodes_list: list[Node],
-                    complete_adjacency_matrix: list[list[float]],
-                    shortest_paths: dict[tuple[int, int], list[int]]) -> None:
+    def _load_graph(self, graph_data: GraphData) -> None:
         """
         Loads a graph's structure and metadata into the model.
 
         Args:
-            edges_matrix: The adjacency matrix of the graph.
-            nodes_list: A list of nodes in the graph.
-            complete_adjacency_matrix: The complete adjacency matrix
-                for the graph.
-            shortest_paths: The list of shortest paths.
+            graph_data (GraphData): The Graph data containing
+                the adjacency matrix, the nodes list and the
+                graph's complements.
         """
-        if edges_matrix and nodes_list:
+        if graph_data.adjacency_matrix and graph_data.nodes_list:
             self.clear_graph()
-            for coords in nodes_list:
+            for coords in graph_data.nodes_list:
                 self._node_controller.add_node(coords)
-            for i, row in enumerate(edges_matrix):
+            for i, row in enumerate(graph_data.adjacency_matrix):
                 for j, distance in enumerate(row):
                     if distance > 0:
                         node1 = self._graph.nodes[i]
                         node2 = self._graph.nodes[j]
                         self._graph.add_edge(node1, node2)
-            self.store_complements_to_model(complete_adjacency_matrix,
-                                            shortest_paths)
+            self.store_complements_to_model(
+                graph_data
+            )
 
             self.update()
             print("Graph imported and displayed successfully.")
@@ -445,26 +443,30 @@ class GraphController:
         """
         return self._csv_service.are_complements_saved(self._image_name)
 
-    def store_complements_to_model(self,
-                                   complete_adjacency_matrix: list[list[float]],
-                                   shortest_paths: dict[tuple[int, int], list[int]]):
+    def store_complements_to_model(
+        self,
+        graph_data_complements: GraphDataComplements
+    ) -> None:
         """
         Stores complement data like adjacency matrices and shortest
         paths into the model.
 
         Args:
-            complete_adjacency_matrix: The complete adjacency matrix
-                for the graph.
-            shortest_paths: The list of shortest paths to store in the
-                model.
+            graph_data_complements (GraphDataComplements): The
+                complements of the Graph such as the complete
+                adjacency matrix and the shortest paths
         """
-        if complete_adjacency_matrix:
-            self._graph.set_complete_adjacency_matrix(complete_adjacency_matrix)
-            if not shortest_paths:
+        if graph_data_complements.complete_adjacency_matrix:
+            self._graph.set_complete_adjacency_matrix(
+                graph_data_complements.complete_adjacency_matrix
+            )
+            if not graph_data_complements.shortest_paths:
                 raise ValueError("Shortest paths are missing despite a \
                                  complete adjacency matrix being present.")
             else:
-                self._graph.set_shortest_paths(shortest_paths)
+                self._graph.set_shortest_paths(
+                    graph_data_complements.shortest_paths
+                )
 
     def raise_error_message(self, message: str) -> None:
         """
