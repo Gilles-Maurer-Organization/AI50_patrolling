@@ -392,11 +392,9 @@ class GraphController:
         Loads a graph's structure and metadata into the model.
 
         Args:
-            edges_matrix: The adjacency matrix of the graph.
-            nodes_list: A list of nodes in the graph.
-            complete_adjacency_matrix: The complete adjacency matrix
-                for the graph.
-            shortest_paths: The list of shortest paths.
+            graph_data (GraphData): The Graph data containing
+                the adjacency matrix, the nodes list and the
+                graph's complements.
         """
         if graph_data.adjacency_matrix and graph_data.nodes_list:
             self.clear_graph()
