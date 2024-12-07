@@ -274,7 +274,7 @@ class GraphController:
         self._create_link(pos)
         self._select_node(node)
 
-    def is_within_bounds(self, pos) -> bool:
+    def _is_within_bounds(self, pos) -> bool:
         bounds = self._graph_view.get_image_bounds()
         margin_left = bounds["margin_left"]
         margin_top = bounds["margin_top"]

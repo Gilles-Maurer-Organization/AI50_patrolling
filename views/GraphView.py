@@ -25,13 +25,14 @@ class GraphView:
         _background_image (Optional[pygame.Surface]): The background
             image for the graph view, or None if no background is set.
     """
-    def __init__(self, screen) -> None:
+    def __init__(self, screen: pygame.Surface) -> None:
         self._screen = screen
         self._background_image = None
         self._scaled_width = None
         self._scaled_height = None
         self._margin_left = 0
         self._margin_top = 0
+        self._popup = None
 
     def set_background_image(self, background_image):
         """Set the background image for the view."""
