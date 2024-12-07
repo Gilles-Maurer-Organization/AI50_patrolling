@@ -3,7 +3,8 @@ from typing import Optional
 import pygame
 
 from constants.Colors import Colors
-from constants.Config import NODE_RADIUS, GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT
+from constants.Config import NODE_RADIUS, GRAPH_WINDOW_WIDTH, \
+    GRAPH_WINDOW_HEIGHT
 from models.Agent import Agent
 from models.Graph import Graph
 from models.Node import Node
@@ -35,12 +36,20 @@ class GraphView:
         self._popup = None
 
     def set_background_image(self, background_image):
-        """Set the background image for the view."""
+        """
+        Set the background image for the view, adjusting its size to
+        fit the window and centering it with margins.
+
+        Args:
+            background_image (pygame.Surface): The image to be set as
+                the background.
+        """
         # Store the image in an instance variable
         self._background_image = background_image
 
         # Get the original dimensions of the image
-        original_width, original_height = self._background_image.get_width(), self._background_image.get_height()
+        original_width, original_height = self._background_image.get_width(), \
+                                          self._background_image.get_height()
         window_ratio = GRAPH_WINDOW_WIDTH / GRAPH_WINDOW_HEIGHT
         image_ratio = original_width / original_height
 
@@ -60,9 +69,19 @@ class GraphView:
         margin_color = Colors.BLACK.value
         self._screen.fill(margin_color)
         # Scale the image and store it as the final background
-        self._background_image = pygame.transform.scale(self._background_image, (self._scaled_width, self._scaled_height))
+        self._background_image = pygame.transform.scale(self._background_image,
+                                                        (self._scaled_width,
+                                                         self._scaled_height))
 
     def get_image_bounds(self):
+        """
+        Retrieve the dimensions and margins of the scaled image.
+
+        Returns:
+            dict: A dictionary containing the keys 'scaled_width',
+            'scaled_height', 'margin_left', and 'margin_top', each
+            with their respective values as integers.
+        """
         return {
             "scaled_width": self._scaled_width,
             "scaled_height": self._scaled_height,
@@ -94,7 +113,8 @@ class GraphView:
         if self._background_image is None:
             self._screen.fill(Colors.WHITE.value)
         else:
-            self._screen.blit(self._background_image, (self._margin_left, self._margin_top))
+            self._screen.blit(self._background_image, (self._margin_left,
+                                                       self._margin_top))
 
         # Draw nodes
         for node in graph.nodes:
@@ -192,21 +212,30 @@ class GraphView:
     
     def show_error_popup(self, message: str) -> None:
         """
-        Shows an Error Popup
+        Displays an error popup with the specified message.
+
+        Args:
+            message (str): The error message to be displayed.
         """
         popup_view = ErrorPopupView(self._screen, message)
         self._show_pop_up_type(popup_view)
 
     def show_info_popup(self, message: str) -> None:
         """
-        Shows an Info Popup
+        Displays an informational popup with the specified message.
+
+        Args:
+            message (str): The info message to be displayed.
         """
         popup_view = InfoPopupView(self._screen, message)
         self._show_pop_up_type(popup_view)
     
     def show_popup(self, message: str) -> None:
         """
-        Shows a Popup
+        Displays a generic popup with the specified message.
+
+        Args:
+            message (str): The message to be displayed in the popup.
         """
         popup_view = PopupView(self._screen, message)
         self._show_pop_up_type(popup_view)

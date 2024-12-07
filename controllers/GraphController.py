@@ -3,8 +3,7 @@ import re
 
 import pygame
 
-from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, NODE_RADIUS
-from controllers.NodeController import NodeController
+from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT
 from controllers.EdgeController import EdgeController
 from controllers.NodeController import NodeController
 from models.Agent import Agent
@@ -12,10 +11,10 @@ from models.Graph import Graph
 from models.GraphData import GraphData
 from models.GraphDataComplements import GraphDataComplements
 from models.Node import Node
-from views.GraphView import GraphView
-
 from services import IImageService
 from services.ICSVService import ICSVService
+from views.GraphView import GraphView
+
 
 class GraphController:
     """
@@ -275,6 +274,15 @@ class GraphController:
         self._select_node(node)
 
     def _is_within_bounds(self, pos) -> bool:
+        """
+        Checks if the given position is within the bounds of the graph view.
+
+        Args:
+            pos (tuple[int, int]): The position to check.
+
+        Returns:
+            bool: True if the position is within bounds, otherwise False.
+        """
         bounds = self._graph_view.get_image_bounds()
         margin_left = bounds["margin_left"]
         margin_top = bounds["margin_top"]
