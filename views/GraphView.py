@@ -35,7 +35,10 @@ class GraphView:
         self._margin_top = 0
         self._popup = None
 
-    def set_background_image(self, background_image):
+    def set_background_image(
+        self,
+        background_image: pygame.Surface
+    ) -> None:
         """
         Set the background image for the view, adjusting its size to
         fit the window and centering it with margins.
@@ -73,7 +76,7 @@ class GraphView:
                                                         (self._scaled_width,
                                                          self._scaled_height))
 
-    def get_image_bounds(self):
+    def get_image_bounds(self) -> dict[str, int]:
         """
         Retrieve the dimensions and margins of the scaled image.
 
