@@ -3,8 +3,7 @@ import re
 
 import pygame
 
-from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, NODE_RADIUS
-from controllers.NodeController import NodeController
+from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT
 from controllers.EdgeController import EdgeController
 from controllers.NodeController import NodeController
 from models.Agent import Agent
@@ -12,10 +11,10 @@ from models.Graph import Graph
 from models.GraphData import GraphData
 from models.GraphDataComplements import GraphDataComplements
 from models.Node import Node
-from views.GraphView import GraphView
-
 from services import IImageService
 from services.ICSVService import ICSVService
+from views.GraphView import GraphView
+
 
 class GraphController:
     """
@@ -198,10 +197,6 @@ class GraphController:
         # Check if the image exists in the folder
         if self._image_service.check_if_image_exists(image_path):
             background_image = pygame.image.load(image_path)
-            background_image = pygame.transform.scale(
-                background_image,
-                (GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)
-            )
             self._graph_view.set_background_image(background_image)
         else:
             print(f"Image {image_name} not found or could not be copied.")
@@ -278,9 +273,24 @@ class GraphController:
         self._create_link(pos)
         self._select_node(node)
 
-    def _is_within_bounds(self, pos: tuple[int, int]) -> bool:
-        return (NODE_RADIUS < pos[0] < GRAPH_WINDOW_WIDTH - NODE_RADIUS and
-                NODE_RADIUS < pos[1] < GRAPH_WINDOW_HEIGHT - NODE_RADIUS)
+    def _is_within_bounds(self, pos) -> bool:
+        """
+        Checks if the given position is within the bounds of the graph view.
+
+        Args:
+            pos (tuple[int, int]): The position to check.
+
+        Returns:
+            bool: True if the position is within bounds, otherwise False.
+        """
+        bounds = self._graph_view.get_image_bounds()
+        margin_left = bounds["margin_left"]
+        margin_top = bounds["margin_top"]
+        scaled_width = bounds["scaled_width"]
+        scaled_height = bounds["scaled_height"]
+
+        return (margin_left < pos[0] < margin_left + scaled_width and
+                margin_top < pos[1] < margin_top + scaled_height)
 
     def update(self) -> None:
         """
