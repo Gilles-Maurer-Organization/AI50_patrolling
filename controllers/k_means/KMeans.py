@@ -23,7 +23,7 @@ class KMeans:
 
     def group_points(self, visualize): 
         # Initialiser les centres au hasard parmi les points existants
-        self.centers = self.list_points[np.random.default_rng().choice(len(self.list_points), self.nb_agents, replace=False)]
+        self.centers = self.list_points[np.random.choice(len(self.list_points), self.nb_agents, replace=False)]
         prev_centers = np.empty_like(self.centers)
         
         if visualize:

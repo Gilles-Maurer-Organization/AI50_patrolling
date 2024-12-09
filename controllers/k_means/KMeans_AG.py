@@ -125,7 +125,7 @@ class AlgorithmeGenetique:
 
         total_fitness = np.sum(1 / fitness)  # Priorité aux plus petites distances
         probabilities = (1 / fitness) / total_fitness
-        indices = np.random.default_rng().choice(range(len(self.population)), size=nbr_parents, p=probabilities, replace=False)
+        indices = np.random.choice(range(len(self.population)), size=nbr_parents, p=probabilities, replace=False)
         parents = self.population[indices]
         return parents
 
