@@ -37,7 +37,7 @@ class TestGraphController(unittest.TestCase):
         self.graph_controller.graph.edges = []
 
         # Configure mocked methods
-        self.graph_controller.graph_view.get_image_bounds.return_value = {
+        self.graph_controller._graph_view.get_image_bounds.return_value = {
             "margin_left": 0,
             "margin_top": 0,
             "scaled_width": GRAPH_WINDOW_WIDTH,

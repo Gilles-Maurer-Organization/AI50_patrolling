@@ -113,8 +113,10 @@ class GraphView:
         if self._background_image is None:
             self._screen.fill(Colors.WHITE.value)
         else:
-            self._screen.blit(self._background_image, (self._margin_left,
-                                                       self._margin_top))
+            self._screen.blit(
+                self._background_image,
+                (self._margin_left, self._margin_top)
+            )
 
         # Draw nodes
         for node in graph.nodes:
