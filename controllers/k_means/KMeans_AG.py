@@ -78,22 +78,10 @@ class AlgorithmeGenetique:
     def optimize(self):
         nbr_parents = self.pop_size // 2
         nbr_enfants = self.pop_size - nbr_parents 
-
-        x = [i for i in range(self.nb_generations)]
-        y_min = np.zeros(self.nb_generations)
-        y_avg = np.zeros(self.nb_generations)
-        
+       
         for gen in range(self.nb_generations):
             
-            print(f"\rProgression : {(int)(gen * 100/self.nb_generations):.0f}%", end="")
-
             fitness = self.cal_fitness()
-
-            y_min[gen] = np.min(fitness)
-            y_avg[gen] = np.mean(fitness)
-
-            # print(f'Voici la population: \n{self.population}\n')
-            # print(f'Fitness de la population: \n{fitness}\n')
 
             parents = self.selection(fitness, nbr_parents)
             enfants = self.croisement(parents, nbr_enfants)
@@ -106,22 +94,10 @@ class AlgorithmeGenetique:
             
         fitness_derniere_generation = self.cal_fitness()   
         
-        # print(f'Voici la dernière génération de la population: \n{self.population}\n') 
-        # print(f'Fitness de la dernière génération: \n{fitness_derniere_generation}\n')
-
-        # plt.plot(x, y_min, label='Minimum')
-        # plt.plot(x, y_avg, label='Moyenne')
-        # plt.xlabel('Générations')
-        # plt.ylabel('Fitness')
-        # plt.legend()
-        # plt.show()
-
         min_fitness = np.min(fitness_derniere_generation)
-        index_min_fitness = np.where(fitness_derniere_generation == min_fitness)
+        index_min_fitness = np.nonzero(fitness_derniere_generation == min_fitness)
         sol_opt = self.population[index_min_fitness[0][0],:]
         
-        print("\r", 20*" ")
-
         return sol_opt, min_fitness
 
 
@@ -149,7 +125,7 @@ class AlgorithmeGenetique:
 
         total_fitness = np.sum(1 / fitness)  # Priorité aux plus petites distances
         probabilities = (1 / fitness) / total_fitness
-        indices = np.random.choice(range(len(self.population)), size=nbr_parents, p=probabilities, replace=False)
+        indices = np.random.default_rng().choice(range(len(self.population)), size=nbr_parents, p=probabilities, replace=False)
         parents = self.population[indices]
         return parents
 

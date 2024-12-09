@@ -13,7 +13,7 @@ class KMeans:
 
     def launch(self, visualize=False):
 
-        self.kmeans(visualize) 
+        self.group_points(visualize) 
         
         # Afficher les centres finaux
         print("Final centers: ", self.centers)
@@ -21,10 +21,11 @@ class KMeans:
         result = self.connect_points(visualize)
         return result
 
-    def kmeans(self, visualize): 
+    def group_points(self, visualize): 
         # Initialiser les centres au hasard parmi les points existants
-        self.centers = self.list_points[np.random.choice(len(self.list_points), self.nb_agents, replace=False)]
-        prev_centers = np.zeros_like(self.centers)
+        self.centers = self.list_points[np.random.default_rng().choice(len(self.list_points), self.nb_agents, replace=False)]
+        self.centers = np.array([np.array([0, 0]), np.array([0, 0]), np.array([0, 0])])
+        prev_centers = np.empty_like(self.centers)
         
         if visualize:
             plt.ion()  # Mode interactif pour mettre à jour le graphique
@@ -46,7 +47,7 @@ class KMeans:
                 if len(cluster_points) > 0:
                     self.centers[i] = np.mean(cluster_points, axis=0)
 
-                                # Visualisation du processus
+            # Visualisation du processus
             if visualize:
                 ax.clear()
                 self._plot(ax, clusters)
@@ -96,7 +97,8 @@ class KMeans:
         if visualize:
             plt.show() 
 
-
+        print(cout_min_ag)
+        print(np.sum(cout_min_ag))
         return min_sol_ag
 
 if __name__ == '__main__':
