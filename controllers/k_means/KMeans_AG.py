@@ -79,7 +79,7 @@ class AlgorithmeGenetique:
         nbr_parents = self.pop_size // 2
         nbr_enfants = self.pop_size - nbr_parents 
        
-        for gen in range(self.nb_generations):
+        for _ in range(self.nb_generations):
             
             fitness = self.cal_fitness()
 
@@ -175,7 +175,7 @@ class AlgorithmeGenetique:
             rd_parent1 = parents[rd.randint(0, parents.shape[0] - 1)].copy()
             rd_parent2 = parents[rd.randint(0, parents.shape[0] - 1)].copy()
 
-            if rd.random() > taux_croisement:
+            if rd.random() > taux_croisement: 
                 enfants[nb_enfants_create] = rd_parent1
 
             else:
@@ -207,68 +207,3 @@ class AlgorithmeGenetique:
 
         return enfants
 
-    
-
-
-
-
-    #region ancien code
-
-    
-    # def croisement(self, parents, nbr_enfants):
-    #     enfants = np.empty((nbr_enfants, parents.shape[1]))
-    #     point_de_croisement = int(parents.shape[1]/2) #croisement au milieu
-    #     taux_de_croisement = 0.8
-    #     i = 0
-
-    #     while (i < nbr_enfants): #parents.shape[0]
-    #         indice_parent1 = i%parents.shape[0]
-    #         indice_parent2 = (i+1)%parents.shape[0]
-    #         x = rd.random()
-    #         if x < taux_de_croisement: # probabilité de croisement
-
-    #             indice_parent1 = i%parents.shape[0]
-    #             indice_parent2 = (i+1)%parents.shape[0]
-    #             enfants[i,0:point_de_croisement] = parents[indice_parent1,0:point_de_croisement]
-    #             enfants[i,point_de_croisement:] = parents[indice_parent2,point_de_croisement:]
-    #             i+=1
-
-    #     return enfants
-
-
-
-    # def selection(self, fitness, nbr_parents):
-    #     fitness = list(fitness)
-    #     parents = np.empty((nbr_parents, self.population.shape[1]))
-
-    #     for i in range(nbr_parents):
-    #         indice_min_fitness = np.where(fitness == np.min(fitness))
-    #         parents[i,:] = self.population[indice_min_fitness[0][0], :]
-    #         fitness[indice_min_fitness[0][0]] = 999999
-
-    #     return parents
-
-
-
-    
-    # def mutation(self, enfants):
-    #     mutants = np.empty((enfants.shape))
-    #     taux_mutation = 0.3 # taux de mutation
-        
-    #     for i in range(mutants.shape[0]):
-    #         random_valeur = rd.random()
-    #         mutants[i,:] = enfants[i,:]
-    #         if random_valeur < taux_mutation:
-
-    #             random_index_1 = rd.randint(0, len(mutants[i]) - 2)
-    #             random_index_2 = rd.randint(0, len(mutants[i]) - 2)
-
-    #             val = mutants[i][random_index_1]
-    #             mutants[i][random_index_1] = mutants[i][random_index_2]
-    #             mutants[i][random_index_2] = val
-
-            
-    #     return mutants 
-
-
-    #endregion
