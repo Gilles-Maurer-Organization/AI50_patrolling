@@ -201,7 +201,7 @@ class AlgorithmeGenetique:
         return enfants
     
 
-    def complete_enfant(enfant, not_in_h1): 
+    def complete_enfant(self, enfant, not_in_h1): 
         
         index = 0
 
