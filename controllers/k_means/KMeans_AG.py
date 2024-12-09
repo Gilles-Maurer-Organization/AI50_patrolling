@@ -164,10 +164,9 @@ class AlgorithmeGenetique:
 
 
 
-    def croisement(self, parents, nbr_enfants):
+    def croisement(self, parents, nbr_enfants, taux_croisement = 0.7):
 
         enfants = np.empty((nbr_enfants, parents.shape[1]))
-        taux_croisement = 0.7
         nb_enfants_create = 0
 
         for nb_enfants_create in range(nbr_enfants):
@@ -194,16 +193,22 @@ class AlgorithmeGenetique:
                         not_in_h1.append(rd_parent2[i])
 
                 enfant[point_a:point_b] = heritage_parent1
-                index = 0
 
-                for i in range(enfant.shape[0]):
-                    if enfant[i] == -1:
-                        enfant[i] = not_in_h1[index]
-                        index += 1
-
+                enfant = self.complete_enfant(enfant, not_in_h1)
+                
                 enfants[nb_enfants_create] = enfant
 
-
-
         return enfants
+    
+
+    def complete_enfant(enfant, not_in_h1): 
+        
+        index = 0
+
+        for i in range(enfant.shape[0]):
+            if  [i] == -1:
+                enfant[i] = not_in_h1[index]
+                index += 1
+
+        return enfant
 
