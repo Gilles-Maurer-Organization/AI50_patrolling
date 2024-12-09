@@ -36,6 +36,13 @@ class TestGraphController(unittest.TestCase):
         self.graph_controller.graph.nodes = []
         self.graph_controller.graph.edges = []
 
+        # Configure mocked methods
+        self.graph_controller._graph_view.get_image_bounds.return_value = {
+            "margin_left": 0,
+            "margin_top": 0,
+            "scaled_width": GRAPH_WINDOW_WIDTH,
+            "scaled_height": GRAPH_WINDOW_HEIGHT
+        }
         self.graph_controller._load_graph = MagicMock()
 
     def tearDown(self):
