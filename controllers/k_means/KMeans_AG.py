@@ -194,19 +194,19 @@ class AlgorithmeGenetique:
 
                 enfant[point_a:point_b] = heritage_parent1
 
-                enfant = self.complete_enfant(enfant, not_in_h1)
+                enfant = self.complete_child(enfant, not_in_h1)
                 
                 enfants[nb_enfants_create] = enfant
 
         return enfants
     
 
-    def complete_enfant(self, enfant, not_in_h1): 
+    def complete_child(self, enfant, not_in_h1): 
         
         index = 0
 
         for i in range(enfant.shape[0]):
-            if  [i] == -1:
+            if  enfant[i] == -1:
                 enfant[i] = not_in_h1[index]
                 index += 1
 
