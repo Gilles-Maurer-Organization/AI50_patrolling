@@ -155,6 +155,13 @@ class Graph:
         
         return edges_matrix, nodes_list
 
+    def get_shortest_paths(self):
+        return self.shortest_paths
+
+
+    def get_complete_adjacency_matrix(self):
+        return self.complete_adjacency_matrix 
+
     def set_shortest_paths(
         self,
         shortest_paths: dict[tuple[int, int],list[int]]
