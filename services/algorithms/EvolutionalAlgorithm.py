@@ -775,6 +775,7 @@ if __name__ == "__main__":
     end = time.time() - start
 
     print("Res algo G:")
+    print("Res algo G:")
     for elem in res:
         print(elem)
         print("---")
