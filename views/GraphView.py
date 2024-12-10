@@ -33,6 +33,7 @@ class GraphView:
         self._scaled_height = None
         self._margin_left = 0
         self._margin_top = 0
+        self._margin_color = None
         self._popup = None
 
     def set_background_image(
@@ -69,8 +70,9 @@ class GraphView:
             self._margin_top = 0
 
         # Draw margins and render the image
-        margin_color = Colors.BLACK.value
-        self._screen.fill(margin_color)
+        self._margin_color = Colors.BLACK.value
+        self._screen.fill(self._margin_color)
+
         # Scale the image and store it as the final background
         self._background_image = pygame.transform.scale(self._background_image,
                                                         (self._scaled_width,
@@ -115,7 +117,8 @@ class GraphView:
         """
         if self._background_image is None:
             self._screen.fill(Colors.WHITE.value)
-        else:
+        else:    
+            self._screen.fill(self._margin_color)
             self._screen.blit(
                 self._background_image,
                 (self._margin_left, self._margin_top)
