@@ -100,7 +100,6 @@ class  EvolutionalAlgorithm(IAlgorithm):
         self.distance_matrix = graph_object.get_complete_adjacency_matrix()
         self.nodes_idx_list = np.arange(0, len(graph_object.get_complete_adjacency_matrix()))
 
-    #à revoir en vrai 
     def initial_population_generation(self): 
         """
         Generates a random initial population for the Algorithm.
@@ -110,11 +109,33 @@ class  EvolutionalAlgorithm(IAlgorithm):
             ndarray: the generated indicative population.
         """
 
-        #the length of 1 gene of the individual
-        #TODO: ajuster le param gene_length
-        gene_length = max(1, int( 0.75 * len(self.nodes_idx_list)))  #ajuster le 0.25 dynamiquement ici (jsp comment ) ...
-        #gene_length = max(1, int(len(self.nodes_idx_list)/self.nb_agents))
-        print(gene_length)
+        #dictionnary used to apply a ratio value given value intervals
+        gene_length_ratios = {
+            (0,10): 0.75,
+            (11,20):0.65,
+            (21,30):0.6,
+            (31, 40):0.55,
+            (41, 50):0.5,
+            (51, 60):0.45,
+            (61, 70):0.30,
+            (71, 80):0.25,
+            (81, 90):0.2,
+            (91, 100): 0.15
+        }
+
+        #we determine the value of the ratio using the number of nodes contained in the Graph
+        ratio = 0
+        for key, value in gene_length_ratios.items():
+            if len(self.nodes_idx_list) in range(key[0], key[1]+1):
+                ratio = gene_length_ratios[key]
+
+        #the number of nodes is higher than 100, thus, we apply a default of 0.1 as ratio
+        if ratio == 0:
+            ratio = 0.1
+
+        #computing the length of a gene using the determined ratio
+        gene_length = max(1, int(ratio * len(self.nodes_idx_list)))
+
         indicative_population = []
 
         # For each individual
@@ -205,7 +226,7 @@ class  EvolutionalAlgorithm(IAlgorithm):
                     if origin == destination:
                         continue
 
-                    # Retrieve the shortest path between origin and destination #TODO: passer le self.shortest_way_dict pour un dictionnaire
+                    # Retrieve the shortest path between origin and destination
                     shortest_path = list(self.shortest_way_dict[(origin,destination)])
 
                     # Append the nodes from the shortest path to the real path, skipping the first if already added
@@ -360,7 +381,7 @@ class  EvolutionalAlgorithm(IAlgorithm):
     def pareto_fronts(self, fitness_list):
         """
         Classifies all the individuals of the population into categories from the best to the worst.
-        It is using the Pareto Efficiency concept to achieve this. https://en.wikipedia.org/wiki/Pareto_efficiency
+        It is using the Pareto Efficiency concept to achieve this. https://en.wikipedia.org/wiki/Pareto_front
 
         Args:
             fitness_list : The list containing th fitness of the population.
@@ -540,13 +561,12 @@ class  EvolutionalAlgorithm(IAlgorithm):
 
         #matrix of same shape
         children = np.empty((nb_children,parents.shape[1],parents.shape[2])) 
-        #TODO: determiner la meilleure valeur ici 
-        number_of_crossing_points = 2 #we cut in 2 parts atm
+        number_of_crossing_points = 2 #we cut in 2 parts
 
         #probability of crossing the parents
         crossing_rate = 0.8
         i = 0
-        nb_attempts = 0
+
         while (i < nb_children) :
             
             #probability of steril parent
@@ -691,14 +711,9 @@ class  EvolutionalAlgorithm(IAlgorithm):
         nbr_enfants = self.nb_individuals_in_pop - nbr_parents
 
         for _ in range(self.nb_generations):
-            print("iter",_)
+
             #evaluating the fitness of the current population
             fitness = self.fitness()
-
-            #---for testing
-            if _ == 0:
-                print("fitness initiale\n",fitness)
-            #---
 
             #selecting the best individuals to use them as parents
             parents = self.selection_with_pareto(fitness,nbr_parents)
@@ -718,7 +733,7 @@ class  EvolutionalAlgorithm(IAlgorithm):
 
         #evaluating the fitness of the final population
         fitness_finale = self.fitness()
-        print("fitness finale\n",fitness_finale)
+
         #index of the best individual of the final population
         best_individual_idx = self.find_best_individual(fitness_finale)
 
@@ -729,8 +744,6 @@ class  EvolutionalAlgorithm(IAlgorithm):
         algorithm_output = self.clean_output_individual(res_of_algo)
 
         return algorithm_output
-        
-       
 
 if __name__ == "__main__":
 
@@ -759,29 +772,23 @@ if __name__ == "__main__":
         [[9, 0],     [9, 0, 1], [9, 0, 1, 2], [9, 0, 1, 2, 3], [9, 0, 4], [9, 5],  [9, 0, 1, 2, 6], [9, 0, 7], [9, 0, 1, 8], [9]]
     ]
 
+    #transformer en dico pour les tests
     shortest_way_dict = {}
     for i in range(len(shortest_way_mat)):
         for j in range(len(shortest_way_mat)):
             shortest_way_dict[(i,j)] = shortest_way_mat[i][j]
 
-    #for elem in shortest_way_dict:
-        #print(elem, ": ",shortest_way_dict[elem] )
-
-
-    #500, 5, 10, 10
     graph = Graph()
     graph.set_complete_adjacency_matrix(simple_graph)
     graph.set_shortest_paths(shortest_way_dict)
     
-    AG =  EvolutionalAlgorithm(100, 10, 15, graph)
+    AG = EvolutionalAlgorithm(100, 10, 15, graph)
 
-    for _ in range(10):
-        print(_)
-        start = time.time()
-        res = AG.launch()
-        end = time.time()-start
+    start = time.time()
+    res = AG.launch()
+    end = time.time()-start
 
-    print("REs algo G:")
+    print("Res algo G:")
     for elem in res:
         print(elem)
         print("---")
