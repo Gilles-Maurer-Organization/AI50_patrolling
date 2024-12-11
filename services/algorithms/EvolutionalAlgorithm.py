@@ -88,7 +88,7 @@ class EvolutionalAlgorithm(IAlgorithm):
         # thus we apply a default of 0.1 as ratio
         if ratio == 0:
             ratio = 0.1
-
+            
         # computing the length of a gene using the determined ratio
         gene_length = max(1, int(ratio * len(self.nodes_idx_list)))
 
@@ -133,10 +133,6 @@ class EvolutionalAlgorithm(IAlgorithm):
                     # if it's the last attempt, we add the individual (even if he's not valid )
                     if nb_tries_individual == max_tries:
                         indicative_population.append(individual)
-
-
-
-
 
         # Transforming into np.array for later use
         indicative_population = np.array(indicative_population)
