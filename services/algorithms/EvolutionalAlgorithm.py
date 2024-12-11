@@ -47,8 +47,6 @@ class EvolutionalAlgorithm(IAlgorithm):
 
     # The "# NOSONAR" comments you'll see next to the random number generators are used to tell SonarCloud
     # to skip the associated warnings as the random generators are used on purpose.
-    # The "# NOSONAR" comments you'll see next to the random number generators are used to tell SonarCloud
-    # to skip the associated warnings as the random generators are used on purpose.
 
     def __init__(self, nb_of_generations, nb_agent, individuals_number_per_population, graph_object):
         self.nb_generations = nb_of_generations
@@ -762,8 +760,6 @@ class EvolutionalAlgorithm(IAlgorithm):
             ndarray: A list containing every child (mutated or not)
             ndarray: A list containing every child (mutated or not)
         """
-        # matrix of same shape
-        mutants = np.zeros(children.shape)
         # matrix of same shape
         mutants = np.zeros(children.shape)
 
