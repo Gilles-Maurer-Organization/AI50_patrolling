@@ -5,6 +5,7 @@ from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, PARAMETERS
 from controllers.FileExplorerController import FileExplorerController
 from controllers.GraphController import GraphController
 from controllers.ParametersController import ParametersController
+from controllers.SimulationDataController import SimulationDataController
 from controllers.SimulationController import SimulationController
 
 from services import IImageService
@@ -28,7 +29,11 @@ class ViewController:
         _parameters_controller (ParametersController): The controller
             responsible for managing the parameters interface.
     """
-    def __init__(self, csv_service: ICSVService, image_service: IImageService) -> None:
+    def __init__(
+        self,
+        csv_service: ICSVService,
+        image_service: IImageService
+    ) -> None:
         self._screen = pygame.display.set_mode(
             (GRAPH_WINDOW_WIDTH + PARAMETERS_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT)
             )
@@ -52,6 +57,10 @@ class ViewController:
             csv_service
         )
 
+        self._simulation_data_controller = SimulationDataController(
+            self._screen
+        )
+
     def handle_actions(self, event) -> None:
         """
         Handles all user actions, delegating to the appropriate
@@ -72,8 +81,11 @@ class ViewController:
         
         Also handles drawing the file explorer if it is open.
         """
-        self._parameters_controller.draw_parameters()
+        if self._simulation_controller.has_simulation_started():
+            self._simulation_controller.draw_simulation()
+            self._simulation_data_controller.draw_simulation_data()
+        else:
+            self._parameters_controller.draw_parameters()
         self._graph_controller.update()
-        self._simulation_controller.draw_simulation()
         if self._file_explorer_controller.is_file_explorer_opened():
             self._file_explorer_controller.draw_file_explorer()
