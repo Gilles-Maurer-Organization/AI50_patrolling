@@ -18,17 +18,23 @@ class EvolutionalAlgorithm(IAlgorithm):
 
         -> nb_individuals_in_pop : The number of individuals in the population.
 
-        -> indicative_paths_population : Contains the "short" version of the path, thus ignoring the case when
-                                        2 following nodes in the path don't have a direct link.
+        -> indicative_paths_population : Contains the "short" version of the pat,
+         thus ignoring the case when 2 following nodes in the path don't have a direct link.
 
-        -> real_paths_population : Contains the "real" path by adding the additional nodes between 2 nodes
-                                   which don't have a direct link
+        -> real_paths_population : Contains the "real" path by adding the
+        additional nodes between 2 nodes which don't have a direct link
 
         -> shortest_way_dict : the "shortest_paths" attribute from the Graph Class.
 
-        -> distance_matrix  : the "complete_adjacency_matrix" attribute from the Graph Class.
+        -> distance_matrix : the "complete_adjacency_matrix" attribute from the Graph Class.
 
         -> nodes_idx_list : Stores a sorted list of all the nodes contained the Graph.
+
+        -> number_of_crossing_points : nb of crossing points used in the Algorithm
+
+        -> crossing_rate :  the crossing rate used in the Algorithm
+
+        -> mutation_rate : the mutating rate used in the Algorithm
     """
 
     # The "# NOSONAR" comments you'll see next to the random number generators are used to tell SonarCloud
@@ -43,6 +49,9 @@ class EvolutionalAlgorithm(IAlgorithm):
         self.shortest_way_dict = graph_object.get_shortest_paths()
         self.distance_matrix = graph_object.get_complete_adjacency_matrix()
         self.nodes_idx_list = np.arange(0, len(graph_object.get_complete_adjacency_matrix()))
+        self.number_of_crossing_points = 2
+        self.crossing_rate = 0.8
+        self.mutation_rate = 0.5
 
     def initial_population_generation(self) -> np.ndarray:
         """
@@ -53,7 +62,7 @@ class EvolutionalAlgorithm(IAlgorithm):
         Returns:
             ndarray: the generated indicative population.
         """
-
+        max_tries = 10
         # dictionary used to apply a ratio value given value intervals
         gene_length_ratios = {
             (0, 10): 0.75,
@@ -89,7 +98,9 @@ class EvolutionalAlgorithm(IAlgorithm):
         for _ in range(self.nb_individuals_in_pop):
 
             # while the individual is not covering all nodes, we generate him
-            while True:
+            # we generate another one (max 10 tries)
+            nb_tries_individual = 0
+            while (nb_tries_individual < max_tries):
 
                 individual = []
                 # For each gene of the individual (a gene is a path of an agent)
@@ -98,14 +109,17 @@ class EvolutionalAlgorithm(IAlgorithm):
                     # while the generated gene already exists
                     # we generate another one (max 10 tries)
                     nb_tries_agent = 0
-                    while (nb_tries_agent < 10):
-                        # Generate a random individual of the desired length
-                        random_individual = rd.sample(self.nodes_idx_list.tolist(), gene_length)  # NOSONAR
+                    while (nb_tries_agent < max_tries):
+                        # Generate a random gene of the desired length
+                        random_gene = rd.sample(self.nodes_idx_list.tolist(), gene_length)  # NOSONAR
                         # Ensure the generated path does not already exist in the individual's genes
-                        if random_individual not in individual:
-                            individual.append(random_individual)
+                        if random_gene not in individual:
+                            individual.append(random_gene)
                             break
                         else:
+                            # if it's the last attempt, we add the gene (even if he already exists)
+                            if nb_tries_agent == max_tries:
+                                individual.append(random_gene)
                             nb_tries_agent += 1
 
                 individual = np.array(individual)
@@ -114,6 +128,15 @@ class EvolutionalAlgorithm(IAlgorithm):
                     # Appending the individual to the population if he's OK 
                     indicative_population.append(individual)
                     break
+
+                else:
+                    # if it's the last attempt, we add the individual (even if he's not valid )
+                    if nb_tries_individual == max_tries:
+                        indicative_population.append(individual)
+
+
+
+
 
         # Transforming into np.array for later use
         indicative_population = np.array(indicative_population)
@@ -272,7 +295,7 @@ class EvolutionalAlgorithm(IAlgorithm):
         path_length_mean = np.mean(path_lengths)
         return path_length_mean
 
-    def fitness(self) -> list:
+    def fitness(self) -> list[tuple[float, float]]:
         """
         Awards a fitness to each individual
         using the mean occurrence and mean path length.
@@ -306,7 +329,7 @@ class EvolutionalAlgorithm(IAlgorithm):
 
         return fitness_lst
 
-    def dominates(self, individual_1: tuple, individual_2: tuple) -> bool:
+    def dominates(self, individual_1: tuple[float, float], individual_2: tuple[float, float]) -> bool:
         """
         Checks if an individual dominates another individual
 
@@ -332,7 +355,7 @@ class EvolutionalAlgorithm(IAlgorithm):
             # not respecting the domination condition, so no domination
             return False
 
-    def pareto_fronts(self, fitness_list: list) -> list:
+    def pareto_fronts(self, fitness_list: list[tuple[float, float]]) -> list:
         """
         Classifies all the individuals of the population
         into categories from the best to the worst.
@@ -395,7 +418,7 @@ class EvolutionalAlgorithm(IAlgorithm):
 
         return fronts
 
-    def selection_with_pareto(self, fitness: list, nb_parent: int) -> np.ndarray:
+    def selection_with_pareto(self, fitness: list[tuple[float, float]], nb_parent: int) -> np.ndarray:
         """
         Selects the best individuals until reaching the desired number of parents.
 
@@ -524,17 +547,14 @@ class EvolutionalAlgorithm(IAlgorithm):
 
         # matrix of same shape
         children = np.empty((nb_children, parents.shape[1], parents.shape[2]))
-        number_of_crossing_points = 2  # we cut in 2 parts
 
-        # probability of crossing the parents
-        crossing_rate = 0.8
         i = 0
 
         while (i < nb_children):
 
             # probability of sterile parent
             x = rd.random()  # NOSONAR
-            if x > crossing_rate:
+            if x > self.crossing_rate:
                 continue
 
             # randomly choosing the 2 individuals to cross together
@@ -551,7 +571,7 @@ class EvolutionalAlgorithm(IAlgorithm):
             parent2 = parents[second_individual_to_cross]
 
             # get the 2 created children
-            created_children = list(self.vertical_crossing_process(parent1, parent2, number_of_crossing_points))
+            created_children = list(self.vertical_crossing_process(parent1, parent2, self.number_of_crossing_points))
 
             # for each generated children
             # he passes through the validation process
@@ -573,15 +593,12 @@ class EvolutionalAlgorithm(IAlgorithm):
         # matrix of same shape
         mutants = np.zeros(children.shape)
 
-        # probability of mutating the child
-        prob_mutation = 0.5
-
         # for each child
         for i in range(mutants.shape[0]):
 
             # probability of mutating
             random_value = rd.random()  # NOSONAR
-            if random_value > prob_mutation:
+            if random_value > self.mutation_rate:
                 # continue
                 pass
 
@@ -595,7 +612,7 @@ class EvolutionalAlgorithm(IAlgorithm):
 
         return mutants.astype(int)
 
-    def find_best_individual(self, tuples_list: list) -> int:
+    def find_best_individual(self, tuples_list: list[tuple[float, float]]) -> int:
         """
         find the best individual (the highest occurrence, lowest length).
 
@@ -767,3 +784,4 @@ if __name__ == "__main__":
         print("---")
 
     print("time :", end, " seconds")
+
