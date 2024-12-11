@@ -13,8 +13,8 @@ class AlgorithmeGenetique:
 
         self.distances = distances
 
-        self.nb_generations = 1000
-        self.pop_size = 50
+        self.nb_generations = 300
+        self.pop_size = 30
 
         self.population = np.empty((self.pop_size, self.nb_villes))
 
@@ -133,7 +133,7 @@ class AlgorithmeGenetique:
     def mutation_rsm(self, enfants):
         
         mutants = np.empty((enfants.shape))
-        taux_mutation = 0.2 # taux de mutation
+        taux_mutation = 0.3 # taux de mutation
         
         for i in range(mutants.shape[0]):
 
@@ -141,13 +141,15 @@ class AlgorithmeGenetique:
                 mutants[i] = enfants[i].copy()
             
             else: 
-
                 mutants[i] = self.individual_mutation(enfants[i])
 
         return mutants 
 
 
     def individual_mutation(self, enfant): 
+        
+        if (enfant.shape[0] < 3):
+            return enfant.copy()
         
         point_a = rd.randint(0, enfant.shape[0] - 3)
         point_b = rd.randint(point_a + 1, enfant.shape[0] - 1)
@@ -164,7 +166,7 @@ class AlgorithmeGenetique:
 
 
 
-    def croisement(self, parents, nbr_enfants, taux_croisement = 0.7):
+    def croisement(self, parents, nbr_enfants, taux_croisement = 0.8):
 
         enfants = np.empty((nbr_enfants, parents.shape[1]))
         nb_enfants_create = 0
@@ -174,7 +176,7 @@ class AlgorithmeGenetique:
             rd_parent1 = parents[rd.randint(0, parents.shape[0] - 1)].copy()
             rd_parent2 = parents[rd.randint(0, parents.shape[0] - 1)].copy()
 
-            if rd.random() > taux_croisement: 
+            if rd.random() > taux_croisement or parents.shape[1] < 3: 
                 enfants[nb_enfants_create] = rd_parent1
 
             else:
