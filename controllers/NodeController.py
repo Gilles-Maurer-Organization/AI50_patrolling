@@ -116,15 +116,23 @@ class NodeController:
         self._graph.update_distances(self._dragging_node)
         self._dragging_node = None
 
-    def drag_node(self, pos: tuple[int, int]) -> None:
+    def drag_node(
+        self,
+        pos: tuple[int, int]
+    ) -> Optional[dict[str, Node | None]]:
         """
         Moves the dragged node according to the current mouse position.
         Either with a snapping process, or without.
 
         Args:
-            pos (tuple of float): The current coordinates of the mouse
-                cursor (x, y).
-        
+            pos (tuple of float): The current coordinates of th
+                mouse's cursor (x, y).
+
+        Returns:
+            dict[str, Node | None] (optional): a dictionary of the
+                candidates that pass the snap sensitivity check,
+                composed of the related node with its axis.
+                Returns None if no candidates are found.
         """
         if self._dragging_node is not None:
             candidates = self.move_node_with_snapping(
@@ -153,7 +161,7 @@ class NodeController:
         """
         self._selected_node = None
 
-    def get_node_at_position(self, pos: tuple[int, int]):
+    def get_node_at_position(self, pos: tuple[int, int]) -> Optional[Node]:
         """
         Finds and returns the node located at the specified (x, y)
         coordinates based on the user's mouse click.
@@ -162,8 +170,8 @@ class NodeController:
             pos (tuple of int): The mouse click coordinates (x, y).
 
         Returns:
-            Node: The node located at the specified coordinates, or
-                None if no node is found.
+            Node (optional): The node located at the specified
+                coordinates, or None if no node is found.
         """
         for node in self._graph.nodes:
             if (
@@ -181,7 +189,7 @@ class NodeController:
         nodes: list[Node],
         mouse_position: tuple[int, int],
         threshold: int = 10,
-    ) -> None:
+    ) -> Optional[dict[str, Node | None]]:
         """
         Moves a node with a snapping process that helps the user to
         align nodes on the user interface.
@@ -197,6 +205,12 @@ class NodeController:
             mouse_position (tuple[int, int]): the user's cursor
                 position when dragging the node.
             threshold (int, optional): the sensivity of the snapping.
+
+        Returns:
+            dict[str, Node | None] (optional): a dictionary of the
+                candidates that pass the snap sensitivity check,
+                composed of the related node with its axis.
+                Returns None if no candidates are found.
         """
         if mouse_position:
             distance_x = abs(mouse_position[0] - node.x)
