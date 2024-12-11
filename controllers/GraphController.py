@@ -65,6 +65,8 @@ class GraphController:
         self._image_name = "image1.jpg"
         self._load_background_image(self._image_name)
 
+        self._alignment_lines = {}
+
     @property
     def graph(self) -> Graph:
         """
@@ -121,7 +123,10 @@ class GraphController:
             pos: A tuple representing the (x, y) coordinates of the new
                 position.
         """
-        self._node_controller.drag_node(pos)
+        candidates = self._node_controller.drag_node(pos)
+
+        if candidates:
+            self._alignment_lines = candidates
 
     @mark_graph_as_modified
     def _create_link(self, pos: tuple[int, int]) -> None:
@@ -158,6 +163,7 @@ class GraphController:
         Ends the current node dragging operation.
         """
         self._node_controller.end_drag()
+        self._alignment_lines.clear()
 
     def _clear_selection(self) -> None:
         """
@@ -296,10 +302,24 @@ class GraphController:
         """
         Updates the graph view to reflect the current state of the model.
         """
-        self._graph_view.draw_graph(self._graph,
-                                    self._node_controller.selected_node,
-                                    self._node_controller.dragging_node)
+        self._graph_view.draw_graph(
+            self._graph,
+            self._node_controller.selected_node,
+            self._node_controller.dragging_node
+        )
         self._graph_view.draw_popup()
+        self._draw_alignment_lines()
+        
+    def _draw_alignment_lines(self) -> None:
+        """
+        Draws the alignment's line for each candidate found.
+        """
+        for axis, candidate in self._alignment_lines.items():
+            if candidate:
+                self._graph_view.draw_line_full_extent(
+                    candidate,
+                    axis,
+                )
 
     def save_graph(self) -> None:
         """

@@ -1,4 +1,5 @@
 import math
+from typing import Optional
 
 from models.Node import Node
 
@@ -182,5 +183,37 @@ class Graph:
                 graph.
         """
         self._complete_adjacency_matrix = complete_adjacency_matrix
+
+    def find_alignment_candidates(
+        self,
+        node: Node,
+        nodes: list[Node],
+        threshold=10
+    ) -> dict[str, Optional[Node]]:
+        """
+        Finds nodes that are within a threshold distance along the x or
+        y axis from a specific node.
+
+        Args:
+            node (Node): the dragged node.
+            nodes (list[Node]): the list of nodes of the graph.
+            threshold (int, optional): the sensivity of the snapping.
+        """
+        # Initialization of potential candidates on x and y axis.
+        candidates = {"x": None, "y": None}
+        for other_node in nodes:
+            if other_node == node:
+                continue
+            # If the distance between two nodes on the x avis is
+            # smaller than the threshold, we add the candidate into
+            # the dictionary
+            if abs(other_node.x - node.x) <= threshold:
+                candidates["x"] = other_node
+            # same for the y axis.
+            if abs(other_node.y - node.y) <= threshold:
+                candidates["y"] = other_node
+        
+        return candidates
+
 
 

@@ -209,6 +209,24 @@ class GraphView:
                 5
             )
 
+    def draw_line_full_extent(self, candidate: Node, axis: str) -> None:
+        """
+        Draws an horizontal or vertical line that covers the graph screen.
+
+        Args:
+            candidate (Node): the candidate found.
+            axis (str): the axis x or y of the alingment.
+        """
+        x1, y1 = candidate.x, candidate.y
+
+        if axis == "y":
+            pygame.draw.line(self._screen, "orange", (0, y1), (GRAPH_WINDOW_WIDTH, y1), 1)
+        elif axis == "x":
+            pygame.draw.line(self._screen, "orange", (x1, 0), (x1, GRAPH_WINDOW_HEIGHT), 1)
+        else:
+            raise ValueError("Can't find axis alingment on alingment assistant.")
+
+
     def has_an_image(self) -> bool:
         """
         Checks if a background image is set.
