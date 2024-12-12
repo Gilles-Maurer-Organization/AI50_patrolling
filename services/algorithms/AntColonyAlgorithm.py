@@ -17,7 +17,7 @@ Example:
 import numpy as np
 import time as time
 
-class AntColony:
+class AntColonyAlgorithm:
     """
     This class implements the Ant Colony Optimization (ACO) algorithm for solving pathfinding and optimization problems.
 

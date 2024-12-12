@@ -66,3 +66,9 @@ class SimulationController:
         if self._simulation_started:
             self.update_simulation()
             self._graph_controller.draw_simulation(self._agents)
+
+# TODO : 
+# Place les agents ensuite une boule infini arreter sur ordre de l'utilisateur
+# Chaque agent est ce que il est en trqin de se deplacer ou est ce que il est sur un noeud
+# Agent.py
+# S'il est en train de se faire deplacer sinon regarder prochain dans la liste ou real time
