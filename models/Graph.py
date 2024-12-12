@@ -38,7 +38,7 @@ class Graph:
         Getter for the nodes attribute.
         """
         return self._nodes
-    
+
     @property
     def edges(self) -> dict[tuple[Node, Node], float]:
         """
@@ -54,6 +54,7 @@ class Graph:
         return self._modified
     
     @property
+
     def empty(self) -> bool:
         """
         Returns True if the graph contains no nodes, otherwise False.
@@ -154,6 +155,7 @@ class Graph:
                       for index, node in enumerate(self._nodes)}
         
         return edges_matrix, nodes_list
+
 
     def get_shortest_paths(self):
         return self.shortest_paths
