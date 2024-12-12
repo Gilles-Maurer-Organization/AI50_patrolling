@@ -697,7 +697,7 @@ class EvolutionalAlgorithm(IAlgorithm):
 
         return cleaned_individual
 
-    def launch(self) -> np.ndarray:
+    def launch(self) -> list:
         """
         Launches the whole Algorithm.
 
@@ -744,6 +744,8 @@ class EvolutionalAlgorithm(IAlgorithm):
         res_of_algo = self.indicative_paths_population[best_individual_idx]
 
         # cleaning the individual before returning him
-        algorithm_output = self.clean_output_individual(res_of_algo)
+        # also casting the ndarray to a list
+        algorithm_output = list(self.clean_output_individual(res_of_algo))
 
         return algorithm_output
+
