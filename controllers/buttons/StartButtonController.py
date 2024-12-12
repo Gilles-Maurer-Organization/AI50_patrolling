@@ -1,4 +1,5 @@
 from constants.Colors import Colors
+from constants.Config import PARAMETERS_WINDOW_WIDTH, PARAMETERS_WINDOW_HEIGHT
 from controllers.GraphController import GraphController
 from controllers.ScrollingListController import ScrollingListController
 from controllers.SimulationController import SimulationController
@@ -47,17 +48,19 @@ class StartButtonController(BaseButtonController):
         self._simulation_controller = simulation_controller
         self._scrolling_list_controller = scrolling_list_controller
 
-        self._start_button = Button("Start simulation",
-                                    self.start_action,
-                                    enabled=False)
+        self._start_button = Button(
+            "Start simulation",
+            self.start_action,
+            enabled=False
+        )
 
         # Création de la map des boutons et leurs vues
         self._button_map = {
             self._start_button: ButtonView(
                 parameters_view.screen,
                 self._start_button.text,
-                160,
-                490,
+                PARAMETERS_WINDOW_WIDTH - 140 - 10,
+                PARAMETERS_WINDOW_HEIGHT - 40 - 10,
                 140,
                 40,
                 color=Colors.BUTTON_GREEN,
