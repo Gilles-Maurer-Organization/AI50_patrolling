@@ -12,35 +12,42 @@ class EvolutionalAlgorithm(IAlgorithm):
     This class implements a regular Genetics Algorithm.
 
     Attributes:
-        -> nb_generations : The number of generation the Algorithm has to perform.
+        nb_generations : The number of generation the Algorithm has to perform.
 
-        -> nb_agents : The number of agents (defines the size of an individual).
+        nb_agents : The number of agents (defines the size of an individual).
 
-        -> nb_individuals_in_pop : The number of individuals in the population.
+        nb_individuals_in_pop : The number of individuals in the population.
 
-        -> indicative_paths_population : Contains the "short" version of the pat,
+        indicative_paths_population : Contains the "short" version of the pat,
          thus ignoring the case when 2 following nodes in the path don't have a direct link.
 
-        -> real_paths_population : Contains the "real" path by adding the
+        real_paths_population : Contains the "real" path by adding the
         additional nodes between 2 nodes which don't have a direct link
 
-        -> shortest_way_dict : the "shortest_paths" attribute from the Graph Class.
+        shortest_way_dict : the "shortest_paths" attribute from the Graph Class.
 
-        -> distance_matrix : the "complete_adjacency_matrix" attribute from the Graph Class.
+        distance_matrix : the "complete_adjacency_matrix" attribute from the Graph Class.
 
-        -> nodes_idx_list : Stores a sorted list of all the nodes contained the Graph.
+        nodes_idx_list : Stores a sorted list of all the nodes contained the Graph.
 
-        -> number_of_crossing_points : nb of crossing points used in the Algorithm
+        number_of_crossing_points : nb of crossing points used in the Algorithm
 
-        -> crossing_rate :  the crossing rate used in the Algorithm
+        crossing_rate :  the crossing rate used in the Algorithm
 
-        -> mutation_rate : the mutating rate used in the Algorithm
+        mutation_rate : the mutating rate used in the Algorithm
     """
 
     # The "# NOSONAR" comments you'll see next to the random number generators are used to tell SonarCloud
     # to skip the associated warnings as the random generators are used on purpose.
 
-    def __init__(self, nb_of_generations, nb_agent, individuals_number_per_population, graph_object):
+    def __init__(
+            self, 
+            nb_of_generations : int, 
+            nb_agent: int , 
+            individuals_number_per_population: int, 
+            graph_object: Graph
+        ) -> None :
+
         self.nb_generations = nb_of_generations
         self.nb_agents = nb_agent
         self.nb_individuals_in_pop = individuals_number_per_population
@@ -325,7 +332,11 @@ class EvolutionalAlgorithm(IAlgorithm):
 
         return fitness_lst
 
-    def dominates(self, individual_1: tuple[float, float], individual_2: tuple[float, float]) -> bool:
+    def dominates(
+            self, 
+            individual_1: tuple[float, float], 
+            individual_2: tuple[float, float]
+        ) -> bool:
         """
         Checks if an individual dominates another individual
 
@@ -414,7 +425,11 @@ class EvolutionalAlgorithm(IAlgorithm):
 
         return fronts
 
-    def selection_with_pareto(self, fitness: list[tuple[float, float]], nb_parent: int) -> np.ndarray:
+    def selection_with_pareto(
+                        self, 
+                        fitness: list[tuple[float, float]], 
+                        nb_parent: int
+                    ) -> np.ndarray:
         """
         Selects the best individuals until reaching the desired number of parents.
 
@@ -448,8 +463,12 @@ class EvolutionalAlgorithm(IAlgorithm):
 
         return selected_individuals
 
-    def vertical_crossing_process(self, parent_1: np.ndarray, parent_2: np.ndarray, nb_crossings: int) -> tuple[
-        np.ndarray, np.ndarray]:
+    def vertical_crossing_process(
+                            self, 
+                            parent_1: np.ndarray, 
+                            parent_2: np.ndarray, 
+                            nb_crossings: int
+                        ) -> tuple[np.ndarray, np.ndarray]:
         """
         Crosses two individuals on a vertical axis.
 
