@@ -1,6 +1,7 @@
 import pygame
 
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, PARAMETERS_WINDOW_WIDTH
+from controllers.AlignmentCheckBoxController import AlignmentCheckBoxController
 from controllers.FileExplorerController import FileExplorerController
 from controllers.GraphController import GraphController
 from controllers.ScrollingListController import ScrollingListController
@@ -80,6 +81,9 @@ class ParametersController:
         self._algorithm_parameters_controller = AlgorithmParametersController(
             self._parameters_view
         )
+        self._alignment_check_box_controller = AlignmentCheckBoxController(
+            self._parameters_view
+        )
 
         # Disabling certain buttons if the graph does not have an image
         if not graph_controller.graph_has_an_image():
@@ -97,6 +101,7 @@ class ParametersController:
         self._text_box_controller.draw_text_boxes()
         self._algorithm_parameters_controller.draw_text_boxes()
         self._scrolling_list_controller.draw_scrolling_list()
+        self._alignment_check_box_controller.draw_check_box()
 
     def handle_events(self, event: pygame.event.Event) -> None:
         """
