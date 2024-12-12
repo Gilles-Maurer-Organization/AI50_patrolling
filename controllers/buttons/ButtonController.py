@@ -71,7 +71,6 @@ class ButtonController(BaseButtonController):
         Saves a graph to the computer when the Save button is clicked.
         """
         self._graph_controller.save_graph()
-        print("Save action triggered")
 
     def import_action(self) -> None:
         """
