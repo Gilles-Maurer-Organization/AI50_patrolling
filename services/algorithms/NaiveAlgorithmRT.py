@@ -2,58 +2,115 @@ import time
 import numpy as np
 import random as rd
 
-class Naive:
-    def __init__(self,nb_agent,distance_matrix):
-        self.nb_agent = nb_agent
+from IAlgorithm import IAlgorithm
+
+#Le refaire en fonction d'un agent en particulier car sinon on ne peut pas faire d'appel tranquille
+
+class NaiveAlgorithmRT(IAlgorithm):
+    """
+    This class implements the real time greedy Multiagent
+
+    Attributes:
+        nb_agents : The number of agents
+        distance_matrix : the "complete_adjacency_matrix" attribute from the Graph Class.
+
+    """
+
+    def __init__(self, distance_matrix, nb_agents):
         self.distance_matrix = distance_matrix
-        pass
+        self.nb_nodes = distance_matrix.shape[0]
+        self.nb_agents = nb_agents
+        self.paths = [[] for _ in range(nb_agents)]  # Chemins de chaque agent
+        self.positions = [0] * nb_agents  # Position actuelle de chaque agent (commencent au nœud 0)
+        self.visited = [False] * self.nb_nodes  # Les nœuds déjà visités
+        self.oisivete = [0] * self.nb_nodes  # Oisiveté de chaque nœud
+        self.targets = [None] * nb_agents  # Prochains nœuds cibles pour chaque agent
     
-    
-    def naive_shortest_path(self):
-        
-        nb_nodes = self.distance_matrix.shape[0]
-        visited = [False] * nb_nodes
-        path = []
+    def find_next_node(self, agent_id):
 
-        # Start at a node between 0 and number max of nodes
-        current_node = rd.randint(0,nb_nodes-1)
-        path.append(current_node)
-        visited[current_node] = True
+        current_node = self.positions[agent_id]
+        min_distance = float('inf')
+        nearest_node = None
+        max_oisivete = -1  # Pour garder trace de l'oisiveté maximale en cas d'égalité de distance
+
+        # Rechercher le nœud non visité (et non réservé) avec la plus grande oisiveté
+        for i in range(self.nb_nodes):
+            if not self.visited[i] and i not in self.targets:  # Éviter les nœuds déjà visités ou réservés
+                distance = self.distance_matrix[current_node][i]
+                if distance < min_distance:
+                    nearest_node = i
+                    min_distance = distance
+                    max_oisivete = self.oisivete[i]
+                elif distance == min_distance:
+                    # Si deux nœuds ont la même distance, choisir celui avec la plus grande oisiveté
+                    if self.oisivete[i] > max_oisivete:
+                        nearest_node = i
+                        max_oisivete = self.oisivete[i]
         
-        while len(path) < nb_nodes:
-            # Find the shortest node not visited next to the current node
-            next_node = np.argmin([self.distance_matrix[current_node][i] if not visited[i] else np.inf for i in range(nb_nodes)])
-            path.append(next_node)
-            visited[next_node] = True
-            current_node = next_node
+        return nearest_node
+
+    def update_targets(self):
+        for agent_id in range(self.nb_agents):
+            if self.targets[agent_id] is None or self.visited[self.targets[agent_id]]:
+                # Recalculer le prochain nœud uniquement si l'agent n'a pas encore de cible ou que sa cible est déjà visitée
+                next_node = self.find_next_node(agent_id)
+                self.targets[agent_id] = next_node
+
+    def resolve_conflicts(self):
+        # Si plusieurs agents ciblent le même nœud, résoudre le conflit par priorité d'index d'agent
+        target_count = {}
+        for target in self.targets:
+            if target is not None:
+                if target not in target_count:
+                    target_count[target] = 0
+                target_count[target] += 1
         
-        path.append(path[0])
+        for target, count in target_count.items():
+            if count > 1:
+                # Si plusieurs agents ciblent le même nœud, forcer les autres agents à recalculer
+                conflicted_agents = [i for i in range(self.nb_agents) if self.targets[i] == target]
+                # Le premier agent garde la cible, les autres doivent recalculer
+                for i in conflicted_agents[1:]:
+                    self.targets[i] = None
+
+    def step(self):
+        # Mise à jour des cibles pour chaque agent
+        self.update_targets()
         
-        return path
-    
-    
+        # Résoudre les conflits de cibles
+        self.resolve_conflicts()
+        
+        # Faire avancer les agents et mettre à jour les oisivetés
+        for node_id in range(self.nb_nodes):
+            if not self.visited[node_id]:
+                self.oisivete[node_id] += 1  # Augmenter l'oisiveté de tous les nœuds non visités
+
+        for agent_id in range(self.nb_agents):
+            target = self.targets[agent_id]
+            if target is not None:
+                # Déplacer l'agent vers le nœud cible
+                self.positions[agent_id] = target
+                self.paths[agent_id].append(target)
+                self.visited[target] = True  # Marquer le nœud comme visité
+                self.oisivete[target] = 0  # Réinitialiser l'oisiveté du nœud visité
+
     def launch(self):
+        self.step()
+        
+        # Retourner chaque agent à son point de départ pour fermer le cycle
+        for agent_id in range(self.nb_agents):
+            self.paths[agent_id].append(self.paths[agent_id][0])
 
-        paths = []
-                
-        path = self.naive_shortest_path()
-        
-        #Dispatch each agents to optimize their paths
-        if(self.nb_agent > 1):
-            for idx in range(self.nb_agent):
-                agent_start_index = int(len(path)/self.nb_agent)
-                paths.append(path.copy())
-                for i in range(agent_start_index):
-                    path.append(path[0])
-                    path.pop(0)
-        else :
-            paths.append(path.copy())
-        
-        return paths
+        print(f"Chemins finaux : {self.paths}")
+        return self.paths
+
+
+
+
     
 
 def main():
-    nb_agent = 35
+    nb_agents = 5
 
     distance_matrix = [
         [0.0, 54.0, 129.0, 183.0, 267.0, 311.0, 164.0, 264.0, 257.0, 208.0, 134.0, 176.0, 269.0, 169.0, 262.0, 227.00537618869137, 206.0, 299.0, 172.0, 215.0, 281.0, 406.0, 342.0, 270.0, 578.0016834969122, 713.0016834969122, 627.0016834969122, 850.0016834969122, 936.0016834969122, 391.0, 318.0, 246.0, 304.0, 381.0, 309.0, 347.0, 100.0, 164.0, 54.0, 537.0, 227.0, 499.0, 575.0, 455.0, 531.0, 494.0, 566.0, 637.0, 708.0, 597.0, 526.0, 610.0, 752.0, 681.0, 376.0, 746.0, 747.0, 686.0, 605.0, 534.0, 464.0, 522.0, 593.0, 664.0, 668.0, 803.0016834969122, 694.0016834969122, 906.0016834969122, 791.0016834969122, 740.0016834969122, 939.0016834969122, 1032.0016834969122, 1028.0016834969122],
@@ -131,18 +188,13 @@ def main():
         [1028.0016834969122, 1082.0016834969122, 1157.0016834969122, 1211.0016834969122, 1076.0, 1032.0, 973.0, 985.0, 978.0, 929.0, 962.0016834969122, 1004.0016834969122, 1097.0016834969122, 927.0016834969122, 1020.0016834969122, 1055.0070596856035, 890.0016834969122, 983.0016834969122, 856.0016834969122, 813.0016834969122, 747.0016834969122, 872.0016834969122, 940.0016834969122, 868.0016834969122, 450.0, 585.0, 499.0, 722.0, 808.0, 638.0, 711.0, 783.0, 841.0, 774.0, 846.0, 808.0, 928.0016834969122, 865.0, 974.0016834969122, 784.0, 928.0, 932.0, 856.0, 888.0, 812.0, 741.0, 669.0, 598.0, 527.0, 558.0, 627.0, 713.0, 571.0, 642.0, 769.0, 403.0, 404.0, 343.0, 424.0, 495.0, 565.0, 623.0, 554.0, 483.0, 487.0, 225.0, 334.0, 328.0, 431.0, 380.0, 89.0, 182.0, 0.0],
     ]
 
+    #Vrai graphe, 
+
     distance_matrix = np.array(distance_matrix)
     
-    naif = Naive(nb_agent,distance_matrix)
-    
-    debut_time = time.time()
-    paths = naif.launch()
-    execution_time = time.time() - debut_time
-
-    print("Le temps d'éxecution est de : ", execution_time)
-    print("Les chemins de chaque agent :")
-    for elem in paths:
-        print(elem)
+    # Création d'une instance avec 3 agents
+    multi_agent_tsp = NaiveAlgorithmRT(distance_matrix, nb_agents = nb_agents)
+    multi_agent_tsp.launch()
     
 
 
