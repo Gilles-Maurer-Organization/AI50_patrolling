@@ -158,11 +158,11 @@ class Graph:
 
 
     def get_shortest_paths(self):
-        return self.shortest_paths
+        return self._shortest_paths
 
 
     def get_complete_adjacency_matrix(self):
-        return self.complete_adjacency_matrix 
+        return self._complete_adjacency_matrix
 
     def set_shortest_paths(
         self,
