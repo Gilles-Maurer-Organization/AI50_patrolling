@@ -14,4 +14,7 @@ class SimulationDataView:
         This method fills the screen with the background color.
         """
         self._screen.fill(self._background_color)
-        
+    
+    @property
+    def screen(self) -> pygame.Surface:
+        return self._screen

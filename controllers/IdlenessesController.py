@@ -4,9 +4,7 @@ from models.IdlenessData import IdlenessData
 from views.SimulationDataView import SimulationDataView
 from views.IdlenessView import IdlenessView
 
-class IdlenessController(BaseTextBoxController):
-        
-
+class IdlenessController:
     """
     initialiser IdlenessData avec la liste des nodes du Graph
 
@@ -18,34 +16,19 @@ class IdlenessController(BaseTextBoxController):
         - l'envoie à la vue ? 
 
     """
-    def __init__(self, nodes_list : list[Node], simulation_view: SimulationDataView)-> None:
-        super().__init__(simulation_view)
-        self.idleness = IdlenessData(nodes_list)
-    
-
-    #def handle_idleness(self):
-        
-        #update idleness values
-    #    self.idleness.update_idleness()
-
-    def draw_idlenesses(self):
-
-        self._text_boxes.clear()
-        offset_y = 0
-        for label, value in self.idleness.get_idleness_data().items():
-
-            text_box_view = IdlenessView(
-                self._parameters_view._screen,
+    def __init__(self, nodes_list : list[Node], simulation_data_view: SimulationDataView)-> None:
+        self._simulation_data_view = simulation_data_view
+        self._idleness = IdlenessData(nodes_list)
+        self._idleness_view = IdlenessView(
+                self._simulation_data_view.screen,
+                10,
                 10,
                 100,
-                190,
                 40,
-                label_text = label,
-                label_value = value
+                label_text = "Idleness"
             )
-            self.add_text_box(value, text_box_view)
-            offset_y += 77
-            
-        pass
+    
+    def draw_idlenesses(self):
+        self._idleness_view.draw_text()
    
 
