@@ -113,8 +113,10 @@ class FileExplorerController:
             self._file_explorer.path = file_path
             if file_path.endswith('.csv'):
                 success = self._graph_controller.import_graph_from_csv(file_path)
+                self._graph_controller.raise_message("Graph successfully imported!")
             else:
                 success = self._graph_controller.import_graph_from_image(file_path)
+                self._graph_controller.raise_message("Image successfully imported!")
 
             if success and self._on_file_imported:
                 self._on_file_imported()

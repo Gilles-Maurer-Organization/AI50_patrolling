@@ -348,6 +348,7 @@ class GraphController:
         """
         edges_matrix, nodes_list = self._graph.compute_matrix()
         self._csv_service.save(edges_matrix, nodes_list, self._image_name)
+        self.raise_message("Graph successfully saved!")
 
     def save_complements(
         self,
@@ -373,6 +374,7 @@ class GraphController:
         """
         self._graph.nodes.clear()
         self._graph.edges.clear()
+        self.raise_message("Graph successfully cleared!")
 
     def load_graph_from_csv(self, file_number: str) -> None:
         """
