@@ -28,7 +28,7 @@ class ScrollingListController:
         self._scrolling_list_view = ScrollingListView(
             parameters_view.screen,
             10,
-            110,
+            210,
             290,
             40
         )

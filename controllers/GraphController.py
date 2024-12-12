@@ -67,9 +67,11 @@ class GraphController:
         self._image_name = ""
 
         self._alignment_lines = {}
+
         self._snapping_enabled : bool = False
 
         self._is_in_simulation : bool = False
+        self._dev_mode_enabled = False
 
     @property
     def graph(self) -> Graph:
@@ -532,22 +534,31 @@ class GraphController:
 
     def raise_error_message(self, message: str) -> None:
         """
-        This method triggers an error popup with a specific message.
+        Triggers an error popup with a specific message.
         """
         self._graph_view.show_error_popup(message)
 
     def raise_info(self, message: str) -> None:
         """
-        This method triggers an error popup with a specific message.
+        Triggers an error popup with a specific message.
         """
         self._graph_view.show_info_popup(message)
 
     
     def raise_message(self, message: str) -> None:
         """
-        This method triggers an error popup with a specific message.
+        Ttriggers an error popup with a specific message.
         """
         self._graph_view.show_popup(message)
 
-    def set_snapping_enabled(self, snapping_enabled) -> None:
-        self._snapping_enabled = snapping_enabled
+    def enable_snapping(self, snapping_enabled) -> None:
+        """
+        Enables the snapping on the graph view.
+        """
+        self._snapping_enabled = snapping_enabled 
+
+    def enable_dev_mode(self, dev_mode_enabled) -> None:
+        """
+        Enables the dev mode.
+        """
+        self._dev_mode_enabled = dev_mode_enabled 

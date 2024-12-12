@@ -41,7 +41,7 @@ class AlgorithmParametersController(BaseTextBoxController):
             text_box_view = AlgorithmParametersView(
                 self._parameters_view.screen,
                 10,
-                190 + offset_y,
+                290 + offset_y,
                 190,
                 40,
                 label_text = label

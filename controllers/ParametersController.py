@@ -1,13 +1,14 @@
 import pygame
 
 from constants.Config import GRAPH_WINDOW_WIDTH, GRAPH_WINDOW_HEIGHT, PARAMETERS_WINDOW_WIDTH
-from controllers.AlignmentCheckBoxController import AlignmentCheckBoxController
+from controllers.check_boxes.AlignmentCheckBoxController import AlignmentCheckBoxController
 from controllers.FileExplorerController import FileExplorerController
 from controllers.GraphController import GraphController
 from controllers.ScrollingListController import ScrollingListController
 from controllers.SimulationController import SimulationController
 from controllers.buttons.ButtonController import ButtonController
 from controllers.buttons.StartButtonController import StartButtonController
+from controllers.check_boxes.DevModeCheckBoxController import DevModeCheckBoxController
 from controllers.text_boxes.AlgorithmParametersController import AlgorithmParametersController
 from controllers.text_boxes.TextBoxController import TextBoxController
 from views.ParametersView import ParametersView
@@ -86,6 +87,10 @@ class ParametersController:
             self._parameters_view,
             self._graph_controller
         )
+        self._dev_mode_check_box_controller = DevModeCheckBoxController(
+            self._parameters_view,
+            self._graph_controller
+        )
 
         # Disabling certain buttons if the graph does not have an image
         self._enable_or_disable_buttons()
@@ -102,6 +107,7 @@ class ParametersController:
         self._algorithm_parameters_controller.draw_text_boxes()
         self._scrolling_list_controller.draw_scrolling_list()
         self._alignment_check_box_controller.draw_check_box()
+        self._dev_mode_check_box_controller.draw_check_box()
 
     def handle_events(self, event: pygame.event.Event) -> None:
         """
@@ -117,7 +123,7 @@ class ParametersController:
         self._handle_scrolling_list(event)
         self._handle_algorithm_parameters(event)
         self._check_start_button_state()
-        self._handle_check_box(event)
+        self._handle_check_boxes(event)
 
     def _handle_button(self, event: pygame.event.Event) -> None:
         """
@@ -160,14 +166,15 @@ class ParametersController:
         """
         self._algorithm_parameters_controller.handle_event(event)
 
-    def _handle_check_box(self, event: pygame.event.Event) -> None:
+    def _handle_check_boxes(self, event: pygame.event.Event) -> None:
         """
-        Handles events related to nodes alignment.
+        Handles events related to nodes alignment and development mode.
 
         Args:
             event: The Pygame event containing user interaction.
         """
         self._alignment_check_box_controller.handle_event(event)
+        self._dev_mode_check_box_controller.handle_event(event)
 
     def _enable_start_button(self) -> bool:
         """
