@@ -6,6 +6,5 @@ class AlignmentCheckBox:
     def alignment_enabled(self) -> bool:
         return self._alignment_enabled
 
-    @alignment_enabled.setter
-    def alignment_enabled(self, enabled) -> None:
-        self._alignment_enabled = enabled
+    def toggle_alignment(self) -> None:
+        self._alignment_enabled = not self._alignment_enabled

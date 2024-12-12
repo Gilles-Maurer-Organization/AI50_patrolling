@@ -82,7 +82,8 @@ class ParametersController:
             self._parameters_view
         )
         self._alignment_check_box_controller = AlignmentCheckBoxController(
-            self._parameters_view
+            self._parameters_view,
+            self._graph_controller
         )
 
         # Disabling certain buttons if the graph does not have an image
@@ -117,6 +118,7 @@ class ParametersController:
         self._handle_scrolling_list(event)
         self._handle_algorithm_parameters(event)
         self._check_start_button_state()
+        self._handle_check_box(event)
 
     def _handle_button(self, event: pygame.event.Event) -> None:
         """
@@ -134,8 +136,7 @@ class ParametersController:
         Handles events for the text boxes.
 
         Args:
-            event: The Pygame event containing user interaction
-                details.
+            event: The Pygame event containing user interaction details.
         """
         self._text_box_controller.handle_event(event)
 
@@ -144,8 +145,7 @@ class ParametersController:
         Handles events for the dropdown list.
 
         Args:
-            event: The Pygame event containing user interaction
-                details.
+            event: The Pygame event containing user interaction details.
         """
         is_algorithm_selected = self._scrolling_list_controller.handle_event(event)
         if is_algorithm_selected:
@@ -160,6 +160,15 @@ class ParametersController:
             event: The Pygame event containing interaction details.
         """
         self._algorithm_parameters_controller.handle_event(event)
+
+    def _handle_check_box(self, event: pygame.event.Event) -> None:
+        """
+        Handles events related to nodes alignment.
+
+        Args:
+            event: The Pygame event containing user interaction.
+        """
+        self._alignment_check_box_controller.handle_event(event)
 
     def enable_start_button(self) -> bool:
         """

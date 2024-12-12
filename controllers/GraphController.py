@@ -58,14 +58,17 @@ class GraphController:
 
         # Initialize node and edge controllers
         self._node_controller = NodeController(self._graph)
-        self._edge_controller = EdgeController(self._graph,
-                                               self._node_controller)
+        self._edge_controller = EdgeController(
+            self._graph,
+            self._node_controller
+        )
 
         # Load initial background image
         self._image_name = "image1.jpg"
         self._load_background_image(self._image_name)
 
         self._alignment_lines = {}
+        self._snapping_enabled = False
 
     @property
     def graph(self) -> Graph:
@@ -123,7 +126,7 @@ class GraphController:
             pos: A tuple representing the (x, y) coordinates of the new
                 position.
         """
-        candidates = self._node_controller.drag_node(pos)
+        candidates = self._node_controller.drag_node(pos, self._snapping_enabled)
 
         if candidates:
             self._alignment_lines = candidates
@@ -516,3 +519,6 @@ class GraphController:
         This method triggers an error popup with a specific message.
         """
         self._graph_view.show_popup(message)
+
+    def set_snapping_enabled(self, snapping_enabled) -> None:
+        self._snapping_enabled = snapping_enabled

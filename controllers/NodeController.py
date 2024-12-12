@@ -118,7 +118,8 @@ class NodeController:
 
     def drag_node(
         self,
-        pos: tuple[int, int]
+        pos: tuple[int, int],
+        snapping_enabled: bool
     ) -> Optional[dict[str, Node | None]]:
         """
         Moves the dragged node according to the current mouse position.
@@ -135,11 +136,14 @@ class NodeController:
                 Returns None if no candidates are found.
         """
         if self._dragging_node is not None:
-            candidates = self.move_node_with_snapping(
-                self._dragging_node, pos[0], pos[1], self._graph.nodes, mouse_position=pos
-            )
-            return candidates
-        
+            if snapping_enabled:
+                candidates = self.move_node_with_snapping(
+                    self._dragging_node, pos[0], pos[1], self._graph.nodes, mouse_position=pos
+                )
+                return candidates
+            else:
+                 self._dragging_node.x, self._dragging_node.y = pos
+            
         return None
 
     def select_node(self, node: Node) -> None:
