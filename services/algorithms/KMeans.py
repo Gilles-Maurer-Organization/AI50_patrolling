@@ -31,10 +31,6 @@ class KMeans(IAlgorithm):
         Launch a KMeans algorithm to create cluster and the connect 
         node in the same cluster using an genetic algorithm.
 
-        Args:
-           activePlot (bool) : activate or not plot which show results, 
-           can be used to see detail of both algorithms. 
-
         Returns:
             result (list of list of int) : path found for each agent.
         """
@@ -66,8 +62,10 @@ class KMeans(IAlgorithm):
         self._initialize_centers()
         prev_centers = np.empty_like(self._centers)
         
+        i = 0
+
         # Loop until convergence
-        while not np.allclose(self._centers, prev_centers):  
+        while (not np.allclose(self._centers, prev_centers)) and (i < 100):  
             prev_centers = self._centers.copy()
             
             # Compute distance matrix betwenn all nodes and all centers
@@ -78,6 +76,8 @@ class KMeans(IAlgorithm):
             
             # Replace each center in the center of his cluster
             self._actualize_centers(clusters_attribution)
+
+            i += 1
 
         if self._active_plot:
             self._plot(clusters_attribution)
