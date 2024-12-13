@@ -69,6 +69,9 @@ class SimulationController:
 
 # TODO : 
 # Place les agents ensuite une boule infini arreter sur ordre de l'utilisateur
-# Chaque agent est ce que il est en trqin de se deplacer ou est ce que il est sur un noeud
+# Chaque agent est ce que il est en train de se deplacer ou est ce que il est sur un noeud
 # Agent.py
 # S'il est en train de se faire deplacer sinon regarder prochain dans la liste ou real time
+
+# TODO : Modifier parametre ant colony vue
+# TODO : Augementer le rayon en fonction de l'oisiveter
