@@ -4,6 +4,7 @@ from controllers.GraphController import GraphController
 from controllers.ScrollingListController import ScrollingListController
 from controllers.SimulationController import SimulationController
 from controllers.buttons.BaseButtonController import BaseButtonController
+from controllers.text_boxes.TextBoxController import TextBoxController
 from models.Button import Button
 from models.GraphData import GraphData
 from services.AStarService import AStarService
@@ -37,6 +38,7 @@ class StartButtonController(BaseButtonController):
         graph_controller: GraphController,
         simulation_controller: SimulationController,
         scrolling_list_controller: ScrollingListController,
+        text_box_controller: TextBoxController,
         complete_graph_service: ICompleteGraphService,
         csv_service: ICSVService
     ) -> None:
@@ -47,6 +49,7 @@ class StartButtonController(BaseButtonController):
         self._scrolling_list_controller = scrolling_list_controller
         self._simulation_controller = simulation_controller
         self._scrolling_list_controller = scrolling_list_controller
+        self._text_box_controller = text_box_controller
 
         self._start_button = Button(
             "Start simulation",
@@ -68,31 +71,11 @@ class StartButtonController(BaseButtonController):
             )
         }
 
-        # Initialisation des agents et de la vue de simulation
-        self.agents = []
-
     def start_action(self) -> None:
         """
         Starts the simulation by initializing agents and launching the
         selected algorithm.
         """
-        paths = [
-            [0, 1, 2, 3, 4],  # Agent 1 fait le tour du pentagone
-            [4, 3, 2, 1, 0],  # Agent 2 fait le tour inverse
-            [0, 2, 4],        # Agent 3 suit un chemin en étoile
-            [1, 3, 0],        # Agent 4 suit un autre chemin en étoile
-            [2, 0, 3, 4, 1]   # Agent 5 suit un chemin en zigzag
-        ]
-
-        # Initializing agents with predefined paths
-        self._simulation_controller.initialize_agents(paths)
-
-        # Setting the simulation as started
-        self._simulation_controller.set_simulation_started(True)
-        
-        #complete_graph_data = self.csv_service.find_csv_reference("path/to/image")
-        #if complete_graph_data:
-        #    pass
 
         if self._graph_controller.is_graph_modified():
             self._graph_controller.save_graph()
@@ -107,7 +90,7 @@ class StartButtonController(BaseButtonController):
             if success:
                 self._launch_algorithm()
             else:
-                self.graph_controller.raise_error_message('The graph must not have isolated subgraphs')
+                self._graph_controller.raise_error_message('The graph must not have isolated subgraphs')
 
         elif self._graph_controller.are_complements_saved():
             self._launch_algorithm()
@@ -127,7 +110,7 @@ class StartButtonController(BaseButtonController):
         self._graph_controller.save_complements(graph_data.complements)
         return True
 
-    def _launch_algorithm(self):
+    def _launch_algorithm(self) -> None:
         """
         Launches the selected algorithm and starts the simulation.
         """
@@ -135,11 +118,40 @@ class StartButtonController(BaseButtonController):
         selected_algorithm = self._scrolling_list_controller.get_selected_algorithm()
         
         # TODO: interface for all the algorithm that owns a launch() method,
-        # that all the algorithm implement
+        # that all the algorithm 
+        try:
+            nb_agents =  int(self._text_box_controller.text_content)
+        except ValueError:
+            self._graph_controller.raise_error_message('Invalid number of agents. Please enter a valid integer.')
+            return
+
+        complete_adjacency_matrix = self._graph_controller.graph.get_complete_adjacency_matrix()
+        self._algorithm = selected_algorithm.initialize_algorithm(nb_agents, complete_adjacency_matrix)
         
-        print("Launching algorithm with complete graph", selected_algorithm)
-    
-        #self.graph_controller.raise_message('Simulation started')
+        solution: list[list[int]] = self._algorithm.launch()
+
+        # Convert the solution paths to use the shortest paths in the real graph
+        real_paths = []
+        for agent_path in solution:
+            real_path = []
+            for i in range(len(agent_path) - 1):
+                start_node = agent_path[i]
+                end_node = agent_path[i + 1]
+                real_path.extend(self._graph_controller.graph.get_shortest_paths()[(start_node, end_node)])
+                real_paths.append(real_path)
+            # Ajouter le chemin de retour au premier nœud
+            start_node = agent_path[-1]
+            end_node = agent_path[0]
+            real_path.extend(self._graph_controller.graph.get_shortest_paths()[(start_node, end_node)])
+            
+            real_paths.append(real_path)
+
+        # Initializing agents with the real paths
+        self._simulation_controller.initialize_agents(real_paths)
+
+
+        # Setting the simulation as started
+        self._simulation_controller.set_simulation_started(True)
             
     def compute_complete_graph_and_shortest_paths(self):
         """

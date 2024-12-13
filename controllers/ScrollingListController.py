@@ -5,8 +5,8 @@ from models.algorithms.IAlgorithmModel import IAlgorithmModel
 from models.algorithms.AntColony import AntColony
 from models.algorithms.Evolutional import Evolutional
 from models.algorithms.Naive import Naive
-from views.ParametersView import ParametersView
 from views.ScrollingListView import ScrollingListView
+from services.algorithms.IAlgorithm import IAlgorithm
 
 
 class ScrollingListController:
@@ -20,7 +20,7 @@ class ScrollingListController:
         _scrolling_list_view (ScrollingListView): The view responsible
             for rendering the scrolling list.
     """
-    def __init__(self, parameters_view: ParametersView) -> None:
+    def __init__(self, parameters_view) -> None:
         self._scrolling_list = ScrollingList(
             [Naive(), Evolutional(), AntColony()]
         )

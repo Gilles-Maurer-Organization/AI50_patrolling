@@ -1,5 +1,6 @@
 from models.TextBox import TextBox
 from models.algorithms.IAlgorithmModel import IAlgorithmModel
+from services.algorithms.AntColonyAlgorithm import AntColonyAlgorithm
 
 class AntColony(IAlgorithmModel):
     """
@@ -15,18 +16,20 @@ class AntColony(IAlgorithmModel):
     def __init__(
         self,
         nb_iterations=100,
-        alpha=0.1,
-        beta=0.6,
-        p=0.5,
-        t=0.2
+        alpha=1,
+        beta=1,
+        q=10,
+        evaporation=0.5,
+        nb_colony = 3
     ) -> None:
         self._parameters = {
             "Alpha": TextBox(str(alpha)),
             "Beta": TextBox(str(beta)),
-            "Rho": TextBox(str(p)),
-            "Tau": TextBox(str(t))
+            "Pheromone quantity": TextBox(str(q)),
+            "Nb colony" : TextBox(str(nb_colony)),
+            "Nb iterations": TextBox(str(nb_iterations)),
+            "Evaporation rate": TextBox(str(evaporation))
         }
-
         self._name = "Ant Colony Algorithm"
 
     @property
@@ -48,3 +51,7 @@ class AntColony(IAlgorithmModel):
             str: The name of the algorithm, "Ant Colony Algorithm".
         """
         return self._name
+    
+    # TODO
+    def initialize_algorithm(self, nb_agents, complete_adjacency_matrix) -> None :
+        return AntColonyAlgorithm(self._parameters, nb_agents, complete_adjacency_matrix)

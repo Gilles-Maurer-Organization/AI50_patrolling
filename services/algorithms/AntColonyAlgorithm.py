@@ -14,10 +14,13 @@ Example:
     >>> best_path = colony.launch()
 """
 
+from matplotlib import pyplot as plt
 import numpy as np
 import time as time
+from models.TextBox import TextBox
+from services.algorithms.IAlgorithm import IAlgorithm
 
-class AntColonyAlgorithm:
+class AntColonyAlgorithm(IAlgorithm):
     """
     This class implements the Ant Colony Optimization (ACO) algorithm for solving pathfinding and optimization problems.
 
@@ -33,29 +36,24 @@ class AntColonyAlgorithm:
         The number of ants participating in each iteration of the algorithm.
     nb_iterations : int
         The number of iterations over which the algorithm will run.
-
-    Methods:
-    --------
-    get_length_path(ants_path):
-        Calculates the total distance traveled by each ant for its path.
-        
-    get_pheromone_matrix(pheromone_matrix, ants_path):
-        Updates and returns the pheromone matrix after each ant has completed its path, considering pheromone evaporation.
-        
-    get_probability(pheromone_matrix):
-        Calculates and returns the probability matrix for each ant to move from one node to another based on pheromone levels and cost.
-        
-    roulette_wheel(probability, current_node, visited):
-        Simulates the roulette wheel selection to determine the next node an ant will move to, based on the probability matrix.
-        
-    launch(node_agent):
-        Runs the ant colony optimization algorithm and returns the best path based on the final pheromone matrix.
-        
-    get_best_path(pheromone_matrix, current_node):
-        Returns the path with the highest pheromone levels by following the most popular routes as determined by the ants.
     """
     
-    def __init__(self, evaporation_rate, alpha_parameter, beta_parameter, nb_agents, nb_colony, nb_iterations, pheromone_quantity, cost_matrix):
+
+    def __init__(
+        self, 
+        parameters: dict[str, TextBox],
+        nb_agents,
+        cost_matrix
+    ) -> None:
+        # Get parameters
+        alpha_parameter: float =  float(parameters["Alpha"].text_content)
+        beta_parameter: float =  float(parameters["Beta"].text_content)
+        pheromone_quantity: float =  float(parameters["Pheromone quantity"].text_content)
+        nb_colony: int =  int(parameters["Nb colony"].text_content)
+        nb_iterations: int =  int(parameters["Nb iterations"].text_content)
+        evaporation_rate: float =  float(parameters["Evaporation rate"].text_content)  
+
+        print(evaporation_rate)
         # Validation of the parameters
         if not (0 < evaporation_rate <= 1):
             raise ValueError("The evaporation rate must be between 0 and 1 (exclusive for 0).")
@@ -71,12 +69,12 @@ class AntColonyAlgorithm:
             raise ValueError("The number of iterations must be greater than 0.")
         if pheromone_quantity <= 0:
             raise ValueError("The pheromone quantity must be greater than 0.")
-        if not isinstance(cost_matrix, np.ndarray) or cost_matrix.ndim != 2:
-            raise ValueError("The cost matrix must be a 2-dimensional numpy array.")
-        if not all(len(row) == len(cost_matrix) for row in cost_matrix):
-            raise ValueError("The cost matrix must be square.")
-        if nb_agents > len(cost_matrix):
-            raise ValueError("The number of agents must not exceed the number of nodes in the cost matrix.")
+        #if not isinstance(cost_matrix, np.ndarray) or cost_matrix.ndim != 2:
+        #    raise ValueError("The cost matrix must be a 2-dimensional numpy array.")
+        #if not all(len(row) == len(cost_matrix) for row in cost_matrix):
+        #    raise ValueError("The cost matrix must be square.")
+        #if nb_agents > len(cost_matrix):
+        #    raise ValueError("The number of agents must not exceed the number of nodes in the cost matrix.")
 
             
         self.evaporation_rate = evaporation_rate
@@ -86,9 +84,11 @@ class AntColonyAlgorithm:
         self.nb_colony = nb_colony
         self.nb_iterations = nb_iterations
         self.pheromone_quantity = pheromone_quantity
-        self.cost_matrix = cost_matrix
+        self.cost_matrix = np.array(cost_matrix)
 
-    def get_length_path(self, ants_path):
+        print(self.cost_matrix, self.pheromone_quantity, self.nb_iterations, self.nb_colony, self.nb_ants, self.beta_parameter, self.alpha_parameter, self.evaporation_rate)
+
+    def get_length_path(self, ants_path) -> float:
         """
         Calculate the total length of paths taken by all ants.
         This method computes the total distance traveled by each ant based on their respective paths.
@@ -233,21 +233,30 @@ class AntColonyAlgorithm:
         nb_nodes = self.cost_matrix.shape[0]
 
         start_nodes = []
-        # List of nodes where an agent can start, IE : 2 agents can't spawn in the same node and an agent can't spaw
+        # List of nodes where an agent can start, IE : 2 agents can't spawn in the same node and an agent can't spawn
         autorize_nodes = [i for i in range(nb_nodes)]
 
         # Create a random generator
         rng = np.random.default_rng()
 
         for _ in range(self.nb_ants):
-            # Heuristique is random
-            random_node = autorize_nodes[rng.integers(len(autorize_nodes))]
+            if not start_nodes:
+                # If no start nodes yet, choose randomly
+                random_node = autorize_nodes[rng.integers(len(autorize_nodes))]
+            else:
+                # Calculate distances from already selected nodes
+                distances = np.zeros(len(autorize_nodes))
+                for i, node in enumerate(autorize_nodes):
+                    distances[i] = np.min([self.cost_matrix[node][start_node] for start_node in start_nodes])
+                
+                # Choose the node with the maximum minimum distance
+                random_node = autorize_nodes[np.argmax(distances)]
+            
             start_nodes.append(random_node)
             autorize_nodes.remove(random_node)
         
         # Return first node of each ant
         return start_nodes
-    
     def colony_path(self, nb_nodes, global_pheromone_matrix, first_nodes):
         # Each ant builds a path
         ants_path = [[] for _ in range(self.nb_ants)]
@@ -336,6 +345,8 @@ class AntColonyAlgorithm:
 
         # Get the best path after all iterations
         best_path = self.get_best_path(global_ants_path)
+
+        self.plot_path_length_history(path_length_history)
         
         return best_path
 
@@ -360,6 +371,26 @@ class AntColonyAlgorithm:
         # Verify if all recent path lengths are close to the most recent one
         return all(np.allclose(last_lengths, lengths, atol=1e-2) for lengths in recent_lengths[:-1])
 
+    def plot_path_length_history(self, path_length_history):
+        """
+        Plot the path length history for each colony over the iterations.
+        
+        Parameters:
+        - path_length_history: list of lists containing path lengths for each colony at each iteration.
+        """
+        nb_iterations = len(path_length_history)
+        nb_colony = len(path_length_history[0]) if nb_iterations > 0 else 0
+        
+        # Tracer les longueurs de chemin pour chaque colonie
+        for colony in range(nb_colony):
+            lengths = [iteration[colony] for iteration in path_length_history]
+            plt.plot(range(nb_iterations), lengths, label=f"Colony {colony + 1}")
+
+        plt.xlabel("Iterations")
+        plt.ylabel("Path Length")
+        plt.title("Path Length History for Each Colony")
+        plt.legend()
+        plt.show()
 
     def get_best_path(self, global_ants_path):
         """
