@@ -17,33 +17,55 @@ Example:
 from matplotlib import pyplot as plt
 import numpy as np
 import time as time
+from models.Graph import Graph
 from models.TextBox import TextBox
 from services.algorithms.IAlgorithm import IAlgorithm
 
 class AntColonyAlgorithm(IAlgorithm):
     """
-    This class implements the Ant Colony Optimization (ACO) algorithm for solving pathfinding and optimization problems.
-
+    AntColonyAlgorithm is an implementation of the Ant Colony Optimization (ACO) algorithm.
+    This algorithm is used to find the shortest path in a graph by simulating the behavior of ants
+    searching for food. The ants deposit pheromones on the paths they take, and the probability of
+    choosing a path increases with the amount of pheromone on that path.
     Attributes:
-    ------------
-    evaporation_rate : float
-        The rate at which pheromones evaporate from the paths, a value between 0 and 1.
-    alpha_parameter : float
-        Controls the influence of pheromone levels on the decision-making process of the ants.
-    beta_parameter : float
-        Controls the influence of the distance (or cost) on the decision-making process of the ants.
-    nb_ants : int
-        The number of ants participating in each iteration of the algorithm.
-    nb_iterations : int
-        The number of iterations over which the algorithm will run.
+        evaporation_rate (float): The rate at which pheromones evaporate.
+        alpha_parameter (float): The influence of pheromone concentration on path selection.
+        beta_parameter (float): The influence of path cost on path selection.
+        pheromone_quantity (float): The amount of pheromone deposited by each ant.
+        nb_ants (int): The number of ants in the colony.
+        nb_colony (int): The number of colonies.
+        nb_iterations (int): The number of iterations to run the algorithm.
+        cost_matrix (np.ndarray): The matrix representing the cost between nodes.
+    Methods:
+        __init__(self, parameters: dict[str, TextBox], nb_agents: int, cost_matrix) -> None:
+            Initializes the AntColonyAlgorithm with the given parameters.
+        get_length_path(self, ants_path) -> float:
+            Calculates the total length of paths taken by all ants.
+        get_pheromone_matrix(self, pheromone_matrix, globl_ants_path):
+            Returns the new pheromone matrix after the passage of each ant.
+        get_probability(self, pheromone_matrix, current_node, visited):
+            Returns a probability vector representing the probability that an ant at the current node 
+        roulette_wheel(self, pheromone_matrix, current_node, visited):
+            Returns the next node for an ant based on the roulette wheel selection method.
+        get_start_nodes(self):
+            Returns the starting nodes for each ant.
+        colony_path(self, nb_nodes, global_pheromone_matrix, first_nodes):
+            Builds a path for each ant in the colony.
+        launch(self):
+            Launches the ant colony algorithm and returns the final best path and path length history.
+        check_convergence(self, path_length_history, n=10):
+            Checks if the algorithm has converged based on the path length history.
+        plot_path_length_history(self, path_length_history):
+            Plots the path length history for each colony over the iterations.
+        get_best_path(self, global_ants_path):
+            Returns the best path found by the algorithm.
     """
-    
 
     def __init__(
         self, 
         parameters: dict[str, TextBox],
-        nb_agents,
-        cost_matrix
+        nb_agents: int,
+        graph_object: Graph,
     ) -> None:
         # Get parameters
         alpha_parameter: float =  float(parameters["Alpha"].text_content)
@@ -53,7 +75,6 @@ class AntColonyAlgorithm(IAlgorithm):
         nb_iterations: int =  int(parameters["Nb iterations"].text_content)
         evaporation_rate: float =  float(parameters["Evaporation rate"].text_content)  
 
-        print(evaporation_rate)
         # Validation of the parameters
         if not (0 < evaporation_rate <= 1):
             raise ValueError("The evaporation rate must be between 0 and 1 (exclusive for 0).")
@@ -69,24 +90,15 @@ class AntColonyAlgorithm(IAlgorithm):
             raise ValueError("The number of iterations must be greater than 0.")
         if pheromone_quantity <= 0:
             raise ValueError("The pheromone quantity must be greater than 0.")
-        #if not isinstance(cost_matrix, np.ndarray) or cost_matrix.ndim != 2:
-        #    raise ValueError("The cost matrix must be a 2-dimensional numpy array.")
-        #if not all(len(row) == len(cost_matrix) for row in cost_matrix):
-        #    raise ValueError("The cost matrix must be square.")
-        #if nb_agents > len(cost_matrix):
-        #    raise ValueError("The number of agents must not exceed the number of nodes in the cost matrix.")
-
             
-        self.evaporation_rate = evaporation_rate
-        self.alpha_parameter = alpha_parameter
-        self.beta_parameter = beta_parameter
-        self.nb_ants = nb_agents
-        self.nb_colony = nb_colony
-        self.nb_iterations = nb_iterations
-        self.pheromone_quantity = pheromone_quantity
-        self.cost_matrix = np.array(cost_matrix)
-
-        print(self.cost_matrix, self.pheromone_quantity, self.nb_iterations, self.nb_colony, self.nb_ants, self.beta_parameter, self.alpha_parameter, self.evaporation_rate)
+        self.evaporation_rate: float = evaporation_rate
+        self.alpha_parameter: float = alpha_parameter
+        self.beta_parameter: float = beta_parameter
+        self.pheromone_quantity : float = pheromone_quantity
+        self.nb_ants : int = nb_agents
+        self.nb_colony : int = nb_colony
+        self.nb_iterations : int = nb_iterations
+        self.cost_matrix : np.ndarray  = np.array(graph_object.get_complete_adjacency_matrix())
 
     def get_length_path(self, ants_path) -> float:
         """

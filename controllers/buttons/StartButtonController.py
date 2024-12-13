@@ -125,8 +125,8 @@ class StartButtonController(BaseButtonController):
             self._graph_controller.raise_error_message('Invalid number of agents. Please enter a valid integer.')
             return
 
-        complete_adjacency_matrix = self._graph_controller.graph.get_complete_adjacency_matrix()
-        self._algorithm = selected_algorithm.initialize_algorithm(nb_agents, complete_adjacency_matrix)
+        graph = self._graph_controller.graph
+        self._algorithm = selected_algorithm.initialize_algorithm(nb_agents, graph)
         
         solution: list[list[int]] = self._algorithm.launch()
 

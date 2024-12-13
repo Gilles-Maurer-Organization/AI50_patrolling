@@ -2,6 +2,7 @@ import random as rd
 import time
 
 from models.Graph import Graph
+from models.TextBox import TextBox
 from services.algorithms.IAlgorithm import IAlgorithm
 
 import numpy as np
@@ -42,15 +43,14 @@ class EvolutionalAlgorithm(IAlgorithm):
 
     def __init__(
             self, 
-            nb_of_generations : int, 
-            nb_agent: int , 
-            individuals_number_per_population: int, 
+            parameters : dict[str, TextBox], 
+            nb_agents: int ,
             graph_object: Graph
         ) -> None :
 
-        self.nb_generations = nb_of_generations
-        self.nb_agents = nb_agent
-        self.nb_individuals_in_pop = individuals_number_per_population
+        self.nb_generations = parameters["Number of iterations"].text_content
+        self.nb_agents = nb_agents
+        self.nb_individuals_in_pop = parameters["Number of individuals"].text_content
         self.indicative_paths_population = []
         self.real_paths_population = []
         self.shortest_way_dict = graph_object.get_shortest_paths()
