@@ -25,10 +25,21 @@ class IdlenessController:
                 10,
                 100,
                 40,
-                label_text = "Idleness"
+                label_average_idleness_value = 0,
+                label_max_idleness_value = 0,
+                label_ath_idleness_value = 0
             )
     
     def draw_idlenesses(self):
+
+        self._idleness.update_idleness()
+
+        # Get the updated idleness values
+        idleness_data = self._idleness.get_idleness_data()
+
+        # Update the view with the new values
+        self._idleness_view.update_values(idleness_data[0], idleness_data[1], idleness_data[2])
+        #update l'idleness
         self._idleness_view.draw_text()
    
 
