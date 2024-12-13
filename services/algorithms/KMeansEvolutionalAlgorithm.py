@@ -2,7 +2,7 @@
 import random as rd
 import numpy as np
 
-class AlgorithmeGenetique: 
+class KMeansEvolutionalAlgorithm: 
 
     def __init__(
         self, 

@@ -4,7 +4,7 @@ from scipy.spatial.distance import cdist
 import matplotlib.pyplot as plt
 
 from IAlgorithm import IAlgorithm
-from KMeans_AG import AlgorithmeGenetique as AG
+from AI50.AI50_patrolling.services.algorithms.KMeansEvolutionalAlgorithm import AlgorithmeGenetique as AG
 
 class KMeans(IAlgorithm):
     def __init__(
@@ -250,17 +250,6 @@ class KMeans(IAlgorithm):
                 cluster_distances[j][i] = cluster_distances[i][j]
         
         return cluster_distances
-
-
-
-
-
-
-        
-
-
-
-        
 
 
     
