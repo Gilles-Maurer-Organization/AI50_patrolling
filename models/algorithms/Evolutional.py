@@ -1,6 +1,6 @@
 from models.algorithms.IAlgorithmModel import IAlgorithmModel
 from models.TextBox import TextBox
-from services.algorithms import EvolutionalAlgorithm
+from services.algorithms.EvolutionalAlgorithm import EvolutionalAlgorithm
 
 class Evolutional(IAlgorithmModel):
     """
@@ -46,5 +46,5 @@ class Evolutional(IAlgorithmModel):
         return self._name
     
      
-    def initialize_algorithm(self, nb_agents, complete_adjacency_matrix) -> None :
-        return EvolutionalAlgorithm(self._parameters, nb_agents, complete_adjacency_matrix)
+    def initialize_algorithm(self, nb_agents, graph) -> None :
+        return EvolutionalAlgorithm(self._parameters, nb_agents, graph)

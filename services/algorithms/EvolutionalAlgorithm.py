@@ -48,9 +48,9 @@ class EvolutionalAlgorithm(IAlgorithm):
             graph_object: Graph
         ) -> None :
 
-        self.nb_generations = parameters["Number of iterations"].text_content
+        self.nb_generations : int = int(parameters["Number of iterations"].text_content)
         self.nb_agents = nb_agents
-        self.nb_individuals_in_pop = parameters["Number of individuals"].text_content
+        self.nb_individuals_in_pop : int = int(parameters["Number of individuals"].text_content)
         self.indicative_paths_population = []
         self.real_paths_population = []
         self.shortest_way_dict = graph_object.get_shortest_paths()

@@ -52,5 +52,5 @@ class AntColony(IAlgorithmModel):
         """
         return self._name
     
-    def initialize_algorithm(self, nb_agents, complete_adjacency_matrix) -> None :
-        return AntColonyAlgorithm(self._parameters, nb_agents, complete_adjacency_matrix)
+    def initialize_algorithm(self, nb_agents, graph) -> None :
+        return AntColonyAlgorithm(self._parameters, nb_agents, graph)
