@@ -25,7 +25,7 @@ class CheckBoxController:
         self._parameters_view = parameters_view
 
         self._check_box = CheckBox()
-        self._check_box_view = self.create_view(parameters_view)
+        self._check_box_view = self.create_view()
 
     def create_view(self) -> CheckBoxView:
         """
