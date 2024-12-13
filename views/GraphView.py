@@ -120,7 +120,7 @@ class GraphView:
             self._screen.fill(Colors.WHITE.value)
             font = pygame.font.SysFont(None, 24)
             text_surface = font.render(
-                "Please load a graph or image to start.", True, Colors.BLACK.value
+                "Please import a graph or image to start.", True, Colors.BLACK.value
             )
             self._screen.blit(
                 text_surface,
