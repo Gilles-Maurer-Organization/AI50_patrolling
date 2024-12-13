@@ -3,7 +3,6 @@ import math
 from scipy.spatial.distance import cdist
 import matplotlib.pyplot as plt
 
-# from services.algorithms.IAlgorithm import IAlgorithm
 from IAlgorithm import IAlgorithm
 from KMeans_AG import AlgorithmeGenetique as AG
 
@@ -14,14 +13,14 @@ class KMeans(IAlgorithm):
         list_nodes : np.ndarray[np.ndarray[float]], 
         distances : np.ndarray[np.ndarray[float]],
         nb_launch_kmeans : int, 
-        activePlot : bool = False
+        active_plot : bool = False
     ) -> None:
 
         self._nb_clusters = nb_agents  
         self._list_nodes = list_nodes
         self._distances = distances  
         self._nb_launch_kmeans = nb_launch_kmeans
-        self._activePlot = activePlot
+        self._active_plot = active_plot
 
         self._centers = None  
         self._clusters = {}  
@@ -80,7 +79,7 @@ class KMeans(IAlgorithm):
             # Replace each center in the center of his cluster
             self._actualize_centers(clusters_attribution)
 
-        if self._activePlot:
+        if self._active_plot:
             self._plot(clusters_attribution)
 
 
@@ -166,12 +165,12 @@ class KMeans(IAlgorithm):
         Compute the sum of the squared distance between each node and 
         his center to evaluate the KMeans algorithm.
         """ 
-        sum = 0
+        sum_squarred_distance = 0
         for id_center, cluster in self._clusters.items(): 
             for node in cluster: 
-                sum += self._squarred_distance(node, self._centers[id_center])
+                sum_squarred_distance += self._squarred_distance(node, self._centers[id_center])
 
-        return sum
+        return sum_squarred_distance
                 
 
     def _squarred_distance(
@@ -190,7 +189,7 @@ class KMeans(IAlgorithm):
         Run the genetic algorithm to connect each node in the same cluster.  
         """
         min_sol_ag, min_cost_ag = [], []
-        if self._activePlot:
+        if self._active_plot:
             ax = plt.subplots()[1]
 
         # For each cluster
@@ -198,25 +197,7 @@ class KMeans(IAlgorithm):
             
             cluster = self._clusters[i]
 
-            # Compute the distance between each nodes by using the initial distance matrix
-            cluster_distances = np.empty((len(cluster), len(cluster)))
-
-            for i in range(len(cluster)): 
-                for j in range(i, len(cluster)): 
-                    
-                    for idx, node in enumerate(self._list_nodes):
-                        if np.array_equal(node, cluster[i]):
-                            id_node1 = idx
-                            break
-
-                    for idx, node in enumerate(self._list_nodes):
-                        if np.array_equal(node, cluster[j]):
-                            id_node2 = idx
-                            break
-
-                    cluster_distances[i][j] = self._distances[id_node1][id_node2]
-                    cluster_distances[j][i] = cluster_distances[i][j]
-
+            cluster_distances = self.create_distance_matrix(cluster)
 
             # Run the genetic algorithm to connect the nodes
             ag = AG(nb_nodes=len(cluster), distances=cluster_distances) 
@@ -226,16 +207,50 @@ class KMeans(IAlgorithm):
             min_sol_ag.append(result[0].tolist())
             min_cost_ag.append(result[1])
 
-            if self._activePlot:
+            if self._active_plot:
                 ax.plot(cluster[result[0], 0], cluster[result[0], 1], 'o-')
 
-        if self._activePlot:
+        if self._active_plot:
             plt.show() 
 
         return min_sol_ag, min_cost_ag
 
 
-    
+    def create_distance_matrix(
+        self, 
+        cluster : np.ndarray[np.ndarray[float]]
+    ) -> np.ndarray[np.ndarray[float]]: 
+        """
+        Compute the distance between each nodes by using 
+        the initial distance matrix.        
+        
+        Args: 
+              cluster (np.ndarray[np.ndarray[float]]) : list of nodes in the cluster
+
+        Returns:
+                cluster_distances (np.ndarray[np.ndarray[float]]) : distance matrix 
+                between all nodes in the cluster based on the initial distance matrix.
+        """
+        cluster_distances = np.empty((len(cluster), len(cluster)))
+
+        for i in range(len(cluster)): 
+            for j in range(i, len(cluster)): 
+                
+                for idx, node in enumerate(self._list_nodes):
+                    if np.array_equal(node, cluster[i]):
+                        id_node1 = idx
+                        break
+
+                for idx, node in enumerate(self._list_nodes):
+                    if np.array_equal(node, cluster[j]):
+                        id_node2 = idx
+                        break
+
+                cluster_distances[i][j] = self._distances[id_node1][id_node2]
+                cluster_distances[j][i] = cluster_distances[i][j]
+        
+        return cluster_distances
+
 
 
 
