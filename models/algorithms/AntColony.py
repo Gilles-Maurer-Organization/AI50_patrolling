@@ -25,6 +25,7 @@ class AntColony(IAlgorithmModel):
         self._parameters = {
             "Alpha": TextBox(str(alpha)),
             "Beta": TextBox(str(beta)),
+            "Evaporation rate": TextBox(str(evaporation)),
             "Pheromone quantity": TextBox(str(q)),
             "Nb colony" : TextBox(str(nb_colony)),
             "Nb iterations": TextBox(str(nb_iterations)),
