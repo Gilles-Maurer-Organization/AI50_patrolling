@@ -61,10 +61,6 @@ class GraphController:
         self._edge_controller = EdgeController(self._graph,
                                                self._node_controller)
 
-        # Load initial background image
-        self._image_name = "image1.jpg"
-        self._load_background_image(self._image_name)
-
     @property
     def graph(self) -> Graph:
         """
@@ -244,6 +240,9 @@ class GraphController:
                 click.
             node: The node located at the clicked position, if any.
         """
+        if not self.graph_has_an_image() and self.is_graph_empty():
+            return
+
         keys = pygame.key.get_pressed()
         if (
             keys[pygame.K_LCTRL]

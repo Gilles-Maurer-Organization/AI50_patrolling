@@ -78,6 +78,8 @@ class ButtonController(BaseButtonController):
         Imports a graph from the computer when the Import button is
         clicked.
         """
+        self.enable_clear_button()
+        self.enable_save_button()
         self._file_explorer_controller.set_is_opened(True)
 
     def clear_action(self) -> None:
@@ -100,4 +102,16 @@ class ButtonController(BaseButtonController):
         with it.
         """
         self._save_button.enabled = False
-        
+
+    def enable_clear_button(self) -> None:
+        """
+        Enables the Clear button.
+        """
+        self._clear_button.enabled = True
+
+    def enable_save_button(self) -> None:
+        """
+        Enables the Save button.
+        """
+        self._save_button.enabled = True
+

@@ -115,6 +115,23 @@ class GraphView:
             dragging_node (Node, optional): The node currently being
                 dragged by the user.
         """
+        if self._background_image is None and not graph.nodes:
+            # Display a default message when no graph or background is loaded
+            self._screen.fill(Colors.WHITE.value)
+            font = pygame.font.SysFont(None, 24)
+            text_surface = font.render(
+                "Please load a graph or image to start.", True, Colors.BLACK.value
+            )
+            self._screen.blit(
+                text_surface,
+                (
+                    GRAPH_WINDOW_WIDTH // 2 - text_surface.get_width() // 2,
+                    GRAPH_WINDOW_HEIGHT // 2 - text_surface.get_height() // 2,
+                ),
+            )
+            return
+
+            # If a background or nodes exist, proceed with normal drawing
         if self._background_image is None:
             self._screen.fill(Colors.WHITE.value)
         else:    
