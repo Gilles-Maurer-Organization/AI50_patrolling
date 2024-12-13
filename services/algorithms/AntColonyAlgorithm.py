@@ -66,6 +66,7 @@ class AntColonyAlgorithm(IAlgorithm):
         parameters: dict[str, TextBox],
         nb_agents: int,
         graph_object: Graph,
+        active_plot : bool = False
     ) -> None:
         # Get parameters
         alpha_parameter: float =  float(parameters["Alpha"].text_content)
@@ -99,6 +100,7 @@ class AntColonyAlgorithm(IAlgorithm):
         self.nb_colony : int = nb_colony
         self.nb_iterations : int = nb_iterations
         self.cost_matrix : np.ndarray  = np.array(graph_object.get_complete_adjacency_matrix())
+        self.active_plot = active_plot
 
     def get_length_path(self, ants_path) -> float:
         """
@@ -358,7 +360,8 @@ class AntColonyAlgorithm(IAlgorithm):
         # Get the best path after all iterations
         best_path = self.get_best_path(global_ants_path)
 
-        self.plot_path_length_history(path_length_history)
+        if  self.active_plot:
+            self.plot_path_length_history(path_length_history)
         
         return best_path
 

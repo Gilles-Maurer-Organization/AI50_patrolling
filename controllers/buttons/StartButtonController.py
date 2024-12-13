@@ -140,11 +140,12 @@ class StartButtonController(BaseButtonController):
                 real_path.extend(self._graph_controller.graph.get_shortest_paths()[(start_node, end_node)])
                 real_paths.append(real_path)
             # Ajouter le chemin de retour au premier nœud
-            start_node = agent_path[-1]
-            end_node = agent_path[0]
-            real_path.extend(self._graph_controller.graph.get_shortest_paths()[(start_node, end_node)])
-            
-            real_paths.append(real_path)
+            if (len(agent_path) > 1):
+                start_node = agent_path[-1]
+                end_node = agent_path[0]
+                real_path.extend(self._graph_controller.graph.get_shortest_paths()[(start_node, end_node)])
+                
+                real_paths.append(real_path)
 
         # Initializing agents with the real paths
         self._simulation_controller.initialize_agents(real_paths)

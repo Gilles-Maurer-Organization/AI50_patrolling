@@ -14,7 +14,7 @@ class KMeansAlgorithm(IAlgorithm):
         parameters: dict[str, TextBox],
         nb_agents : int, 
         graph: Graph,
-        active_plot : bool = False
+        active_plot : bool = True
     ) -> None:
 
         self._nb_clusters = nb_agents  
@@ -84,8 +84,8 @@ class KMeansAlgorithm(IAlgorithm):
 
             i += 1
 
-        if self._active_plot:
-            self._plot(clusters_attribution)
+        #if self._active_plot:
+        #    self._plot(clusters_attribution)
 
 
     def _initialize_centers(self) -> None: 
@@ -193,7 +193,7 @@ class KMeansAlgorithm(IAlgorithm):
         """
         Run the genetic algorithm to connect each node in the same cluster.  
         """
-        min_sol_ea, min_cost_ea = [], []
+        min_sol_kmea, min_cost_kmea = [], []
         if self._active_plot:
             ax = plt.subplots()[1]
 
@@ -205,12 +205,12 @@ class KMeansAlgorithm(IAlgorithm):
             cluster_distances = self.create_distance_matrix(cluster)
 
             # Run the genetic algorithm to connect the nodes
-            ea = KMEA(nb_nodes=len(cluster), distances=cluster_distances) 
-            result = ea.run()
+            kmea = KMEA(nb_nodes=len(cluster), distances=cluster_distances) 
+            result = kmea.run()
 
             # Append the result to the list of all results
-            min_sol_ea.append(result[0].tolist())
-            min_cost_ea.append(result[1])
+            min_sol_kmea.append(self.reconstruct_solution(cluster, result[0]))
+            min_cost_kmea.append(result[1])
 
             if self._active_plot:
                 ax.plot(cluster[result[0], 0], cluster[result[0], 1], 'o-')
@@ -218,7 +218,7 @@ class KMeansAlgorithm(IAlgorithm):
         if self._active_plot:
             plt.show() 
 
-        return min_sol_ea, min_cost_ea
+        return min_sol_kmea, min_cost_kmea
 
 
     def create_distance_matrix(
@@ -241,20 +241,48 @@ class KMeansAlgorithm(IAlgorithm):
         for i in range(len(cluster)): 
             for j in range(i, len(cluster)): 
                 
-                for idx, node in enumerate(self._list_nodes):
-                    if np.array_equal(node, cluster[i]):
-                        id_node1 = idx
-                        break
-
-                for idx, node in enumerate(self._list_nodes):
-                    if np.array_equal(node, cluster[j]):
-                        id_node2 = idx
-                        break
+                id_node1 = self.find_index(cluster[i])
+                id_node2 = self.find_index(cluster[j])
 
                 cluster_distances[i][j] = self._distances[id_node1][id_node2]
                 cluster_distances[j][i] = cluster_distances[i][j]
         
         return cluster_distances
-
-
     
+    def find_index(self, target_node : np.ndarray[float]) -> int:
+        """
+        Find the index of a node in the list of nodes.
+
+        Args:
+            node (np.ndarray[float]) : node to find in the list of nodes.
+
+        Returns:
+            index (int) : index of the node in the list of nodes.
+        """
+        for idx, node in enumerate(self._list_nodes):
+            if np.array_equal(node, target_node):
+                return idx
+            
+    
+    def reconstruct_solution(
+        self, 
+        cluster :  np.ndarray[np.ndarray[float]],
+        solution : np.ndarray[int]
+        ) -> list[int]:
+        """
+        Reconstruct the solution of the genetic algorithm to have the 
+        index of the nodes in the list of nodes.
+
+        Args:
+            solution (np.ndarray[int]) : solution to reconstruct.
+
+        Returns:
+            reconstructed_solution (np.ndarray[int]) : reconstructed solution.
+        """
+        reconstructed_solution = np.empty(len(solution), dtype=int)
+
+        for i in range(len(solution)):
+            node = cluster[solution[i]]
+            reconstructed_solution[i] = self.find_index(node)
+
+        return reconstructed_solution.tolist()
