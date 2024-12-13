@@ -69,35 +69,12 @@ class EvolutionalAlgorithm(IAlgorithm):
         Returns:
             ndarray: the generated indicative population.
         """
+
+        # maximal number of tries allowed
         max_tries = 10
-        # dictionary used to apply a ratio value given value intervals
-        gene_length_ratios = {
-            (0, 10): 0.75,
-            (11, 20): 0.65,
-            (21, 30): 0.6,
-            (31, 40): 0.55,
-            (41, 50): 0.5,
-            (51, 60): 0.45,
-            (61, 70): 0.30,
-            (71, 80): 0.25,
-            (81, 90): 0.2,
-            (91, 100): 0.15
-        }
-
-        # we determine the value of the ratio using the number
-        # of nodes contained in the Graph
-        ratio = 0
-        for key, value in gene_length_ratios.items():
-            if len(self.nodes_idx_list) in range(key[0], key[1] + 1):
-                ratio = gene_length_ratios[key]
-
-        # the number of nodes is higher than 100
-        # thus we apply a default of 0.1 as ratio
-        if ratio == 0:
-            ratio = 0.1
 
         # computing the length of a gene using the determined ratio
-        gene_length = max(1, int(ratio * len(self.nodes_idx_list)))
+        gene_length = max(1, int(len(self.nodes_idx_list)/self.nb_agents)+1)
 
         indicative_population = []
 
@@ -748,4 +725,3 @@ class EvolutionalAlgorithm(IAlgorithm):
         algorithm_output = list(self.clean_output_individual(res_of_algo))
 
         return algorithm_output
-
