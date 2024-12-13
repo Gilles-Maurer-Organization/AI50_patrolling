@@ -61,6 +61,8 @@ class GraphController:
         self._edge_controller = EdgeController(self._graph,
                                                self._node_controller)
 
+        self._image_name = ""
+
     @property
     def graph(self) -> Graph:
         """
