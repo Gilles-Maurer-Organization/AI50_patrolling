@@ -219,7 +219,7 @@ class GraphController:
             background_image = pygame.image.load(image_path)
             self._graph_view.set_background_image(background_image)
         else:
-            print(f"Image {image_name} not found or could not be copied.")
+            self.raise_error_message(f"Image {image_name} not found or could not be copied.")
             self._graph_view.set_background_image(None)
 
 
@@ -346,9 +346,12 @@ class GraphController:
         """
         Saves the graph's structure (nodes and edges) to a CSV file.
         """
-        edges_matrix, nodes_list = self._graph.compute_matrix()
-        self._csv_service.save(edges_matrix, nodes_list, self._image_name)
-        self.raise_message("Graph successfully saved!")
+        try:
+            edges_matrix, nodes_list = self._graph.compute_matrix()
+            self._csv_service.save(edges_matrix, nodes_list, self._image_name)
+            self.raise_message("Graph successfully saved!")
+        except Exception as e:
+            self.raise_error_message(f"Error saving graph: {str(e)}")
 
     def save_complements(
         self,
@@ -372,9 +375,12 @@ class GraphController:
         """
         Clears all nodes and edges from the graph.
         """
-        self._graph.nodes.clear()
-        self._graph.edges.clear()
-        self.raise_message("Graph successfully cleared!")
+        try:
+            self._graph.nodes.clear()
+            self._graph.edges.clear()
+            self.raise_message("Graph successfully cleared!")
+        except Exception as e:
+            self.raise_error_message(f"Error clearing graph: {str(e)}")
 
     def load_graph_from_csv(self, file_number: str) -> None:
         """
@@ -409,20 +415,18 @@ class GraphController:
 
         # if the image has no associated csv file, display it only
         if csv_path is None:
-            print(f"{image_name} not found in references.csv.\
-                  Displaying image only.")
             self.clear_graph()
             self.update()
-            return True
+            raise ValueError(f"{image_name} has no associated graph data.")
 
         # if a csv file exists, load the associated graph
         match = re.search(r'graph_(\d+)\.csv', csv_path)
-        if match:
-            file_number = match.group(1)
-            self.load_graph_from_csv(file_number)
-            return True
-        else:
-            raise ValueError(f"Unexpected CSV path format: {csv_path}")
+        try:
+            if match:
+                file_number = match.group(1)
+                self.load_graph_from_csv(file_number)
+        except Exception as e:
+            self.raise_error_message(f"Error loading graph data: {str(e)}")
 
     def import_graph_from_csv(self, csv_path: str) -> bool:
         """
@@ -432,8 +436,8 @@ class GraphController:
             csv_path: The path to the CSV file to be imported.
         """
         if not csv_path.endswith('.csv'):
-            print(f"{csv_path} is not a valid CSV file.")
-            return False
+            raise ValueError(f"{csv_path} is not a valid file.")
+            return
 
         self._image_name = self._csv_service.get_image_name(csv_path).strip()
         self._load_background_image(self._image_name)
@@ -451,24 +455,28 @@ class GraphController:
                 the adjacency matrix, the nodes list and the
                 graph's complements.
         """
-        if graph_data.adjacency_matrix and graph_data.nodes_list:
-            self.clear_graph()
-            for coords in graph_data.nodes_list:
-                self._node_controller.add_node(coords)
-            for i, row in enumerate(graph_data.adjacency_matrix):
-                for j, distance in enumerate(row):
-                    if distance > 0:
-                        node1 = self._graph.nodes[i]
-                        node2 = self._graph.nodes[j]
-                        self._graph.add_edge(node1, node2)
-            self.store_complements_to_model(
-                graph_data
-            )
+        try:
+            if graph_data.adjacency_matrix and graph_data.nodes_list:
+                self.clear_graph()
+                for coords in graph_data.nodes_list:
+                    self._node_controller.add_node(coords)
+                for i, row in enumerate(graph_data.adjacency_matrix):
+                    for j, distance in enumerate(row):
+                        if distance > 0:
+                            node1 = self._graph.nodes[i]
+                            node2 = self._graph.nodes[j]
+                            self._graph.add_edge(node1, node2)
+                self.store_complements_to_model(
+                    graph_data
+                )
 
-            self.update()
-            print("Graph imported and displayed successfully.")
+                self.update()
+            else:
+                raise ValueError("No valid graph data found in the CSV file.")
+        except Exception as e:
+            self.raise_error_message(str(e))
         else:
-            print("No valid graph data found in the CSV file.")
+            self.raise_message("Graph successfully loaded!")
 
     def graph_has_an_image(self) -> bool:
         """
