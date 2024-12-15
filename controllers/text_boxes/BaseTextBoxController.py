@@ -106,7 +106,7 @@ class BaseTextBoxController:
         if event.key == pygame.K_BACKSPACE:
             model.handle_backspace()
         # If it's not the backspace key, it must be a digit key
-        elif event.unicode.isdigit():
+        elif event.unicode.isdigit() or event.unicode == '.':
             model.add_character(event.unicode)
 
     def is_text_box_text_completed(self, model: TextBox) -> bool:
