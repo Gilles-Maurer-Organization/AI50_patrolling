@@ -32,4 +32,10 @@ class TextBoxController(BaseTextBoxController):
 
     @property
     def text_content(self) -> str:
+        """
+        Get the text content of the text box.
+
+        Returns:
+            str: The current text content of the text box.
+        """
         return self._text_box.text_content

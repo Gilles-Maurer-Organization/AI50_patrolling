@@ -84,8 +84,8 @@ class KMeansAlgorithm(IAlgorithm):
 
             i += 1
 
-        #if self._active_plot:
-        #    self._plot(clusters_attribution)
+        if self._active_plot:
+            self._plot(clusters_attribution)
 
 
     def _initialize_centers(self) -> None: 

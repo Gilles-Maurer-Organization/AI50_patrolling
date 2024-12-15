@@ -1,3 +1,4 @@
+from models.Graph import Graph
 from models.TextBox import TextBox
 from models.algorithms.IAlgorithmModel import IAlgorithmModel
 from services.algorithms.KMeansAlgorithm import KMeansAlgorithm
@@ -13,7 +14,7 @@ class KMeans(IAlgorithmModel):
             K-means algorithm.
         _name (str): The name of the algorithm.
     """
-    def __init__(self, nb_launch_kmeans=30) -> None:
+    def __init__(self, nb_launch_kmeans : int =30) -> None:
         self._parameters = {
             "Number of launch": TextBox(str(nb_launch_kmeans)),
         }
@@ -41,5 +42,20 @@ class KMeans(IAlgorithmModel):
         """
         return self._name
     
-    def initialize_algorithm(self, nb_agents, graph) -> None :
+    def initialize_algorithm(
+            self,
+            nb_agents : int,
+            graph : Graph
+        ) -> None :
+        """
+        Initializes the K-Means Algorithm with the given parameters.
+        
+        Args:
+            nb_agents (int): The number of agents to use in the algorithm.
+            graph (Graph): The graph on which the algorithm will be applied.
+        
+        Returns:
+            KMeansAlgorithm: An instance of the KMeansAlgorithm
+            class initialized with the given parameters.
+        """
         return KMeansAlgorithm(self._parameters, nb_agents, graph)

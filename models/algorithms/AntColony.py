@@ -1,3 +1,4 @@
+from models.Graph import Graph
 from models.TextBox import TextBox
 from models.algorithms.IAlgorithmModel import IAlgorithmModel
 from services.algorithms.AntColonyAlgorithm import AntColonyAlgorithm
@@ -29,7 +30,6 @@ class AntColony(IAlgorithmModel):
             "Pheromone quantity": TextBox(str(q)),
             "Nb colony" : TextBox(str(nb_colony)),
             "Nb iterations": TextBox(str(nb_iterations)),
-            "Evaporation rate": TextBox(str(evaporation))
         }
         self._name = "Ant Colony Algorithm"
 
@@ -53,5 +53,20 @@ class AntColony(IAlgorithmModel):
         """
         return self._name
     
-    def initialize_algorithm(self, nb_agents, graph) -> None :
+    def initialize_algorithm(
+            self,
+            nb_agents : int,
+            graph : Graph
+        ) -> None :
+        """
+        Initializes the Ant Colony algorithm with the given parameters.
+        
+        Args:
+            nb_agents (int): The number of agents to use in the algorithm.
+            graph (Graph): The graph on which the algorithm will be applied.
+        
+        Returns:
+            AntColonyAlgorithm: An instance of the AntColonyAlgorithm
+            class initialized with the given parameters.
+        """
         return AntColonyAlgorithm(self._parameters, nb_agents, graph)

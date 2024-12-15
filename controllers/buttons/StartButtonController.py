@@ -117,7 +117,6 @@ class StartButtonController(BaseButtonController):
         self._graph_controller.raise_info('Algorithm launched')
         selected_algorithm = self._scrolling_list_controller.get_selected_algorithm()
         
-        # TODO: interface for all the algorithm that owns a launch() method,
         # that all the algorithm 
         try:
             nb_agents =  int(self._text_box_controller.text_content)

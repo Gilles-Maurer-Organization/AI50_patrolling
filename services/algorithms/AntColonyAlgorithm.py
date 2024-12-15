@@ -108,8 +108,9 @@ class AntColonyAlgorithm(IAlgorithm):
         This method computes the total distance traveled by each ant based on their respective paths.
         The paths are assumed to be cyclic, meaning the last node in the path is connected back to the first node.
         Args:
-            ants_path (list of list of int): A list where each element is a list representing the path taken by an ant.
-                                             Each path is a list of node indices.
+            ants_path (list of list of int):
+                A list where each element is a list representing the path taken by an ant.
+                Each path is a list of node indices.
         Returns:
             float: The sum of the distances traveled by all ants.
         """
@@ -120,7 +121,8 @@ class AntColonyAlgorithm(IAlgorithm):
         
         # For each ant
         for k_ant, ant_path in enumerate(ants_path):
-            # For each node, add distance from the node to next node to the total distance that the ant travel
+            # For each node, add distance from the node to next node to 
+            # the total distance that the ant travel
             for k_node, node in enumerate(ant_path):
                 # We considerate that it is a loop, so the last node is connected to the first one
                 next_node = ant_path[k_node + 1] if k_node != (len(ant_path) - 1) else ant_path[0]
@@ -134,7 +136,8 @@ class AntColonyAlgorithm(IAlgorithm):
         Return the new pheromone matrix after the passage of each ant.
         
         The evaporation rate can be set between 0 and 1.
-        ants_path is set like : np.array([[0,1,2,,..., 3],[0,2,1, ..., 3], ...]) this mean the first ant go from node 0 to 1 then 1 to 2, etc.
+        ants_path is set like : np.array([[0,1,2,,..., 3],[0,2,1, ..., 3], ...])
+        this mean the first ant go from node 0 to 1 then 1 to 2, etc.
         """
         # Mathematical model to represent phemone level on a graph
         # Initialization
@@ -151,7 +154,8 @@ class AntColonyAlgorithm(IAlgorithm):
             length_path = self.get_length_path(ants_path)
 
             for k_ant, ant_path in enumerate(ants_path):
-                # If the ant_path contain only 1 node (ie there are as many agents as node or more than half), then we pass
+                # If the ant_path contain only 1 node
+                # (ie there are as many agents as node or more than half), then we pass
                 if len(ant_path) <= 1:
                     break
                 mask = np.zeros((nb_node, nb_node), dtype=bool)
@@ -162,7 +166,8 @@ class AntColonyAlgorithm(IAlgorithm):
                 # Mark the nodes the ant travels
                 mask[i_nodes, j_nodes] = True
 
-                # The matrix is symetrix, if an ant have passed trouth i to j, that mean it had passed throu j to i
+                # The matrix is symetrix, if an ant have passed trouth i to j,
+                # that mean it had passed throu j to i
                 mask[j_nodes, i_nodes] = True
 
                 # Connect the last node to the first node to handle the loop
@@ -174,10 +179,12 @@ class AntColonyAlgorithm(IAlgorithm):
                 delta_t_pheromone_matrix[k_colony][k_ant][mask] += self.pheromone_quantity / length_path
 
 
-        # Sum of delta_pheromone_matrix for each ant, without evaporation np.sum, what come before is the evaporation term
+        # Sum of delta_pheromone_matrix for each ant, without evaporation np.sum, 
+        # what come before is the evaporation term
         pheromone_matrix = (1 - self.evaporation_rate)*pheromone_matrix + np.sum(delta_t_pheromone_matrix, axis=(0, 1))
 
-        # When evaporation_rate = 0 then it will add the delta pheromone to the old one. When = 1 the old pheromone_matrix is completly evaporated
+        # When evaporation_rate = 0 then it will add the delta pheromone to the old one. 
+        # When = 1 the old pheromone_matrix is completly evaporated
         return pheromone_matrix
 
 
@@ -214,7 +221,8 @@ class AntColonyAlgorithm(IAlgorithm):
 
     def roulette_wheel(self, pheromone_matrix, current_node, visited):
         """
-        Get a random number and base on the probability matrix and the node where the ant is. Return from this random roulette wich node did the ant will go next.
+        Get a random number and base on the probability matrix and the node where the ant is. 
+        Return from this random roulette wich node did the ant will go next.
         >>> roulette_wheel(np.array([[0,0.5,0.5],[1,0,0], [0.5,0.5,0]]), 1, { })
         0
         >>> roulette_wheel(np.array([[0,0.5,0.5],[1,0,0], [0.5,0.5,0]]), 1, {0})
@@ -234,10 +242,12 @@ class AntColonyAlgorithm(IAlgorithm):
         random_number = rng.random()
         
         # Find the next node based on the random number
-        next_node_indices = np.nonzero(cumulative_sum >= random_number)[0] # [0] because np.nonzero is a tuple, [0] allows direct retrieval of the array of indices
+        # [0] because np.nonzero is a tuple, [0] allows direct retrieval of the array of indices
+        next_node_indices = np.nonzero(cumulative_sum >= random_number)[0]
         if len(next_node_indices) == 0:
             raise IndexError("No valid next node found, check the probability matrix.")
-        # Return the first value of next_node_indices bacause it is the next_node chosen based of the random_number and cumulative_sum
+        # Return the first value of next_node_indices bacause it 
+        # is the next_node chosen based of the random_number and cumulative_sum
         next_node = next_node_indices[0]
 
         return next_node
@@ -247,7 +257,8 @@ class AntColonyAlgorithm(IAlgorithm):
         nb_nodes = self.cost_matrix.shape[0]
 
         start_nodes = []
-        # List of nodes where an agent can start, IE : 2 agents can't spawn in the same node and an agent can't spawn
+        # List of nodes where an agent can start, IE : 
+        # 2 agents can't spawn in the same node and an agent can't spawn
         autorize_nodes = [i for i in range(nb_nodes)]
 
         # Create a random generator
@@ -317,7 +328,8 @@ class AntColonyAlgorithm(IAlgorithm):
         
         Returns:
         - best_path: the best path found.
-        - path_length_history: a list of lists where each inner list contains the total path length for each colony in each iteration.
+        - path_length_history: a list of lists where each inner list 
+            contains the total path length for each colony in each iteration.
         """
         # Get the number of nodes
         nb_nodes = self.cost_matrix.shape[0]
@@ -386,7 +398,7 @@ class AntColonyAlgorithm(IAlgorithm):
         # Verify if all recent path lengths are close to the most recent one
         return all(np.allclose(last_lengths, lengths, atol=1e-2) for lengths in recent_lengths[:-1])
 
-    def plot_path_length_history(self, path_length_history):
+    def plot_path_length_history(self, path_length_history: list[list[np.ndarray]]):
         """
         Plot the path length history for each colony over the iterations.
         
