@@ -1,12 +1,14 @@
 import pygame
 
 from models.ScrollingList import ScrollingList
+from models.algorithms.KMeans import KMeans
 from models.algorithms.IAlgorithmModel import IAlgorithmModel
 from models.algorithms.AntColony import AntColony
 from models.algorithms.Evolutional import Evolutional
 from models.algorithms.Naive import Naive
 from views.ParametersView import ParametersView
 from views.ScrollingListView import ScrollingListView
+from services.algorithms.IAlgorithm import IAlgorithm
 
 
 class ScrollingListController:
@@ -22,7 +24,7 @@ class ScrollingListController:
     """
     def __init__(self, parameters_view: ParametersView) -> None:
         self._scrolling_list = ScrollingList(
-            [Naive(), Evolutional(), AntColony()]
+            [Naive(), Evolutional(), AntColony(), KMeans()]
         )
         self._scrolling_list_view = ScrollingListView(
             parameters_view.screen,
