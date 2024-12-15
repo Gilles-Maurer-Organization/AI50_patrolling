@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
 
+from models.Graph import Graph
+from services.algorithms.IAlgorithm import IAlgorithm
+
 class IAlgorithmModel(ABC):
     @property
     @abstractmethod
@@ -15,4 +18,12 @@ class IAlgorithmModel(ABC):
         """
         Returns the name of the algorithm.
         """
+        pass
+
+    @abstractmethod
+    def initialize_algorithm(
+            self,
+            nb_agents: int,
+            graph: Graph
+        ) -> IAlgorithm:
         pass

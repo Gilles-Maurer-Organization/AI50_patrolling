@@ -4,3 +4,5 @@ pygame_gui==0.6.12
 pytest==7.2.0
 pytest-cov==3.0.0
 tox==4.4.0
+scipy==1.14.1
+matplotlib==3.10.0

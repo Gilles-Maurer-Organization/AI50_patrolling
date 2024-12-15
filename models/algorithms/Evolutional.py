@@ -1,5 +1,8 @@
+from models import Graph
 from models.algorithms.IAlgorithmModel import IAlgorithmModel
 from models.TextBox import TextBox
+from services.algorithms.EvolutionalAlgorithm import EvolutionalAlgorithm
+from services.algorithms.IAlgorithm import IAlgorithm
 
 class Evolutional(IAlgorithmModel):
     """
@@ -15,12 +18,10 @@ class Evolutional(IAlgorithmModel):
     def __init__(
         self,
         nb_iterations: int = 100,
-        population_size: int = 10,
         nb_individuals: int = 10
     ) -> None:
         self._parameters = {
             "Number of iterations": TextBox(str(nb_iterations)),
-            "Population size": TextBox(str(population_size)),
             "Number of individuals": TextBox(str(nb_individuals))
         }
 
@@ -45,3 +46,22 @@ class Evolutional(IAlgorithmModel):
             str: The name of the algorithm, "Evolutional Algorithm".
         """
         return self._name
+    
+     
+    def initialize_algorithm(
+            self,
+            nb_agents : int,
+            graph : Graph
+        ) -> IAlgorithm :
+        """
+        Initializes the Evolutional Algorithm with the given parameters.
+        
+        Args:
+            nb_agents (int): The number of agents to use in the algorithm.
+            graph (Graph): The graph on which the algorithm will be applied.
+        
+        Returns:
+            EvolutionalAlgorithm: An instance of the EvolutionalAlgorithm
+            class initialized with the given parameters.
+        """
+        return EvolutionalAlgorithm(self._parameters, nb_agents, graph)

@@ -75,6 +75,7 @@ class ParametersController:
             graph_controller,
             simulation_controller,
             self._scrolling_list_controller,
+            self._text_box_controller,
             CompleteGraphService,
             csv_service
         )
