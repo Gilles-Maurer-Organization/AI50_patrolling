@@ -2,6 +2,7 @@ from models import Graph
 from models.algorithms.IAlgorithmModel import IAlgorithmModel
 from models.TextBox import TextBox
 from services.algorithms.EvolutionalAlgorithm import EvolutionalAlgorithm
+from services.algorithms.IAlgorithm import IAlgorithm
 
 class Evolutional(IAlgorithmModel):
     """
@@ -51,7 +52,7 @@ class Evolutional(IAlgorithmModel):
             self,
             nb_agents : int,
             graph : Graph
-        ) -> None :
+        ) -> IAlgorithm :
         """
         Initializes the Evolutional Algorithm with the given parameters.
         

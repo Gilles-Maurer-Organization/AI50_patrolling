@@ -1,6 +1,7 @@
 from models.Graph import Graph
 from models.TextBox import TextBox
 from models.algorithms.IAlgorithmModel import IAlgorithmModel
+from services.algorithms.IAlgorithm import IAlgorithm
 from services.algorithms.KMeansAlgorithm import KMeansAlgorithm
 
 class KMeans(IAlgorithmModel):
@@ -46,7 +47,7 @@ class KMeans(IAlgorithmModel):
             self,
             nb_agents : int,
             graph : Graph
-        ) -> None :
+        ) -> IAlgorithm :
         """
         Initializes the K-Means Algorithm with the given parameters.
         

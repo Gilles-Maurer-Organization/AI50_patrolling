@@ -125,9 +125,9 @@ class StartButtonController(BaseButtonController):
             return
 
         graph = self._graph_controller.graph
-        self._algorithm = selected_algorithm.initialize_algorithm(nb_agents, graph)
+        _algorithm = selected_algorithm.initialize_algorithm(nb_agents, graph)
         
-        solution: list[list[int]] = self._algorithm.launch()
+        solution: list[list[int]] = _algorithm.launch()
 
         # Convert the solution paths to use the shortest paths in the real graph
         real_paths = []

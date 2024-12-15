@@ -2,6 +2,7 @@ from models.Graph import Graph
 from models.TextBox import TextBox
 from models.algorithms.IAlgorithmModel import IAlgorithmModel
 from services.algorithms.AntColonyAlgorithm import AntColonyAlgorithm
+from services.algorithms.IAlgorithm import IAlgorithm
 
 class AntColony(IAlgorithmModel):
     """
@@ -57,7 +58,7 @@ class AntColony(IAlgorithmModel):
             self,
             nb_agents : int,
             graph : Graph
-        ) -> None :
+        ) -> IAlgorithm :
         """
         Initializes the Ant Colony algorithm with the given parameters.
         
