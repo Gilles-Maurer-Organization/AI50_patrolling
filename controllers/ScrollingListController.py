@@ -8,8 +8,6 @@ from models.algorithms.Evolutional import Evolutional
 from models.algorithms.Naive import Naive
 from views.ParametersView import ParametersView
 from views.ScrollingListView import ScrollingListView
-from services.algorithms.IAlgorithm import IAlgorithm
-
 
 class ScrollingListController:
     """
