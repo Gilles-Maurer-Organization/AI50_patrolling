@@ -437,7 +437,6 @@ class GraphController:
         """
         if not csv_path.endswith('.csv'):
             raise ValueError(f"{csv_path} is not a valid file.")
-            return
 
         self._image_name = self._csv_service.get_image_name(csv_path).strip()
         self._load_background_image(self._image_name)
