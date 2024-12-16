@@ -21,6 +21,7 @@ class SimulationController:
     """
     def __init__(self, graph_controller: GraphController) -> None:
         self._agents = None
+        self._agents_view = []
         self._simulation_started = False
         self._graph_controller = graph_controller
         self._start_time = None
