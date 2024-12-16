@@ -57,7 +57,7 @@ class NaiveAlgorithm(IAlgorithm):
                 
         self.naive_shortest_path()
         
-        #Dispatch each agents to optimize their paths
+        # Dispatch each agents to optimize their paths
         if(self.nb_agents > 1):
             for idx in range(self.nb_agents):
                 agent_start_index = int(len(self.path)/self.nb_agents)

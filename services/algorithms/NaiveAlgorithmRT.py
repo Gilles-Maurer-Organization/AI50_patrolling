@@ -20,10 +20,7 @@ class NaiveAlgorithmRT(IAlgorithm):
         self.distance_matrix = distance_matrix
         self.nb_nodes = distance_matrix.shape[0]
         self.nb_agents = nb_agents
-        self.paths = [[] for _ in range(nb_agents)]  # Chemins de chaque agent
         self.positions = [0] * nb_agents  # Position actuelle de chaque agent (commencent au nœud 0)
-        self.visited = [False] * self.nb_nodes  # Les nœuds déjà visités
-        self.oisivete = [0] * self.nb_nodes  # Oisiveté de chaque nœud
         self.targets = [None] * nb_agents  # Prochains nœuds cibles pour chaque agent
     
     def find_next_node(self, agent_id):
@@ -49,12 +46,12 @@ class NaiveAlgorithmRT(IAlgorithm):
         
         return nearest_node
 
-    def update_targets(self):
-        for agent_id in range(self.nb_agents):
-            if self.targets[agent_id] is None or self.visited[self.targets[agent_id]]:
-                # Recalculer le prochain nœud uniquement si l'agent n'a pas encore de cible ou que sa cible est déjà visitée
-                next_node = self.find_next_node(agent_id)
-                self.targets[agent_id] = next_node
+    def update_targets(self,agent_id):
+        
+        if self.targets[agent_id] is None or self.visited[self.targets[agent_id]]:
+            # Recalculer le prochain nœud uniquement si l'agent n'a pas encore de cible ou que sa cible est déjà visitée
+            next_node = self.find_next_node(agent_id)
+            self.targets[agent_id] = next_node
 
     def resolve_conflicts(self):
         # Si plusieurs agents ciblent le même nœud, résoudre le conflit par priorité d'index d'agent
@@ -73,36 +70,25 @@ class NaiveAlgorithmRT(IAlgorithm):
                 for i in conflicted_agents[1:]:
                     self.targets[i] = None
 
-    def step(self):
+    def step(self,agent_id):
         # Mise à jour des cibles pour chaque agent
-        self.update_targets()
+        self.update_targets(agent_id)
         
         # Résoudre les conflits de cibles
         self.resolve_conflicts()
-        
-        # Faire avancer les agents et mettre à jour les oisivetés
-        for node_id in range(self.nb_nodes):
-            if not self.visited[node_id]:
-                self.oisivete[node_id] += 1  # Augmenter l'oisiveté de tous les nœuds non visités
+    
 
         for agent_id in range(self.nb_agents):
             target = self.targets[agent_id]
             if target is not None:
                 # Déplacer l'agent vers le nœud cible
                 self.positions[agent_id] = target
-                self.paths[agent_id].append(target)
-                self.visited[target] = True  # Marquer le nœud comme visité
-                self.oisivete[target] = 0  # Réinitialiser l'oisiveté du nœud visité
 
     def launch(self):
-        self.step()
-        
-        # Retourner chaque agent à son point de départ pour fermer le cycle
-        for agent_id in range(self.nb_agents):
-            self.paths[agent_id].append(self.paths[agent_id][0])
+        while True:
+            for agent_id in range(self.nb_agents):
+                self.step(agent_id)
 
-        print(f"Chemins finaux : {self.paths}")
-        return self.paths
 
 
 
@@ -188,13 +174,12 @@ def main():
         [1028.0016834969122, 1082.0016834969122, 1157.0016834969122, 1211.0016834969122, 1076.0, 1032.0, 973.0, 985.0, 978.0, 929.0, 962.0016834969122, 1004.0016834969122, 1097.0016834969122, 927.0016834969122, 1020.0016834969122, 1055.0070596856035, 890.0016834969122, 983.0016834969122, 856.0016834969122, 813.0016834969122, 747.0016834969122, 872.0016834969122, 940.0016834969122, 868.0016834969122, 450.0, 585.0, 499.0, 722.0, 808.0, 638.0, 711.0, 783.0, 841.0, 774.0, 846.0, 808.0, 928.0016834969122, 865.0, 974.0016834969122, 784.0, 928.0, 932.0, 856.0, 888.0, 812.0, 741.0, 669.0, 598.0, 527.0, 558.0, 627.0, 713.0, 571.0, 642.0, 769.0, 403.0, 404.0, 343.0, 424.0, 495.0, 565.0, 623.0, 554.0, 483.0, 487.0, 225.0, 334.0, 328.0, 431.0, 380.0, 89.0, 182.0, 0.0],
     ]
 
-    #Vrai graphe, 
 
     distance_matrix = np.array(distance_matrix)
     
     # Création d'une instance avec 3 agents
-    multi_agent_tsp = NaiveAlgorithmRT(distance_matrix, nb_agents = nb_agents)
-    multi_agent_tsp.launch()
+    naive_agent_RT = NaiveAlgorithmRT(distance_matrix, nb_agents = nb_agents)
+    naive_agent_RT.launch()
     
 
 
