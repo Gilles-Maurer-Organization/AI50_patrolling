@@ -45,6 +45,7 @@ class SimulationController:
         """
         self._simulation_started = started
         self._start_time = pygame.time.get_ticks()
+        self._graph_controller.is_in_simulation = True
 
     def initialize_agents(self, paths: list[int]) -> None:
         """
