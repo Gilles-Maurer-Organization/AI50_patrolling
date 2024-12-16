@@ -3,6 +3,15 @@ import os
 import pygame
 
 class AgentView:
+    """
+    This class draws an agent on the view of the graph.
+
+    Attributes:
+        _screen (pygame.Surface): The surface on which the agent is drawn.
+        _image_path (str): The path of the agent's image.
+        _self._image (pygame.Surface): The surface of agent's image on the
+            graph.
+    """
     def __init__(self, screen: pygame.Surface) -> None:
         self._screen = screen
         self._image_path = "assets/agent/agent.png"
@@ -19,7 +28,7 @@ class AgentView:
         Draws the agent's image on the screen at the specified position.
 
         Args:
-            position: A tuple (x, y) indicating where to draw the image.
+            position (tuple[int, int]): A tuple (x, y) indicating where to draw the image.
         """
         if self._image:
             offset_x = self._image_width // 2
