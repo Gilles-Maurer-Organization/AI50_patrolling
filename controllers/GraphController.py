@@ -382,7 +382,7 @@ class GraphController:
 
         self._load_graph(graph_data)
 
-    def import_graph_from_image(self, image_path: str) -> None:
+    def import_graph_from_image(self, image_path: str) -> bool:
         """
         Imports a graph background from an image file.
 
@@ -408,17 +408,18 @@ class GraphController:
                   Displaying image only.")
             self.clear_graph()
             self.update()
-            return
+            return True
 
         # if a csv file exists, load the associated graph
         match = re.search(r'graph_(\d+)\.csv', csv_path)
         if match:
             file_number = match.group(1)
             self.load_graph_from_csv(file_number)
+            return True
         else:
             raise ValueError(f"Unexpected CSV path format: {csv_path}")
 
-    def import_graph_from_csv(self, csv_path: str) -> None:
+    def import_graph_from_csv(self, csv_path: str) -> bool:
         """
         Imports a graph's data from a specified CSV file.
 
@@ -427,13 +428,14 @@ class GraphController:
         """
         if not csv_path.endswith('.csv'):
             print(f"{csv_path} is not a valid CSV file.")
-            return
+            return False
 
         self._image_name = self._csv_service.get_image_name(csv_path).strip()
         self._load_background_image(self._image_name)
         graph_data = self._csv_service.load(csv_path)
         
         self._load_graph(graph_data)
+        return True
 
     def _load_graph(self, graph_data: GraphData) -> None:
         """
