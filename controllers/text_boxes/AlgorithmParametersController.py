@@ -36,16 +36,33 @@ class AlgorithmParametersController(BaseTextBoxController):
                 parameters need to be displayed and edited.
         """
         self._text_boxes.clear()
-        offset_y = 0
-        for label, parameter in algorithm.parameters.items():
+    
+        padding_x = 10
+        padding_y = 40
+        
+        text_box_width = 290 // 2 - padding_x // 2
+        text_box_height = 40
+
+        start_x = 10
+        start_y = 190
+
+        col_gap = text_box_width + padding_x
+        row_gap = text_box_height + padding_y
+
+        for i, (label, parameter) in enumerate(algorithm.parameters.items()):
+            col = i % 2
+            row = i // 2
+
+            x = start_x + col * col_gap
+            y = start_y + row * row_gap
+
             text_box_view = AlgorithmParametersView(
                 self._parameters_view.screen,
-                10,
-                190 + offset_y,
-                190,
-                40,
-                label_text = label
+                x,
+                y,
+                text_box_width,
+                text_box_height,
+                label_text=label
             )
             
             self.add_text_box(parameter, text_box_view)
-            offset_y += 77

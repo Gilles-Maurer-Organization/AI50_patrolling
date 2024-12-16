@@ -64,47 +64,47 @@ class TestAlgorithmParametersController(unittest.TestCase):
             mock_parameters_view.screen,
             10,
             190,
-            190,
+            140,
             40,
             label_text="Alpha"
             ),
             unittest.mock.call(
             mock_parameters_view.screen,
-            10,
-            267,
+            160,
             190,
+            140,
             40,
             label_text="Beta"
             ),
             unittest.mock.call(
             mock_parameters_view.screen,
             10,
-            344,
-            190,
+            270,
+            140,
             40,
             label_text="Evaporation rate"
             ),
             unittest.mock.call(
             mock_parameters_view.screen,
-            10,
-            421,
-            190,
+            160,
+            270,
+            140,
             40,
             label_text="Pheromone quantity"
             ),
             unittest.mock.call(
             mock_parameters_view.screen,
             10,
-            498,
-            190,
+            350,
+            140,
             40,
             label_text="Nb colony"
             ),
             unittest.mock.call(
             mock_parameters_view.screen,
-            10,
-            575,
-            190,
+            160,
+            350,
+            140,
             40,
             label_text="Nb iterations"
             )
