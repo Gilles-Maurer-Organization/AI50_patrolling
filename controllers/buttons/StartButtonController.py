@@ -76,7 +76,6 @@ class StartButtonController(BaseButtonController):
         Starts the simulation by initializing agents and launching the
         selected algorithm.
         """
-
         if self._graph_controller.is_graph_modified():
             self._graph_controller.save_graph()
             success = self._compute_store_and_save_graph_data()
@@ -100,7 +99,7 @@ class StartButtonController(BaseButtonController):
         Computes, stores, and saves the complete graph and shortest paths.
         """
         graph_data = self.compute_complete_graph_and_shortest_paths()
-        if not graph_data.adjacency_matrix:
+        if not graph_data or not graph_data.adjacency_matrix:
             return False
         if not graph_data.shortest_paths:
             raise ValueError('Shortest paths dictionnary is null while Complete Graph array exists.')
@@ -163,12 +162,15 @@ class StartButtonController(BaseButtonController):
                 all the data about shortest paths, adjacency matrix,
                 complete adjacency matrix and nodes list.
         """
-        simple_graph, node_positions = self._graph_controller._graph.compute_matrix()
+        simple_graph, node_positions = self._graph_controller.graph.compute_matrix()
         complete_graph = self._complete_graph_service(
             simple_graph=simple_graph,
             node_position=node_positions,
             path_finding_service=AStarService
         ).complete_graph
+
+        if not complete_graph:
+            return None
 
         shortest_paths = {}
         for start in range(len(simple_graph)):
