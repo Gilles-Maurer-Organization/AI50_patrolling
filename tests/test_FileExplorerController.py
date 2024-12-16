@@ -85,7 +85,7 @@ class TestFileExplorerController(unittest.TestCase):
         event.type = pygame.USEREVENT
         event.user_type = pygame_gui.UI_FILE_DIALOG_PATH_PICKED
         # We set the text of the event to the path we want to check
-        event.text = 'csv_files/graph_1.csv'
+        event.text = 'path/to/the/file.csv'
 
         # We create a new mock of our file dialog
         self.controller._file_explorer_view.file_explorer = MagicMock()
@@ -97,7 +97,7 @@ class TestFileExplorerController(unittest.TestCase):
         self.controller.handle_event(event)
 
         # We check that the path equalt to the good path
-        self.assertEqual(self.controller._file_explorer.path, event.text)
+        self.assertEqual(self.controller._file_explorer.path, 'path/to/the/file.csv')
 
         # We check that the close_file_explorer() method was called
         self.controller._close_file_explorer.assert_called_once()
@@ -125,11 +125,11 @@ class TestFileExplorerController(unittest.TestCase):
         pygame.quit()
 
     def test_handle_select_file_invalid_file(self):
-        # Simulate selecting an unsupported file type (for example .py)
+        # Simulate selecting an unsupported file type (for example .txt)
         event = MagicMock()
         event.type = pygame.USEREVENT
         event.user_type = pygame_gui.UI_FILE_DIALOG_PATH_PICKED
-        event.text = 'tests/test_FileExplorerController.py'
+        event.text = 'path/to/file.txt'
         event.ui_element = self.controller._file_explorer_view.file_explorer
 
         # Mock methods to ensure correct actions are taken
@@ -143,7 +143,7 @@ class TestFileExplorerController(unittest.TestCase):
         self.controller._handle_select_file(event)
 
         # Verify that the path is correctly set in the file explorer
-        self.assertEqual(self.controller._file_explorer.path, event.text)
+        self.assertEqual(self.controller._file_explorer.path, 'path/to/file.txt')
 
         # Ensure that neither import_graph_from_csv nor import_graph_from_image was called
         self.controller._graph_controller.import_graph_from_csv.assert_not_called()
