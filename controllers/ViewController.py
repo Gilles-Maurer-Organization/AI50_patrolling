@@ -83,12 +83,12 @@ class ViewController:
         
         Also handles drawing the file explorer if it is open.
         """
+        self._graph_controller.update()
         if self._simulation_controller.has_simulation_started():
-        
             self._simulation_controller.draw_simulation()
             self._simulation_data_controller.draw_simulation_data(self._graph_controller.graph)
         else:
             self._parameters_controller.draw_parameters()
-        self._graph_controller.update()
+        
         if self._file_explorer_controller.is_file_explorer_opened():
             self._file_explorer_controller.draw_file_explorer()
