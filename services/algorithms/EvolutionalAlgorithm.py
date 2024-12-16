@@ -80,22 +80,35 @@ class EvolutionalAlgorithm(IAlgorithm):
 
         # For each individual
         for _ in range(self.nb_individuals_in_pop):
-
+            
             # while the individual is not covering all nodes, we generate him
             # we generate another one (max 10 tries)
             nb_tries_individual = 0
             while (nb_tries_individual < max_tries):
+                
+                # list of available nodes
+                # used to prevent the agents from beginning at the same node
+                available_nodes = self.nodes_idx_list.tolist()
 
                 individual = []
                 # For each gene of the individual (a gene is a path of an agent)
-                for _ in range(self.nb_agents):
+                
+                for _  in range(self.nb_agents):
 
                     # while the generated gene already exists
                     # we generate another one (max 10 tries)
                     nb_tries_agent = 0
                     while (nb_tries_agent < max_tries):
+
+                        #randomly choosing the starting node
+                        starting_node = rd.choice(available_nodes)
+                        # removing the node
+                        available_nodes.remove(starting_node)
+                        
                         # Generate a random gene of the desired length
                         random_gene = rd.sample(self.nodes_idx_list.tolist(), gene_length)  # NOSONAR
+                        random_gene.insert(0, starting_node)
+
                         # Ensure the generated path does not already exist in the individual's genes
                         if random_gene not in individual:
                             individual.append(random_gene)
@@ -115,11 +128,13 @@ class EvolutionalAlgorithm(IAlgorithm):
 
                 else:
                     # if it's the last attempt, we add the individual (even if he's not valid )
+                    nb_tries_individual+=1
                     if nb_tries_individual == max_tries:
                         indicative_population.append(individual)
 
         # Transforming into np.array for later use
         indicative_population = np.array(indicative_population)
+
         return indicative_population
 
     def are_all_nodes_visited(self, individual: np.ndarray) -> bool:
@@ -569,7 +584,11 @@ class EvolutionalAlgorithm(IAlgorithm):
             # for each generated children
             # he passes through the validation process
             for new_child in created_children:
-                children[i] = self.child_validation_process(new_child)
+                #if the number of children is hit, we break
+                if i == nb_children:
+                    break
+                else:
+                    children[i] = self.child_validation_process(new_child)                
                 i += 1
 
         return children.astype(int)
@@ -620,14 +639,20 @@ class EvolutionalAlgorithm(IAlgorithm):
         # if the list is empty
         if not tuples_list:
             return 0
-
+        
         # getting the best individual by checking
         # the max mean occurrence and min mean length
-        best_individual = max(tuples_list, key=lambda x: (x[0].max(), -x[1].min()))
+        best_solution = (-999999,9999999)
 
+        for tuple in tuples_list:
+            
+            #checking if actual individual is better than the actual best 
+            if (tuple[0] > best_solution[0]) and (tuple[1] < best_solution[1] ):
+                best_solution = tuple
+    
         # looping over the elements of the list until we find the "best individual"
         for list_idx, list_tuple in enumerate(tuples_list):
-            if list_tuple == best_individual:
+            if list_tuple == best_solution:
                 return list_idx
 
     def clean_output_individual(self, individual: np.ndarray) -> np.ndarray:
@@ -692,6 +717,7 @@ class EvolutionalAlgorithm(IAlgorithm):
         nbr_enfants = self.nb_individuals_in_pop - nbr_parents
 
         for _ in range(self.nb_generations):
+
             # evaluating the fitness of the current population
             fitness = self.fitness()
 
