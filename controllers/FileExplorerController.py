@@ -107,25 +107,31 @@ class FileExplorerController:
         if event.ui_element == self._file_explorer_view.file_explorer:
             file_path = event.text
 
-            success = False
-
-            # We store the path into the file explorer model
             self._file_explorer.path = file_path
+
             if file_path.endswith('.csv'):
-                try:
-                    self._graph_controller.import_graph_from_csv(file_path)
-                except Exception as e:
-                    self._graph_controller.raise_error_message(str(e))
-                else:
-                    self._graph_controller.raise_message("Graph successfully imported!")
-                    self._on_file_imported()
+                self._import_file(file_path, self._graph_controller.import_graph_from_csv,
+                                  "Graph successfully imported!")
             else:
-                try:
-                    self._graph_controller.import_graph_from_image(file_path)
-                except Exception as e:
-                    self._graph_controller.raise_error_message(str(e))
-                else:
-                    self._graph_controller.raise_message("Image successfully imported!")
-                    self._on_file_imported()
+                self._import_file(file_path, self._graph_controller.import_graph_from_image,
+                                  "Image successfully imported!")
 
         self._close_file_explorer()
+
+    def _import_file(self, file_path: str, import_method: callable, success_message: str) -> None:
+        """
+        General method to handle the file import process (for both CSV and image files).
+
+        Args:
+            file_path (str): The path to the selected file.
+            import_method (callable): The method used to import the file (CSV or image).
+            success_message (str): The message to display upon successful import.
+        """
+        try:
+            import_method(file_path)
+        except Exception as e:
+            self._graph_controller.raise_error_message(str(e))
+        else:
+            self._graph_controller.raise_message(success_message)
+            if self._on_file_imported:  # Call the callback if it's defined
+                self._on_file_imported()
