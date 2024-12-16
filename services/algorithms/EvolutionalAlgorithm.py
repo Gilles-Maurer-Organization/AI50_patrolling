@@ -101,7 +101,7 @@ class EvolutionalAlgorithm(IAlgorithm):
                     while (nb_tries_agent < max_tries):
 
                         #randomly choosing the starting node
-                        starting_node = rd.choice(available_nodes)
+                        starting_node = rd.choice(available_nodes) #NOSONAR
                         # removing the node
                         available_nodes.remove(starting_node)
                         
