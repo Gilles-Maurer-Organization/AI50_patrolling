@@ -30,7 +30,10 @@ class IdlenessController:
                 label_ath_idleness_value = 0
             )
     
-    def draw_idlenesses(self):
+    def draw_idlenesses(self)-> None:
+        """
+        Draws the idleness values in the View.
+        """
 
         self._idleness.update_idleness()
 

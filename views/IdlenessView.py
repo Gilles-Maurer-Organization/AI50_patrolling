@@ -34,7 +34,11 @@ class IdlenessView:
             self._height
         )
 
-    def update_values(self, average_idleness: float, max_idleness: float, ath_idleness: float) -> None:
+    def update_values(self, 
+        average_idleness: float, 
+        max_idleness: float, 
+        ath_idleness: float
+    ) -> None:
         """
         Updates the values of average, max and all-tim highest idleness in the view.
         """
