@@ -8,6 +8,7 @@ from constants.Config import NODE_RADIUS, GRAPH_WINDOW_WIDTH, \
 from models.Agent import Agent
 from models.Graph import Graph
 from models.Node import Node
+from views.AgentView import AgentView
 from views.popup.PopupView import PopupView
 from views.popup.InfoPopupView import InfoPopupView
 from views.popup.ErrorPopupView import ErrorPopupView
@@ -237,13 +238,10 @@ class GraphView:
             agents (List[Agent]): A list of agents to be drawn on the
                 screen.
         """
-        for agent in agents:
-            pygame.draw.circle(
-                self._screen,
-                Colors.AGENT_COLOR.value,
-                (int(agent.x), int(agent.y)),
-                5
-            )
+        agent_views = [AgentView(self._screen) for _ in agents]
+        
+        for agent, agent_view in zip(agents, agent_views):
+            agent_view.draw((int(agent.x), int(agent.y)))
 
     def draw_line_full_extent(self, candidate: Node, axis: str) -> None:
         """
