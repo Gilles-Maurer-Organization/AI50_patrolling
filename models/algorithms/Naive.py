@@ -1,5 +1,7 @@
+from models.Graph import Graph
 from models.algorithms.IAlgorithmModel import IAlgorithmModel
-
+from services.algorithms.IAlgorithm import IAlgorithm
+from services.algorithms.NaiveAlgorithm import NaiveAlgorithm
 class Naive(IAlgorithmModel):
     """
     The Naive class implements a naive algorithm.
@@ -36,3 +38,21 @@ class Naive(IAlgorithmModel):
             str: The name of the algorithm, "Naive Algorithm".
         """
         return self._name
+    
+    def initialize_algorithm(
+            self,
+            nb_agents : int,
+            graph : Graph
+        ) -> IAlgorithm :
+        """
+        Initializes the Naive Algorithm with the given parameters.
+        
+        Args:
+            nb_agents (int): The number of agents to use in the algorithm.
+            graph (Graph): The graph on which the algorithm will be applied.
+        
+        Returns:
+            NaiveAlgorithm: An instance of the NaiveAlgorithm
+            class initialized with the given parameters.
+        """
+        return NaiveAlgorithm(nb_agents, graph)
