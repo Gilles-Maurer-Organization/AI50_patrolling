@@ -118,7 +118,12 @@ class FileExplorerController:
 
         self._close_file_explorer()
 
-    def _import_file(self, file_path: str, import_method: callable, success_message: str) -> None:
+    def _import_file(
+        self,
+        file_path: str,
+        import_method: callable,
+        success_message: str
+    ) -> None:
         """
         General method to handle the file import process (for both CSV and image files).
 
