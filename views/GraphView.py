@@ -142,16 +142,19 @@ class GraphView:
             )
 
         # Draw nodes
+        self._draw_nodes(graph, selected_node, dragging_node)
+
+        self._draw_edges(graph)
+
+    def _draw_nodes(self, graph: Graph, selected_node: Node, dragging_node: Node):
         for node in graph.nodes:
             color = self._get_node_color(node, selected_node, dragging_node)
             pygame.draw.circle(
                 self._screen,
                 color,
                 (node.x, node.y),
-                NODE_RADIUS
+                NODE_RADIUS * (1 + 0.1 * node.idleness) # Modify size based on the idleness
             )
-
-        self._draw_edges(graph)
 
     def draw_popup(self):
         """
