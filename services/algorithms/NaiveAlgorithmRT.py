@@ -107,7 +107,7 @@ class NaiveAlgorithmRT(IAlgorithm):
         self.update_targets(agent_id)
         
         # Résoudre les conflits de cibles
-        self.resolve_conflicts(agent_id)
+        self.resolve_conflicts()
 
         for agent_id in range(self.nb_agents):
             target = self.targets[agent_id]
