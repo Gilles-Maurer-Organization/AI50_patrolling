@@ -1,6 +1,8 @@
 import pygame
+import pygame
 from controllers.GraphController import GraphController
 from models.Agent import Agent
+from models.Node import Node
 from models.Node import Node
 
 class SimulationController:
@@ -98,7 +100,10 @@ class SimulationController:
         them on the graph.
         """
 
+
         if self._simulation_started:
+            self._popup_start_time = pygame.time.get_ticks()
             self.update_simulation()
+            self.update_node_idleness()
             self.update_node_idleness()
             self._graph_controller.draw_simulation(self._agents)
