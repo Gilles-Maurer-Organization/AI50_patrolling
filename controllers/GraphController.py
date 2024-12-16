@@ -313,6 +313,9 @@ class GraphController:
         scaled_width = bounds["scaled_width"]
         scaled_height = bounds["scaled_height"]
 
+        if margin_left is None or scaled_width is None:
+            return False
+
         return (margin_left < pos[0] < margin_left + scaled_width and
                 margin_top < pos[1] < margin_top + scaled_height)
 
