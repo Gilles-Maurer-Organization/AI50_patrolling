@@ -83,9 +83,7 @@ class ParametersController:
         )
 
         # Disabling certain buttons if the graph does not have an image
-        if not graph_controller.graph_has_an_image():
-            self._button_controller.disable_clear_button()
-            self._button_controller.disable_save_button()
+        self._enable_or_disable_buttons()
 
     def draw_parameters(self) -> None:
         """
@@ -157,13 +155,13 @@ class ParametersController:
         """
         self._algorithm_parameters_controller.handle_event(event)
 
-    def enable_start_button(self) -> bool:
+    def _enable_start_button(self) -> bool:
         """
         Enables the start button to initiate the simulation.
         """
         self._start_button_controller.enable_start_button()
 
-    def disable_start_button(self) -> bool:
+    def _disable_start_button(self) -> bool:
         """
         Disables the start button to prevent the simulation from
         starting.
@@ -180,7 +178,19 @@ class ParametersController:
             and self._text_box_controller.is_everything_filled()
             and not self._graph_controller.is_graph_empty()
         ):
-            self.enable_start_button()
+            self._enable_start_button()
         else:
-            self.disable_start_button()
+            self._disable_start_button()
+
+    def _enable_or_disable_buttons (self) -> None:
+        """
+        Checks if the graph has an image and enables or disables the
+        clear and save buttons accordingly.
+        """
+        if self._graph_controller.graph_has_an_image():
+            self._button_controller.enable_clear_button()
+            self._button_controller.enable_save_button()
+        else:
+            self._button_controller.disable_clear_button()
+            self._button_controller.disable_save_button()
 
