@@ -6,18 +6,18 @@ from views.IdlenessView import IdlenessView
 
 class IdlenessController:
     """
-    initialiser IdlenessData avec la liste des nodes du Graph
+    This class manages everything related to the Idleness of the simulation.
 
+    Attributes:
+        _simulation_data_view: the Simulation section of the View
+        _idleness: the Idleness Model
+        _idleness_view : the Idleness-data visualization
 
-    Faire une fct "update" qui:
-        - appelle IdlenessView.update_idleness()
-        - get la max
-        - get la moyenne
-        - l'envoie à la vue ? 
 
     """
     def __init__(self, nodes_list : list[Node], simulation_data_view: SimulationDataView)-> None:
         self._simulation_data_view = simulation_data_view
+        print("nb nodes" ,len(nodes_list))
         self._idleness = IdlenessData(nodes_list)
         self._idleness_view = IdlenessView(
                 self._simulation_data_view.screen,

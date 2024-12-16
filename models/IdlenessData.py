@@ -16,6 +16,8 @@ class IdlenessData:
 
         max_idleness: the maximal idleness during the simulation
 
+        all_time_highest_idleness : the all-time highest idleness of the simulation
+
         nodes_idleness_list: list containing the idleness of each node
           
     """
@@ -26,31 +28,35 @@ class IdlenessData:
         self.max_idleness = 0
         self.all_time_highest_idleness = 0
         self.graph_nodes = nodes_list
-    
+        
     def get_idleness_data(self) :
         """
-        returns the data (average and max idleness).
+        returns the data (average, max and a-t highest idleness).
         """
         return self.average_idleness, self.max_idleness, self.all_time_highest_idleness
     
-    #called from the controller ???? 
+    #
     def update_idleness(self) -> None:
         """
         updates the idleness values using a dedicated function.
         """
         self.compute_idleness_values()
 
-
-    #maybe put the code of this func directly inside of the "update" function ? 
     def compute_idleness_values(self) -> None:
         """
         Computes the average idleness of the current simulation.
+        Computes the highest idleness of the current simulation.
+        Computes the all-time highest idleness of the simulation.
+
         """
 
         idleness_values = [1,2,3,4,5]
+
         #retrieving all the idleness's in a list
+
         #for node in self.graph_nodes:
-        #    idleness_values.append(node.idleness)
+        #   idleness_values.append(node.idleness)
+            #print(node.x,node.y)
 
         #at the moment, generating random values for testing
         for idx, _ in enumerate(idleness_values):
@@ -62,6 +68,7 @@ class IdlenessData:
         #retrieving the max idleness
         max_id = np.max(idleness_values)
 
+        #check if there is a new all-time highest value
         if max_id > self.all_time_highest_idleness:
             self.all_time_highest_idleness = max_id
 
