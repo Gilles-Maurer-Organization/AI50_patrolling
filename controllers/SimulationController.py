@@ -22,6 +22,7 @@ class SimulationController:
         self._agents = None
         self._simulation_started = False
         self._graph_controller = graph_controller
+        self._start_time = None
 
     def has_simulation_started(self) -> bool:
         """
@@ -41,6 +42,7 @@ class SimulationController:
                 start or stop.
         """
         self._simulation_started = started
+        self._start_time = pygame.time.get_ticks()
 
     def initialize_agents(self, paths: list[int]) -> None:
         """
@@ -53,12 +55,13 @@ class SimulationController:
         self._agents = [Agent(path, self._graph_controller.graph)
                         for path in paths]
     
-    def is_agents_on_nodes(self, node: Node) -> bool:
+    def are_agents_on_node(self, node: Node) -> bool:
         """
         For each node verify if an agent is on it, and if so put the idleness at 0
         """
+        margin: int = 2
         for _, agent in enumerate(self._agents):
-            if (agent.x == node.x and agent.y == node.y):
+            if abs(agent.x - node.x) <= margin and abs(agent.y - node.y) <= margin:
                 return True
         
         return False
@@ -79,14 +82,14 @@ class SimulationController:
         elapsed_time = pygame.time.get_ticks() - self._start_time
                 
         for node in self._graph_controller.graph.nodes:
-            if self.is_agents_on_nodes(node):
-                node.idleness =  0
+            if self.are_agents_on_node(node):
+                node.idleness = 0
             else:
                 if elapsed_time >= 1000:
                     node.idleness += 1
         
         if elapsed_time >= 1000:
-            self._start_time = elapsed_time      
+            self._start_time = pygame.time.get_ticks()      
             
             
     def draw_simulation(self) -> None:
@@ -96,7 +99,6 @@ class SimulationController:
         """
 
         if self._simulation_started:
-            self._popup_start_time = pygame.time.get_ticks()
             self.update_simulation()
             self.update_node_idleness()
             self._graph_controller.draw_simulation(self._agents)

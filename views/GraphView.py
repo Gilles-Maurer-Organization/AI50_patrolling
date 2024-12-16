@@ -4,7 +4,7 @@ import pygame
 
 from constants.Colors import Colors
 from constants.Config import NODE_RADIUS, GRAPH_WINDOW_WIDTH, \
-    GRAPH_WINDOW_HEIGHT
+    GRAPH_WINDOW_HEIGHT, MAX_IDLENESS
 from models.Agent import Agent
 from models.Graph import Graph
 from models.Node import Node
@@ -141,10 +141,10 @@ class GraphView:
                 (self._margin_left, self._margin_top)
             )
 
+        self._draw_edges(graph)
+
         # Draw nodes
         self._draw_nodes(graph, selected_node, dragging_node)
-
-        self._draw_edges(graph)
 
     def _draw_nodes(self, graph: Graph, selected_node: Node, dragging_node: Node):
         for node in graph.nodes:
@@ -153,7 +153,7 @@ class GraphView:
                 self._screen,
                 color,
                 (node.x, node.y),
-                NODE_RADIUS * (1 + 0.1 * node.idleness) # Modify size based on the idleness
+                min(NODE_RADIUS * (1 + 0.05 * MAX_IDLENESS), NODE_RADIUS * (1 + 0.05 * node.idleness)) # Modify size based on the idleness
             )
 
     def draw_popup(self):
@@ -193,7 +193,20 @@ class GraphView:
         elif node == dragging_node:
             return Colors.DRAGGING_NODE_COLOR.value
         else:
-            return Colors.NODE_COLOR.value
+            min_color = Colors.NODE_COLOR_MIN.value
+            max_color = Colors.NODE_COLOR_MAX.value
+
+            if node.idleness >= MAX_IDLENESS:
+                return max_color
+
+            # Calculate the color based on idleness
+            ratio = node.idleness / MAX_IDLENESS
+            color = (
+                min_color[0] + (max_color[0] - min_color[0]) * ratio,
+                min_color[1] + (max_color[1] - min_color[1]) * ratio,
+                min_color[2] + (max_color[2] - min_color[2]) * ratio
+            )
+            return color
 
     def _draw_edges(self, graph: Graph) -> None:
         """

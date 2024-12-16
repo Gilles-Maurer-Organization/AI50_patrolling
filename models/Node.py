@@ -91,4 +91,4 @@ class Node:
         """
         if not isinstance(new_idleness, int):
             raise ValueError("new idleness must be an int value.")
-        self._y = new_idleness
+        self._idleness = new_idleness

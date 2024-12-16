@@ -40,17 +40,22 @@ class KMeansAlgorithm(IAlgorithm):
             result (list of list of int) : path found for each agent.
         """
         best_result = math.inf
+        best_clusters_attribution = np.zeros(self._nb_clusters)
         best_clusters = {}
 
         for _ in range(self._nb_launch_kmeans):
             # Run KMean algorithm to group the nodes
-            self._group_nodes() 
+            cluster_attribution = self._group_nodes() 
             result = self._evaluate_kmean()
             if result < best_result: 
                 best_result = result
                 best_clusters = self._clusters
+                best_clusters_attribution = cluster_attribution
 
         self._clusters = best_clusters
+
+        if self._active_plot:
+            self._plot(best_clusters_attribution)
 
         # Run genetic algorithm to connect the nodes in the same cluster
         result = self._connect_nodes()
@@ -59,7 +64,7 @@ class KMeansAlgorithm(IAlgorithm):
     
 
 
-    def _group_nodes(self) -> None: 
+    def _group_nodes(self) -> np.ndarray[int]: 
         """
         Create one cluster by agent and optimize the attribution 
         of each node in a cluster following KMeans algorithm.
@@ -84,8 +89,7 @@ class KMeansAlgorithm(IAlgorithm):
 
             i += 1
 
-        if self._active_plot:
-            self._plot(clusters_attribution)
+        return clusters_attribution
 
 
     def _initialize_centers(self) -> None: 
