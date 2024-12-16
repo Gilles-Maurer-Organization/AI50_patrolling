@@ -1,12 +1,14 @@
 import unittest
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import MagicMock, Mock
+
 import pygame
 import pygame_gui
 from pygame_gui import UIManager
-from models.FileExplorer import FileExplorer
-from views.FileExplorerView import FileExplorerView
+
 from controllers.FileExplorerController import FileExplorerController
 from controllers.GraphController import GraphController
+from models.FileExplorer import FileExplorer
+from views.FileExplorerView import FileExplorerView
 
 
 class TestFileExplorerController(unittest.TestCase):
@@ -121,3 +123,35 @@ class TestFileExplorerController(unittest.TestCase):
 
     def tearDown(self):
         pygame.quit()
+
+    def test_handle_select_file_invalid_file(self):
+        # Simulate selecting an unsupported file type (for example .txt)
+        event = MagicMock()
+        event.type = pygame.USEREVENT
+        event.user_type = pygame_gui.UI_FILE_DIALOG_PATH_PICKED
+        event.text = 'path/to/file.txt'
+        event.ui_element = self.controller._file_explorer_view.file_explorer
+
+        # Mock methods to ensure correct actions are taken
+        self.controller._graph_controller.import_graph_from_csv = MagicMock()
+        self.controller._graph_controller.import_graph_from_image = MagicMock()
+        self.controller._graph_controller.raise_message = MagicMock()
+        self.controller._graph_controller.raise_error_message = MagicMock()
+        self.controller._close_file_explorer = MagicMock()
+
+        # Call the method
+        self.controller._handle_select_file(event)
+
+        # Verify that the path is correctly set in the file explorer
+        self.assertEqual(self.controller._file_explorer.path, 'path/to/file.txt')
+
+        # Ensure that neither import_graph_from_csv nor import_graph_from_image was called
+        self.controller._graph_controller.import_graph_from_csv.assert_not_called()
+        self.controller._graph_controller.import_graph_from_image.assert_not_called()
+
+        # Check that an error message was raised for unsupported file type
+        self.controller._graph_controller.raise_error_message.assert_called_once_with("Unsupported file type!")
+
+        # Verify that the file explorer is closed
+        self.controller._close_file_explorer.assert_called_once()
+
