@@ -116,17 +116,35 @@ class NodeController:
         self._graph.update_distances(self._dragging_node)
         self._dragging_node = None
 
-    def drag_node(self, pos: tuple[int, int]) -> None:
+    def drag_node(
+        self,
+        pos: tuple[int, int],
+        snapping_enabled: bool
+    ) -> Optional[dict[str, Node | None]]:
         """
         Moves the dragged node according to the current mouse position.
+        Either with a snapping process, or without.
 
         Args:
-            pos (tuple of float): The current coordinates of the mouse
-                cursor (x, y).
+            pos (tuple of float): The current coordinates of th
+                mouse's cursor (x, y).
+
+        Returns:
+            dict[str, Node | None] (optional): a dictionary of the
+                candidates that pass the snap sensitivity check,
+                composed of the related node with its axis.
+                Returns None if no candidates are found.
         """
         if self._dragging_node is not None:
-            # Update the node's position with the current mouse coordinates
-            self._dragging_node.x, self._dragging_node.y = pos
+            if snapping_enabled:
+                candidates = self.move_node_with_snapping(
+                    self._dragging_node, pos[0], pos[1], self._graph.nodes, mouse_position=pos
+                )
+                return candidates
+            else:
+                 self._dragging_node.x, self._dragging_node.y = pos
+            
+        return None
 
     def select_node(self, node: Node) -> None:
         """
@@ -147,7 +165,7 @@ class NodeController:
         """
         self._selected_node = None
 
-    def get_node_at_position(self, pos: tuple[int, int]):
+    def get_node_at_position(self, pos: tuple[int, int]) -> Optional[Node]:
         """
         Finds and returns the node located at the specified (x, y)
         coordinates based on the user's mouse click.
@@ -156,8 +174,8 @@ class NodeController:
             pos (tuple of int): The mouse click coordinates (x, y).
 
         Returns:
-            Node: The node located at the specified coordinates, or
-                None if no node is found.
+            Node (optional): The node located at the specified
+                coordinates, or None if no node is found.
         """
         for node in self._graph.nodes:
             if (
@@ -166,3 +184,69 @@ class NodeController:
             ):
                 return node
         return None
+    
+    def move_node_with_snapping(
+        self,
+        node: Node,
+        new_x: int,
+        new_y: int,
+        nodes: list[Node],
+        mouse_position: tuple[int, int],
+        threshold: int = 10,
+    ) -> Optional[dict[str, Node | None]]:
+        """
+        Moves a node with a snapping process that helps the user to
+        align nodes on the user interface.
+
+        Args:
+            node (Node): the dragged node.
+            new_x (int): the new x position of the node when a snap is
+                detected on the y axis.
+            new_y (int): the new y position of the node when a snap is
+                detected on the y axis.
+            nodes (list[Node]): the list of nodes in the graph used to
+                find any candidate.
+            mouse_position (tuple[int, int]): the user's cursor
+                position when dragging the node.
+            threshold (int, optional): the sensivity of the snapping.
+
+        Returns:
+            dict[str, Node | None] (optional): a dictionary of the
+                candidates that pass the snap sensitivity check,
+                composed of the related node with its axis.
+                Returns None if no candidates are found.
+        """
+        if mouse_position:
+            distance_x = abs(mouse_position[0] - node.x)
+            distance_y = abs(mouse_position[1] - node.y)
+
+            # If the mouse is too far from the thresold,
+            # move the node to the position of the mouse
+            if distance_x > threshold or distance_y > threshold:
+                node.x, node.y = mouse_position
+                # Don't need to search for candidates
+                return None
+
+        # If the mouse is close enough, search for snap candidates
+        candidates = self._graph.find_alignment_candidates(
+            node,
+            nodes,
+            threshold
+        )
+        
+        # If a candidate is found on the x axis, we apply the
+        # x position of the candidate
+        if candidates.get("x"):
+            new_x = candidates["x"].x
+
+        # If a candidate is found on the y axis, we apply the
+        # y position of the candidate
+        if candidates.get("y"):
+            new_y = candidates["y"].y
+
+        # Move the coordinates of the node (after or without snap)
+        node.x, node.y = new_x, new_y
+
+        return candidates
+
+

@@ -58,10 +58,15 @@ class GraphController:
 
         # Initialize node and edge controllers
         self._node_controller = NodeController(self._graph)
-        self._edge_controller = EdgeController(self._graph,
-                                               self._node_controller)
+        self._edge_controller = EdgeController(
+            self._graph,
+            self._node_controller
+        )
 
         self._image_name = ""
+
+        self._alignment_lines = {}
+        self._snapping_enabled = False
 
     @property
     def graph(self) -> Graph:
@@ -119,7 +124,10 @@ class GraphController:
             pos: A tuple representing the (x, y) coordinates of the new
                 position.
         """
-        self._node_controller.drag_node(pos)
+        candidates = self._node_controller.drag_node(pos, self._snapping_enabled)
+
+        if candidates:
+            self._alignment_lines = candidates
 
     @mark_graph_as_modified
     def _create_link(self, pos: tuple[int, int]) -> None:
@@ -156,6 +164,7 @@ class GraphController:
         Ends the current node dragging operation.
         """
         self._node_controller.end_drag()
+        self._alignment_lines.clear()
 
     def _clear_selection(self) -> None:
         """
@@ -297,10 +306,24 @@ class GraphController:
         """
         Updates the graph view to reflect the current state of the model.
         """
-        self._graph_view.draw_graph(self._graph,
-                                    self._node_controller.selected_node,
-                                    self._node_controller.dragging_node)
+        self._graph_view.draw_graph(
+            self._graph,
+            self._node_controller.selected_node,
+            self._node_controller.dragging_node
+        )
         self._graph_view.draw_popup()
+        self._draw_alignment_lines()
+        
+    def _draw_alignment_lines(self) -> None:
+        """
+        Draws the alignment's line for each candidate found.
+        """
+        for axis, candidate in self._alignment_lines.items():
+            if candidate:
+                self._graph_view.draw_line_full_extent(
+                    candidate,
+                    axis,
+                )
 
     def save_graph(self) -> None:
         """
@@ -497,3 +520,6 @@ class GraphController:
         This method triggers an error popup with a specific message.
         """
         self._graph_view.show_popup(message)
+
+    def set_snapping_enabled(self, snapping_enabled) -> None:
+        self._snapping_enabled = snapping_enabled

@@ -10,7 +10,6 @@ from views.ParametersView import ParametersView
 from views.ScrollingListView import ScrollingListView
 from services.algorithms.IAlgorithm import IAlgorithm
 
-
 class ScrollingListController:
     """
     The ScrollingListController handles the logic and interaction of

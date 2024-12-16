@@ -58,10 +58,12 @@ class ScrollingListView:
         self._text_color = Colors.TEXT_BOX_TEXT.value
 
         self._font = pygame.font.SysFont("Arial", 16)
-        self._scrolling_list_rect = pygame.Rect(self._x,
-                                                self._y,
-                                                self._width,
-                                                self._height)
+        self._scrolling_list_rect = pygame.Rect(
+            self._x,
+            self._y,
+            self._width,
+            self._height
+        )
 
         self._icon_path = 'assets/scrolling_icon.png'
 
@@ -109,10 +111,12 @@ class ScrollingListView:
             selected_algorithm (IAlgorithmModel, optional): The
                 selected algorithm. Defaults to None.
         """
-        pygame.draw.rect(self._screen,
-                         self._color,
-                         self._scrolling_list_rect,
-                         border_radius=6)
+        pygame.draw.rect(
+            self._screen,
+            self._color,
+            self._scrolling_list_rect,
+            border_radius=6
+        )
         
         text = self._font.render(
             selected_algorithm.name if selected_algorithm else 'Select algorithm',
