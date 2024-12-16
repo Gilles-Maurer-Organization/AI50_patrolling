@@ -153,7 +153,10 @@ class GraphView:
                 self._screen,
                 color,
                 (node.x, node.y),
-                min(NODE_RADIUS * (1 + 0.05 * MAX_IDLENESS), NODE_RADIUS * (1 + 0.05 * node.idleness)) # Modify size based on the idleness
+                min(
+                    NODE_RADIUS * (1 + 0.05 * MAX_IDLENESS), 
+                    NODE_RADIUS * (1 + 0.05 * node.idleness)
+                ) # Modify size based on the idleness
             )
 
     def draw_popup(self):
