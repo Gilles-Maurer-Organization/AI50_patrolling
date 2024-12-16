@@ -1,5 +1,7 @@
+import pygame
 from controllers.GraphController import GraphController
 from models.Agent import Agent
+from models.Node import Node
 
 class SimulationController:
     """
@@ -51,18 +53,50 @@ class SimulationController:
         self._agents = [Agent(path, self._graph_controller.graph)
                         for path in paths]
     
+    def is_agents_on_nodes(self, node: Node) -> bool:
+        """
+        For each node verify if an agent is on it, and if so put the idleness at 0
+        """
+        for _, agent in enumerate(self._agents):
+            if (agent.x == node.x and agent.y == node.y):
+                return True
+        
+        return False
+        
+
+
     def update_simulation(self) -> None:
         """
         Updates the simulation by moving each agent along its path.
         """
         for _, agent in enumerate(self._agents):
             agent.move()
-    
+
+    def update_node_idleness(self) -> None:
+        """
+        Updates the idleness of each node.
+        """
+        elapsed_time = pygame.time.get_ticks() - self._start_time
+                
+        for node in self._graph_controller.graph.nodes:
+            if self.is_agents_on_nodes(node):
+                node.idleness =  0
+            else:
+                if elapsed_time >= 1000:
+                    node.idleness += 1
+        
+        if elapsed_time >= 1000:
+            self._start_time = elapsed_time      
+            
+            
     def draw_simulation(self) -> None:
         """
         Draws the simulation by updating agent positions and rendering
         them on the graph.
         """
+
         if self._simulation_started:
+            self._popup_start_time = pygame.time.get_ticks()
             self.update_simulation()
+            self.update_node_idleness()
             self._graph_controller.draw_simulation(self._agents)
