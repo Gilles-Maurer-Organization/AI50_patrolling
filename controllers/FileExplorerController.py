@@ -29,7 +29,8 @@ class FileExplorerController:
     def __init__(
         self,
         screen: pygame.Surface,
-        graph_controller: GraphController
+        graph_controller: GraphController,
+        on_file_imported: callable = None  # Callback for button updates
     ) -> None:
         self._screen = screen
         self._graph_controller = graph_controller
@@ -37,6 +38,7 @@ class FileExplorerController:
         # We instanciate our model and view of file explorer
         self._file_explorer = FileExplorer()
         self._file_explorer_view = FileExplorerView(screen)
+        self._on_file_imported = on_file_imported  # Store the callback
 
     def set_is_opened(self, is_opened: bool) -> None:
         """
@@ -104,10 +106,19 @@ class FileExplorerController:
         """
         if event.ui_element == self._file_explorer_view.file_explorer:
             file_path = event.text
+
+            success = False
+
             # We store the path into the file explorer model
             self._file_explorer.path = file_path
             if file_path.endswith('.csv'):
-                self._graph_controller.import_graph_from_csv(file_path)
+                success = self._graph_controller.import_graph_from_csv(file_path)
             else:
-                self._graph_controller.import_graph_from_image(file_path)
-        self._close_file_explorer()
+                success = self._graph_controller.import_graph_from_image(file_path)
+
+            if success and self._on_file_imported:
+                self._on_file_imported()
+            elif not success:
+                print(f"Failed to import file: {file_path}")
+
+            self._close_file_explorer()

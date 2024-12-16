@@ -29,6 +29,7 @@ class ButtonController(BaseButtonController):
         super().__init__(parameters_view, graph_controller)
 
         self._file_explorer_controller = file_explorer_controller
+        self._file_explorer_controller._on_file_imported = self._enable_buttons  # Set callback
 
         self._save_button = Button("Save", self.save_action)
         self._import_button = Button("Import", self.import_action)
@@ -72,14 +73,13 @@ class ButtonController(BaseButtonController):
         """
         self._graph_controller.save_graph()
         print("Save action triggered")
+        self._should_enable_button()
 
     def import_action(self) -> None:
         """
         Imports a graph from the computer when the Import button is
         clicked.
         """
-        self.enable_clear_button()
-        self.enable_save_button()
         self._file_explorer_controller.set_is_opened(True)
 
     def clear_action(self) -> None:
@@ -87,7 +87,7 @@ class ButtonController(BaseButtonController):
         Clears the entire graph view when the Clear button is clicked.
         """
         self._graph_controller.clear_graph()
-        # TODO: add an info popup
+        self._enable_buttons()
 
     def disable_clear_button(self) -> None:
         """
@@ -115,3 +115,10 @@ class ButtonController(BaseButtonController):
         """
         self._save_button.enabled = True
 
+    def _enable_buttons(self) -> None:
+        """
+        Toggles the Save and Clear buttons based on the current state of
+        the graph.
+        """
+        self.enable_save_button()
+        self.enable_clear_button()
