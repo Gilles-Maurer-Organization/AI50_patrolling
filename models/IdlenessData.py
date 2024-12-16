@@ -1,9 +1,6 @@
-import random as rd
-
 import numpy as np
 
 from models.Node import Node
-from models.TextBox import TextBox
 
 class IdlenessData:
 
@@ -29,7 +26,7 @@ class IdlenessData:
         self.all_time_highest_idleness = 0
         self.graph_nodes = nodes_list
         
-    def get_idleness_data(self) :
+    def get_idleness_data(self) -> tuple[float, float, float] :
         """
         returns the data (average, max and a-t highest idleness).
         """
@@ -50,18 +47,12 @@ class IdlenessData:
 
         """
 
-        idleness_values = [1,2,3,4,5]
+        idleness_values = []
 
         #retrieving all the idleness's in a list
-
-        #for node in self.graph_nodes:
-        #   idleness_values.append(node.idleness)
-            #print(node.x,node.y)
-
-        #at the moment, generating random values for testing
-        for idx, _ in enumerate(idleness_values):
-            idleness_values[idx] = round(rd.uniform(1,5000)) # NOSONAR
-
+        for node in self.graph_nodes:
+           idleness_values.append(node.idleness)
+           
         #computing mean value of the list
         average_id = np.mean(idleness_values)
 
@@ -72,6 +63,6 @@ class IdlenessData:
         if max_id > self.all_time_highest_idleness:
             self.all_time_highest_idleness = max_id
 
-        #inserting it into the corresponding attribute
+        #inserting it into the corresponding attributes
         self.average_idleness = average_id  
         self.max_idleness = max_id          
