@@ -59,11 +59,11 @@ class ViewController:
 
         #used for initializing the SimulationController
         self.is_simulation_process_initialized = False
-        #self._simulation_data_controller = SimulationDataController(
-        #    self._screen
-        #)
+        self._simulation_data_controller = SimulationDataController(
+            self._screen
+        )
 
-    def handle_actions(self, event) -> None:
+    def handle_actions(self, event: pygame.event.Event) -> None:
         """
         Handles all user actions, delegating to the appropriate
         controllers based on the event type.
@@ -84,18 +84,9 @@ class ViewController:
         Also handles drawing the file explorer if it is open.
         """
         if self._simulation_controller.has_simulation_started():
-            
-            #only going into the if when we launch the simulation,
-            # thus initializing the controller only once
-            if not self.is_simulation_process_initialized:
-                self._simulation_data_controller = SimulationDataController(
-                self._screen,
-                self._graph_controller.graph.nodes
-                )
-                self.is_simulation_process_initialized = True
-            else:
-                self._simulation_controller.draw_simulation()
-                self._simulation_data_controller.draw_simulation_data()
+        
+            self._simulation_controller.draw_simulation()
+            self._simulation_data_controller.draw_simulation_data(self._graph_controller.graph)
         else:
             self._parameters_controller.draw_parameters()
         self._graph_controller.update()
