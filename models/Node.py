@@ -10,10 +10,8 @@ class Node:
         _y (int): The y-coordinate of the node.
     """
     def __init__(self, x: int, y: int, idleness: int = 0) -> None:
-    def __init__(self, x: int, y: int, idleness: int = 0) -> None:
         self._x = x
         self._y = y
-        self._idleness = idleness
         self._idleness = idleness
 
     @property
