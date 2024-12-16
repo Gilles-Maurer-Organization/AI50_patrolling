@@ -9,9 +9,10 @@ class Node:
         _x (int): The x-coordinate of the node.
         _y (int): The y-coordinate of the node.
     """
-    def __init__(self, x: int, y: int) -> None:
+    def __init__(self, x: int, y: int, idleness: int = 0) -> None:
         self._x = x
         self._y = y
+        self._idleness = idleness
 
     @property
     def x(self) -> int:
@@ -32,6 +33,28 @@ class Node:
             int: The y-coordinate of the point.
         """
         return self._y
+    
+    @property
+    def idleness(self) -> int:
+        """
+        Getter for the idleness.
+
+        Returns:
+            idleness: The idleness of the point.
+        """
+        return self._idleness
+        
+    
+    @property
+    def idleness(self) -> int:
+        """
+        Getter for the idleness.
+
+        Returns:
+            idleness: The idleness of the point.
+        """
+        return self._idleness
+        
     
     @x.setter
     def x(self, new_x: int) -> None:
@@ -64,3 +87,19 @@ class Node:
         if not isinstance(new_y, int):
             raise ValueError("new y must be an int value.")
         self._y = new_y
+
+    @idleness.setter
+    def idleness(self, new_idleness: int) -> None:
+        """
+        Setter for the idleness.
+        This method ensures the new value is an integer.
+        
+        Args:
+            new_idleness (int): The new idleness to set.
+        
+        Raises:
+            ValueError: If the provided value is not an integer.
+        """
+        if not isinstance(new_idleness, int):
+            raise ValueError("new idleness must be an int value.")
+        self._idleness = new_idleness
