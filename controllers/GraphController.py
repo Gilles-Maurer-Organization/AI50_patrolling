@@ -68,6 +68,8 @@ class GraphController:
         self._alignment_lines = {}
         self._snapping_enabled = False
 
+        self._is_in_simulation = False
+
     @property
     def graph(self) -> Graph:
         """
@@ -76,7 +78,17 @@ class GraphController:
         Returns:
             Graph: The graph model.
         """
-        return self._graph    
+        return self._graph
+    
+    @property
+    def is_in_simulation(self):
+        return self._is_in_simulation
+
+    @is_in_simulation.setter
+    def is_in_simulation(self, value):
+        if not isinstance(value, bool):
+            raise ValueError("is_in_simulation must be a boolean")
+        self._is_in_simulation = value
 
     def mark_graph_as_modified(func):
         """
@@ -219,19 +231,22 @@ class GraphController:
         """
         pos = pygame.mouse.get_pos()
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            node = self._node_controller.get_node_at_position(pos)
-            if event.button == 1:
-                self._handle_left_click(pos, node)
-            elif event.button == 3 and node is not None:
-                self._handle_right_click(pos, node)
+        # TODO : Si en simulation alors on bloque ça 
 
-        if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-            self._end_drag()
+        if not self.is_in_simulation:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                node = self._node_controller.get_node_at_position(pos)
+                if event.button == 1:
+                    self._handle_left_click(pos, node)
+                elif event.button == 3 and node is not None:
+                    self._handle_right_click(pos, node)
 
-        if event.type == pygame.MOUSEMOTION and event.buttons[0]:
-            if self._is_within_bounds(pos):
-                self._drag_node(pos)
+            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                self._end_drag()
+
+            if event.type == pygame.MOUSEMOTION and event.buttons[0]:
+                if self._is_within_bounds(pos):
+                    self._drag_node(pos)
 
     def _handle_left_click(self, pos: tuple[int, int], node: Node) -> None:
         """
