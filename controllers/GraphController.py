@@ -13,6 +13,7 @@ from models.GraphDataComplements import GraphDataComplements
 from models.Node import Node
 from services import IImageService
 from services.ICSVService import ICSVService
+from views.AgentView import AgentView
 from views.GraphView import GraphView
 
 
@@ -473,10 +474,10 @@ class GraphController:
     
     def draw_simulation(self, agents: list[Agent]) -> None:
         """
-        Draws a simulation of agents moving on the graph.
+        Draws a simulation of agents view moving on the graph.
 
         Args:
-            agents: A list of agents to be simulated on the graph.
+            agents: A list of agents view to be simulated on the graph.
         """
         self._graph_view.draw_simulation(agents)
     

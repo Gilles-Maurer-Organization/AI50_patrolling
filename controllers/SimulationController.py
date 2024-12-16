@@ -2,6 +2,7 @@ import pygame
 from controllers.GraphController import GraphController
 from models.Agent import Agent
 from models.Node import Node
+from views.AgentView import AgentView
 
 class SimulationController:
     """
@@ -53,8 +54,10 @@ class SimulationController:
             paths: A list of integers representing the initial paths
                 for each agent.
         """
-        self._agents = [Agent(path, self._graph_controller.graph)
-                        for path in paths]
+        self._agents = [
+            Agent(path, self._graph_controller.graph)
+                for path in paths
+        ]
     
     def are_agents_on_node(self, node: Node) -> bool:
         """
@@ -67,8 +70,6 @@ class SimulationController:
         
         return False
         
-
-
     def update_simulation(self) -> None:
         """
         Updates the simulation by moving each agent along its path.
@@ -92,14 +93,11 @@ class SimulationController:
         if elapsed_time >= 1000:
             self._start_time = pygame.time.get_ticks()      
             
-            
     def draw_simulation(self) -> None:
         """
         Draws the simulation by updating agent positions and rendering
         them on the graph.
         """
-
-
         if self._simulation_started:
             self._popup_start_time = pygame.time.get_ticks()
             self.update_simulation()
