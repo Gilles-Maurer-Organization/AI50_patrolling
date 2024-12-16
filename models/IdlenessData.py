@@ -19,12 +19,11 @@ class IdlenessData:
           
     """
     
-    def __init__(self,nodes_list : list[Node]) -> Node:
+    def __init__(self) -> None:
 
         self.average_idleness = 0
         self.max_idleness = 0
         self.all_time_highest_idleness = 0
-        self.graph_nodes = nodes_list
         
     def get_idleness_data(self) -> tuple[float, float, float] :
         """
@@ -32,14 +31,14 @@ class IdlenessData:
         """
         return self.average_idleness, self.max_idleness, self.all_time_highest_idleness
     
-    #
-    def update_idleness(self) -> None:
+
+    def update_idleness(self,graph_nodes : list[Node]) -> None:
         """
         updates the idleness values using a dedicated function.
         """
-        self.compute_idleness_values()
+        self._compute_idleness_values(graph_nodes)
 
-    def compute_idleness_values(self) -> None:
+    def _compute_idleness_values(self, graph_nodes : list[Node]) -> None:
         """
         Computes the average idleness of the current simulation.
         Computes the highest idleness of the current simulation.
@@ -50,7 +49,7 @@ class IdlenessData:
         idleness_values = []
 
         #retrieving all the idleness's in a list
-        for node in self.graph_nodes:
+        for node in graph_nodes:
            idleness_values.append(node.idleness)
            
         #computing mean value of the list

@@ -15,10 +15,10 @@ class IdlenessController:
 
 
     """
-    def __init__(self, nodes_list : list[Node], simulation_data_view: SimulationDataView)-> None:
+    def __init__(self, simulation_data_view: SimulationDataView)-> None:
         self._simulation_data_view = simulation_data_view
-        print("nb nodes" ,len(nodes_list))
-        self._idleness = IdlenessData(nodes_list)
+        
+        self._idleness = IdlenessData()
         self._idleness_view = IdlenessView(
                 self._simulation_data_view.screen,
                 10,
@@ -30,12 +30,12 @@ class IdlenessController:
                 label_ath_idleness_value = 0
             )
     
-    def draw_idlenesses(self)-> None:
+    def draw_idlenesses(self, nodes_list : list[Node])-> None:
         """
         Draws the idleness values in the View.
         """
 
-        self._idleness.update_idleness()
+        self._idleness.update_idleness(nodes_list)
 
         # Get the updated idleness values
         idleness_data = self._idleness.get_idleness_data()
