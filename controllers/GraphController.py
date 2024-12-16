@@ -66,9 +66,9 @@ class GraphController:
         self._image_name = ""
 
         self._alignment_lines = {}
-        self._snapping_enabled = False
+        self._snapping_enabled : bool = False
 
-        self._is_in_simulation = False
+        self._is_in_simulation : bool = False
 
     @property
     def graph(self) -> Graph:
@@ -81,11 +81,11 @@ class GraphController:
         return self._graph
     
     @property
-    def is_in_simulation(self):
+    def is_in_simulation(self) -> bool:
         return self._is_in_simulation
 
     @is_in_simulation.setter
-    def is_in_simulation(self, value):
+    def is_in_simulation(self, value) -> None:
         if not isinstance(value, bool):
             raise ValueError("is_in_simulation must be a boolean")
         self._is_in_simulation = value
@@ -230,8 +230,6 @@ class GraphController:
             event: The event triggered by user interaction.
         """
         pos = pygame.mouse.get_pos()
-
-        # TODO : Si en simulation alors on bloque ça 
 
         if not self.is_in_simulation:
             if event.type == pygame.MOUSEBUTTONDOWN:
