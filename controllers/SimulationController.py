@@ -45,7 +45,7 @@ class SimulationController:
         self._start_time = pygame.time.get_ticks()
         self._graph_controller.is_in_simulation = True
 
-    def initialize_agents(self, paths: list[int]) -> None:
+    def initialize_agents(self, paths: list[list[int]]) -> None:
         """
         Initializes the agents with their respective paths.
 
@@ -102,5 +102,5 @@ class SimulationController:
         """
         if self._simulation_started:
             self._update_simulation()
-            self._update_nodes_idlenesses()
+            #self._update_nodes_idlenesses()
             self._graph_controller.draw_simulation(self._agents)

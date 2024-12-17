@@ -116,11 +116,12 @@ class StartButtonController(BaseButtonController):
         self._graph_controller.raise_info('Algorithm launched')
         selected_algorithm = self._scrolling_list_controller.get_selected_algorithm()
         
-        # that all the algorithm 
         try:
             nb_agents =  int(self._text_box_controller.text_content)
         except ValueError:
-            self._graph_controller.raise_error_message('Invalid number of agents. Please enter a valid integer.')
+            self._graph_controller.raise_error_message(
+                'Invalid number of agents. Please enter a valid integer.'
+            )
             return
 
         graph = self._graph_controller.graph
@@ -129,22 +130,7 @@ class StartButtonController(BaseButtonController):
         solution: list[list[int]] = _algorithm.launch()
 
         # Convert the solution paths to use the shortest paths in the real graph
-        real_paths = []
-        for agent_path in solution:
-            real_path = []
-            for i in range(len(agent_path) - 1):
-                start_node = agent_path[i]
-                end_node = agent_path[i + 1]
-                real_path.extend(self._graph_controller.graph.get_shortest_paths()[(start_node, end_node)])
-                real_paths.append(real_path)
-            # Ajouter le chemin de retour au premier nœud
-            if (len(agent_path) > 1):
-                start_node = agent_path[-1]
-                end_node = agent_path[0]
-                real_path.extend(self._graph_controller.graph.get_shortest_paths()[(start_node, end_node)])
-                
-                real_paths.append(real_path)
-
+        real_paths = self._graph_controller.compute_real_paths(solution)
         # Initializing agents with the real paths
         self._simulation_controller.initialize_agents(real_paths)
 

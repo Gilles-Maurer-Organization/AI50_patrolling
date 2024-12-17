@@ -1,4 +1,5 @@
 import numpy as np
+import pygame
 
 class Agent:
     def __init__(self, path, graph):
@@ -12,7 +13,7 @@ class Agent:
 
     def move(self):
         '''
-        Déplace l'agent vers le prochain nœud dans le chemin.
+        Déplace l'agent vers le prochain noeud dans le chemin.
         '''
         if self.current_index < len(self.path) - 1:
             # Déplacer vers le prochain nœud
@@ -33,7 +34,6 @@ class Agent:
         else:
             # Si l'agent est à la fin du chemin, recommencer au début
             self.reset_path()
-
     def reset_path(self):
         '''
         Réinitialise le chemin de l'agent pour recommencer depuis le premier nœud.

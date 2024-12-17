@@ -238,10 +238,13 @@ class GraphView:
             agents (List[Agent]): A list of agents to be drawn on the
                 screen.
         """
+        #start_time = pygame.time.get_ticks()
+        
         agent_views = [AgentView(self._screen) for _ in agents]
         
         for agent, agent_view in zip(agents, agent_views):
             agent_view.draw((int(agent.x), int(agent.y)))
+        #print(pygame.time.get_ticks() - start_time)
 
     def draw_line_full_extent(self, candidate: Node, axis: str) -> None:
         """
