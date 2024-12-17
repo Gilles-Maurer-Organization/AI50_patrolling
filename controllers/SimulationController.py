@@ -102,5 +102,5 @@ class SimulationController:
         """
         if self._simulation_started:
             self._update_simulation()
-            #self._update_nodes_idlenesses()
+            self._update_nodes_idlenesses()
             self._graph_controller.draw_simulation(self._agents)
