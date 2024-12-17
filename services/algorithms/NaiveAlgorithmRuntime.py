@@ -4,7 +4,7 @@ import random as rd
 from models.Graph import Graph
 from services.algorithms.IAlgorithm import IAlgorithm
 
-class NaiveAlgorithmRT(IAlgorithm):
+class NaiveAlgorithmRuntime(IAlgorithm):
     """
     This class implements the real time Naive Algorithm
 
@@ -23,9 +23,13 @@ class NaiveAlgorithmRT(IAlgorithm):
         self.distance_matrix = np.array(graph_object.get_complete_adjacency_matrix())
         self.nb_nodes = np.array(graph_object.get_complete_adjacency_matrix()).shape[0]
         self.nb_agents = nb_agents
+        self.graph = graph_object
+        self.path = []
+        self.paths = []
         self.positions = [0] * nb_agents  # Position actuelle de chaque agent (commencent au nœud 0)
         self.targets = [None] * nb_agents  # Prochains nœuds cibles pour chaque agent
     
+
     def find_next_node(self, agent_id: int) -> int:
         """
         Find the next Node that the agent will move to 
@@ -44,17 +48,17 @@ class NaiveAlgorithmRT(IAlgorithm):
 
         # Rechercher le nœud non visité (et non réservé) avec la plus grande oisiveté
         for i in range(self.nb_nodes):
-            if not self.visited[i] and i not in self.targets:  # Éviter les nœuds déjà visités ou réservés
+            if i not in self.targets:  # Éviter les nœuds déjà visités ou réservés
                 distance = self.distance_matrix[current_node][i]
                 if distance < min_distance:
                     nearest_node = i
                     min_distance = distance
-                    max_oisivete = self.oisivete[i]
+                    max_oisivete = self.graph.nodes[i].idleness
                 elif distance == min_distance:
                     # Si deux nœuds ont la même distance, choisir celui avec la plus grande oisiveté
-                    if self.oisivete[i] > max_oisivete:
+                    if self.graph.nodes[i].idleness > max_oisivete:
                         nearest_node = i
-                        max_oisivete = self.oisivete[i]
+                        max_oisivete = self.graph.nodes[i].idleness
         
         return nearest_node
 
@@ -66,7 +70,7 @@ class NaiveAlgorithmRT(IAlgorithm):
             agent_id : The agent to move
 
         """
-        if self.targets[agent_id] is None or self.visited[self.targets[agent_id]]:
+        if self.targets[agent_id] is None:
             # Recalculer le prochain nœud uniquement si l'agent n'a pas encore de cible ou que sa cible est déjà visitée
             next_node = self.find_next_node(agent_id)
             self.targets[agent_id] = next_node
@@ -113,13 +117,18 @@ class NaiveAlgorithmRT(IAlgorithm):
             target = self.targets[agent_id]
             if target is not None:
                 # Déplacer l'agent vers le nœud cible
-                self.positions[agent_id] = target
+                self.path.append(target)
 
-    def launch(self):
+    def launch(self) -> list[list[int]]:
         """
         Launches the whole Algorithm.
-            
+
+        Returns:
+            paths : The Array with the path of each agents
         """
-        while True:
-            for agent_id in range(self.nb_agents):
-                self.step(agent_id)
+        
+        for agent_id in range(self.nb_agents):
+            self.positions[agent_id] = rd.randint(0,self.nb_nodes-1)   
+            self.paths.append(self.positions[agent_id])
+        print(self.paths)
+        return self.paths
