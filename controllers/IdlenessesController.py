@@ -21,10 +21,6 @@ class IdlenessController:
         self._idleness = IdlenessData()
         self._idleness_view = IdlenessView(
                 self._simulation_data_view.screen,
-                10,
-                10,
-                100,
-                40,
                 label_average_idleness_value = 0,
                 label_max_idleness_value = 0,
                 label_ath_idleness_value = 0
