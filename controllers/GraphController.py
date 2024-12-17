@@ -550,3 +550,31 @@ class GraphController:
 
     def set_snapping_enabled(self, snapping_enabled) -> None:
         self._snapping_enabled = snapping_enabled
+
+    def compute_real_paths(
+        self,
+        solution: list[list[int]]
+    ) -> list[list[int]]:
+        real_paths = []
+        for agent_path in solution:
+            real_path = []
+            for i in range(len(agent_path) - 1):
+                start_node = agent_path[i]
+                end_node = agent_path[i + 1]
+                real_path.extend(
+                    self.graph.get_shortest_paths()[(start_node, end_node)]
+                )
+
+            # Add the way back on the first node
+            # (only if the path has more than one node)
+            if len(agent_path) > 1:
+                start_node = agent_path[-1]
+                end_node = agent_path[0]
+                real_path.extend(
+                    self.graph.get_shortest_paths()[(start_node, end_node)]
+                )
+
+            # Add the finalized path at the real_paths
+            real_paths.append(real_path)
+
+        return real_paths
