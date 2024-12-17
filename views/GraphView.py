@@ -36,6 +36,7 @@ class GraphView:
         self._margin_top = 0
         self._margin_color = None
         self._popup = None
+        self._font = pygame.font.SysFont("Arial", 16)
 
     def set_background_image(
         self,
@@ -150,6 +151,7 @@ class GraphView:
     def _draw_nodes(self, graph: Graph, selected_node: Node, dragging_node: Node):
         for node in graph.nodes:
             color = self._get_node_color(node, selected_node, dragging_node)
+            
             pygame.draw.circle(
                 self._screen,
                 color,
@@ -159,6 +161,12 @@ class GraphView:
                     NODE_RADIUS * (1 + 0.05 * node.idleness)
                 ) # Modify size based on the idleness
             )
+
+            # Display idlness if it is bigger than 10 (otherwise the circle is too small)
+            if node.idleness >= 10:
+                idleness_text = self._font.render(str(node.idleness), True, (255, 255, 255))  # white color for the text
+                text_rect = idleness_text.get_rect(center=(node.x, node.y))
+                self._screen.blit(idleness_text, text_rect)
 
     def draw_popup(self):
         """
