@@ -257,7 +257,7 @@ class GraphView:
 
         Args:
             candidate (Node): the candidate found.
-            axis (str): the axis x or y of the alingment.
+            axis (str): the axis x or y of the alignment.
         """
         x1, y1 = candidate.x, candidate.y
 
@@ -266,7 +266,7 @@ class GraphView:
         elif axis == "x":
             pygame.draw.line(self._screen, "orange", (x1, 0), (x1, GRAPH_WINDOW_HEIGHT), 1)
         else:
-            raise ValueError("Can't find axis alingment on alingment assistant.")
+            raise ValueError("Can't find axis alignment on alignment assistant.")
 
 
     def has_an_image(self) -> bool:

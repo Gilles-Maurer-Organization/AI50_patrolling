@@ -7,6 +7,7 @@ from controllers.buttons.BaseButtonController import BaseButtonController
 from controllers.text_boxes.TextBoxController import TextBoxController
 from models.Button import Button
 from models.GraphData import GraphData
+from models.Error import Error
 from services.AStarService import AStarService
 from services.ICompleteGraphService import ICompleteGraphService
 from services.ICSVService import ICSVService
@@ -102,7 +103,7 @@ class StartButtonController(BaseButtonController):
         if not graph_data or not graph_data.adjacency_matrix:
             return False
         if not graph_data.shortest_paths:
-            raise ValueError('Shortest paths dictionnary is null while Complete Graph array exists.')
+            raise Error('Shortest paths dictionnary is null while Complete Graph array exists.')
     
         self._graph_controller.store_complements_to_model(graph_data.complements)
 
@@ -118,7 +119,7 @@ class StartButtonController(BaseButtonController):
         
         try:
             nb_agents =  int(self._text_box_controller.text_content)
-        except ValueError:
+        except Error:
             self._graph_controller.raise_error_message(
                 'Invalid number of agents. Please enter a valid integer.'
             )
