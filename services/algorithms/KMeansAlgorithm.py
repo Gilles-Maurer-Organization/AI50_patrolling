@@ -59,7 +59,6 @@ class KMeansAlgorithm(IAlgorithm):
 
         # Run genetic algorithm to connect the nodes in the same cluster
         result = self._connect_nodes()
-        print(result[0])
         return result[0]
     
 
