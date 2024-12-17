@@ -10,7 +10,7 @@ class NaiveAlgorithm(IAlgorithm):
 
     Attributes:
         nb_agents : The number of agents
-        graph_object : The graph object of the  Graph Class.
+        distance_matrix : the "complete_adjacency_matrix" attribute from the Graph Class.
         path : a list of the shortest path found by the algorithm
         paths : a list of a list, the path of each agent
     
