@@ -3,8 +3,9 @@ import pygame_gui
 
 from controllers.GraphController import GraphController
 from models.FileExplorer import FileExplorer
+from models.Error import Error
+from models.Info import Info
 from views.FileExplorerView import FileExplorerView
-
 
 class FileExplorerController:
     """
@@ -110,11 +111,17 @@ class FileExplorerController:
             self._file_explorer.path = file_path
 
             if file_path.endswith('.csv'):
-                self._import_file(file_path, self._graph_controller.import_graph_from_csv,
-                                  "Graph successfully imported!")
+                self._import_file(
+                    file_path,
+                    self._graph_controller.import_graph_from_csv,
+                    "Graph successfully imported!"
+                )
             else:
-                self._import_file(file_path, self._graph_controller.import_graph_from_image,
-                                  "Image successfully imported!")
+                self._import_file(
+                    file_path, 
+                    self._graph_controller.import_graph_from_image,
+                    "Image successfully imported!"
+                )
 
         self._close_file_explorer()
 
@@ -134,8 +141,10 @@ class FileExplorerController:
         """
         try:
             import_method(file_path)
-        except Exception as e:
+        except Error as e:
             self._graph_controller.raise_error_message(str(e))
+        except Info as e:
+            self._graph_controller.raise_info(str(e))
         else:
             self._graph_controller.raise_message(success_message)
             if self._on_file_imported:  # Call the callback if it's defined

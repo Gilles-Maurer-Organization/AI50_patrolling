@@ -11,11 +11,11 @@ from models.Graph import Graph
 from models.GraphData import GraphData
 from models.GraphDataComplements import GraphDataComplements
 from models.Node import Node
+from models.Info import Info
+from models.Error import Error
 from services import IImageService
 from services.ICSVService import ICSVService
-from views.AgentView import AgentView
 from views.GraphView import GraphView
-
 
 class GraphController:
     """
@@ -350,7 +350,7 @@ class GraphController:
             edges_matrix, nodes_list = self._graph.compute_matrix()
             self._csv_service.save(edges_matrix, nodes_list, self._image_name)
             self.raise_message("Graph successfully saved!")
-        except Exception as e:
+        except Error as e:
             self.raise_error_message(f"Error saving graph: {str(e)}")
 
     def save_complements(
@@ -403,7 +403,7 @@ class GraphController:
         image_name = os.path.basename(image_path)
 
         if not self._image_service.is_an_image(image_path):
-            raise ValueError(f"{image_path} is not a valid image file.")
+            raise Error(f"{image_path} is not a valid image file.")
 
         # If the image is not found in the project folder, copy it there
         self._image_service.ensure_image_exists_and_copy(image_path)
@@ -417,7 +417,7 @@ class GraphController:
         if csv_path is None:
             self.clear_graph()
             self.update()
-            raise ValueError(f"{image_name} has no associated graph data.")
+            raise Info(f"{image_name} has no associated graph data.")
 
         # if a csv file exists, load the associated graph
         match = re.search(r'graph_(\d+)\.csv', csv_path)
@@ -436,7 +436,7 @@ class GraphController:
             csv_path: The path to the CSV file to be imported.
         """
         if not csv_path.endswith('.csv'):
-            raise ValueError(f"{csv_path} is not a valid file.")
+            raise Error(f"{csv_path} is not a valid file.")
 
         self._image_name = self._csv_service.get_image_name(csv_path).strip()
         self._load_background_image(self._image_name)
@@ -471,7 +471,7 @@ class GraphController:
 
                 self.update()
             else:
-                raise ValueError("No valid graph data found in the CSV file.")
+                raise Error("No valid graph data found in the CSV file.")
         except Exception as e:
             self.raise_error_message(str(e))
         else:
@@ -523,7 +523,7 @@ class GraphController:
                 graph_data_complements.complete_adjacency_matrix
             )
             if not graph_data_complements.shortest_paths:
-                raise ValueError("Shortest paths are missing despite a \
+                raise Error("Shortest paths are missing despite a \
                                  complete adjacency matrix being present.")
             else:
                 self._graph.set_shortest_paths(
@@ -541,7 +541,6 @@ class GraphController:
         This method triggers an error popup with a specific message.
         """
         self._graph_view.show_info_popup(message)
-
     
     def raise_message(self, message: str) -> None:
         """
@@ -551,31 +550,3 @@ class GraphController:
 
     def set_snapping_enabled(self, snapping_enabled) -> None:
         self._snapping_enabled = snapping_enabled
-
-    def compute_real_paths(
-        self,
-        solution: list[list[int]]
-    ) -> list[list[int]]:
-        real_paths = []
-        for agent_path in solution:
-            real_path = []
-            for i in range(len(agent_path) - 1):
-                start_node = agent_path[i]
-                end_node = agent_path[i + 1]
-                real_path.extend(
-                    self.graph.get_shortest_paths()[(start_node, end_node)]
-                )
-            
-            # Add the way back on the first node
-            # (only if the path has more than one node)
-            if len(agent_path) > 1:
-                start_node = agent_path[-1]
-                end_node = agent_path[0]
-                real_path.extend(
-                    self.graph.get_shortest_paths()[(start_node, end_node)]
-                )
-
-            # Add the finalized path at the real_paths
-            real_paths.append(real_path)
-
-        return real_paths
