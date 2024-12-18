@@ -48,8 +48,12 @@ class ViewController:
             self._screen,
             self._graph_controller
         )
+        self._simulation_data_controller = SimulationDataController(
+            self._screen
+        )
         self._simulation_controller = SimulationController(
-            self._graph_controller
+            self._graph_controller,
+            self._simulation_data_controller
         )
 
         #used for initializing the SimulationController

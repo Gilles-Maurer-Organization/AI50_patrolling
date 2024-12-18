@@ -2,7 +2,11 @@ import pygame
 
 from controllers.GraphController import GraphController
 from models.Agent import Agent
+from models.IdlenessData import IdlenessData
 from models.Node import Node
+from services import CSVService
+from services.CSVService import export_idleness_data
+
 
 class SimulationController:
     """
@@ -49,7 +53,6 @@ class SimulationController:
         self._simulation_started = self._graph_controller.is_in_simulation = started
         if started:
             self._start_time = pygame.time.get_ticks()
-
 
     def initialize_agents(self, paths: list[list[int]]) -> None:
         """
@@ -100,6 +103,9 @@ class SimulationController:
         
         if elapsed_time >= 1000:
             self._start_time = pygame.time.get_ticks()
+
+        # Update IdlenessData after recalculating node idleness
+        self._idleness_data.update_idleness(self._graph_controller.graph.nodes)
             
     def draw_simulation(self) -> None:
         """

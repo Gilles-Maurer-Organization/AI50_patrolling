@@ -9,10 +9,12 @@ class IdlenessController:
 
     Attributes:
         _simulation_data_view: the Simulation section of the View
-        _idleness: the Idleness Model
+        idleness: the Idleness Model
         _idleness_view : the Idleness-data visualization
     """
     def __init__(self, simulation_data_view: SimulationDataView)-> None:
+        from controllers.SimulationDataController import SimulationDataController
+        self._simulation_data_controller = SimulationDataController
         self._simulation_data_view = simulation_data_view
         self._idleness = IdlenessData()
         self._idleness_view = IdlenessView(
@@ -38,10 +40,11 @@ class IdlenessController:
         """
         Draws the idleness values in the View.
         """
-        self.idleness.update_idleness(nodes_list)
+
+        self._idleness.update_idleness(nodes_list)
 
         # Get the updated idleness values
-        idleness_data = self.idleness.get_idleness_data()
+        idleness_data = self._idleness.get_idleness_data()
 
         # Update the view with the new values
         self._idleness_view.update_values(
