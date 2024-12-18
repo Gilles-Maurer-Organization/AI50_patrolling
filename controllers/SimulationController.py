@@ -1,5 +1,6 @@
 import pygame
 
+from controllers.SimulationDataController import SimulationDataController
 from controllers.GraphController import GraphController
 from controllers.SimulationDataController import SimulationDataController
 from models.Agent import Agent
@@ -121,6 +122,9 @@ class SimulationController:
         
         if elapsed_time >= 1000:
             self._start_time = pygame.time.get_ticks()
+
+        # Update IdlenessData after recalculating node idleness
+        self._idleness_data.update_idleness(self._graph_controller.graph.nodes)
             
     def draw_simulation(self) -> None:
         """
