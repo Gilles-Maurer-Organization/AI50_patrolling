@@ -46,8 +46,12 @@ class ViewController:
             self._screen,
             self._graph_controller
         )
+        self._simulation_data_controller = SimulationDataController(
+            self._screen
+        )
         self._simulation_controller = SimulationController(
-            self._graph_controller
+            self._graph_controller,
+            self._simulation_data_controller
         )
         self._parameters_controller = ParametersController(
             self._screen,
@@ -59,9 +63,6 @@ class ViewController:
 
         #used for initializing the SimulationController
         self.is_simulation_process_initialized = False
-        self._simulation_data_controller = SimulationDataController(
-            self._screen
-        )
 
     def handle_actions(self, event: pygame.event.Event) -> None:
         """

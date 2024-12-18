@@ -1,12 +1,16 @@
+import csv
 import os
 import ast
+import time
 from pathlib import Path
 import re
+from threading import Timer
 from typing import Union
 
 from models.GraphData import GraphData
 from models.GraphDataComplements import GraphDataComplements
 from services.ICSVService import ICSVService
+
 
 class CSVService(ICSVService):
     """
@@ -19,6 +23,7 @@ class CSVService(ICSVService):
         _references_file_path (str): Path to the file where image and
             CSV references are stored.
     """
+
     def __init__(self) -> None:
         self._csv_folder_path = os.path.join(
             Path(__file__).resolve().parent.parent,
@@ -373,3 +378,37 @@ class CSVService(ICSVService):
                 if "Image_ref" in line:
                     return line.split(",")[1]
         return None
+
+def export_idleness_data(graph_number: int, idleness_data_provider, interval: int = 10):
+    """
+    Exports idleness data (average, max, all-time max) to a CSV file every `interval` seconds.
+
+    Args:
+        graph_number (int): The graph number used to name the file.
+        idleness_data_provider (callable): A function that provides the idleness data as (average, max, all-time max).
+        interval (int): The interval (in seconds) at which the data will be exported.
+    """
+    csv_filename = f'graph_{graph_number}_results.csv'
+    csv_folder_path = os.path.join(Path(__file__).resolve().parent.parent, "csv_files")
+    csv_path = os.path.join(csv_folder_path, csv_filename)
+
+    if not os.path.exists(csv_folder_path):
+        os.makedirs(csv_folder_path)
+
+    with open(csv_path, mode='w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(["Timestamp", "Average idleness", "Max idleness", "All-time max idleness"])
+
+    def write_data():
+        # retrieve idleness data
+        average, max_idleness, all_time_max = idleness_data_provider()
+
+        with open(csv_path, mode='a', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+            writer.writerow([timestamp, average, max_idleness, all_time_max])
+
+        # schedule the next write
+        Timer(interval, write_data).start()
+
+    write_data()

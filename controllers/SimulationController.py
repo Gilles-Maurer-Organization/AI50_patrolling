@@ -1,7 +1,13 @@
 import pygame
+
+from controllers.SimulationDataController import SimulationDataController
 from controllers.GraphController import GraphController
 from models.Agent import Agent
+from models.IdlenessData import IdlenessData
 from models.Node import Node
+from services import CSVService
+from services.CSVService import export_idleness_data
+
 
 class SimulationController:
     """
@@ -18,11 +24,13 @@ class SimulationController:
         _graph_controller (GraphController): The controller managing
             the graph and its visualization.
     """
-    def __init__(self, graph_controller: GraphController) -> None:
+    def __init__(self, graph_controller: GraphController, simulation_data_controller: SimulationDataController) -> None:
         self._agents = None
         self._simulation_started = False
         self._graph_controller = graph_controller
         self._start_time = None
+        self._simulation_data_controller = simulation_data_controller
+        self._idleness_data = IdlenessData()
 
     def has_simulation_started(self) -> bool:
         """
@@ -44,6 +52,10 @@ class SimulationController:
         self._simulation_started = started
         self._start_time = pygame.time.get_ticks()
         self._graph_controller.is_in_simulation = True
+
+        # Start exporting idleness data
+        if started:
+            self.start_idleness_export(graph_number=1)
 
     def initialize_agents(self, paths: list[list[int]]) -> None:
         """
@@ -94,6 +106,9 @@ class SimulationController:
         
         if elapsed_time >= 1000:
             self._start_time = pygame.time.get_ticks()
+
+        # Update IdlenessData after recalculating node idleness
+        self._idleness_data.update_idleness(self._graph_controller.graph.nodes)
             
     def draw_simulation(self) -> None:
         """
@@ -104,3 +119,13 @@ class SimulationController:
             self._update_simulation()
             self._update_nodes_idlenesses()
             self._graph_controller.draw_simulation(self._agents)
+
+    def start_idleness_export(self, graph_number: int):
+        """
+        Starts exporting idleness data every 10 seconds.
+        """
+
+        def idleness_data_provider():
+            return self._idleness_data.get_idleness_data()
+
+        export_idleness_data(graph_number, idleness_data_provider, interval=10)
