@@ -1,7 +1,7 @@
 import pygame
 
-from controllers.SimulationDataController import SimulationDataController
 from controllers.GraphController import GraphController
+from controllers.SimulationDataController import SimulationDataController
 from models.Agent import Agent
 from models.IdlenessData import IdlenessData
 from models.Node import Node
@@ -24,13 +24,14 @@ class SimulationController:
         _graph_controller (GraphController): The controller managing
             the graph and its visualization.
     """
-    def __init__(self, graph_controller: GraphController, simulation_data_controller: SimulationDataController) -> None:
+    def __init__(self, graph_controller: GraphController, simulation_data_controller: SimulationDataController, csv_service: CSVService) -> None:
         self._agents = None
         self._simulation_started = False
         self._graph_controller = graph_controller
         self._start_time = None
         self._simulation_data_controller = simulation_data_controller
         self._idleness_data = IdlenessData()
+        self._csv_service = csv_service
 
     def has_simulation_started(self) -> bool:
         """
@@ -128,4 +129,4 @@ class SimulationController:
         def idleness_data_provider():
             return self._idleness_data.get_idleness_data()
 
-        export_idleness_data(graph_number, idleness_data_provider, interval=10)
+        export_idleness_data(self._csv_service, idleness_data_provider, interval=10)

@@ -34,6 +34,7 @@ class CSVService(ICSVService):
             "references",
             "references.csv"
         )
+        self.current_csv_number = 0
 
     def _initialize_directories(self):
         """
@@ -191,6 +192,7 @@ class CSVService(ICSVService):
             for line in f:
                 img_path, csv_path = line.strip().split(",")
                 if img_path == image_name:
+                    self.current_csv_number = self.extract_graph_number(csv_path)
                     return csv_path
         return None
 
@@ -337,6 +339,7 @@ class CSVService(ICSVService):
                 - List of complete graph adjacency matrix
                 - Dictionary of shortest paths between node pairs
         """
+        self.current_csv_number = num_file
         file_path = os.path.join(
             self._csv_folder_path,
             f"graph_{num_file}.csv"
@@ -361,7 +364,27 @@ class CSVService(ICSVService):
                 - List of complete graph adjacency matrix
                 - Dictionary of shortest paths between node pairs
         """
+        self.current_csv_number = self.extract_graph_number(file_path)
         return self._parse_csv_file(file_path)
+
+    def extract_graph_number(self, file_path: str) -> int:
+        """
+        Extracts the graph number from a file path.
+
+        Args:
+            file_path (str): The path to the file (e.g., '.../graph_2.csv').
+
+        Returns:
+            int: The graph number extracted from the file path.
+
+        Raises:
+            ValueError: If the graph number cannot be found in the file path.
+        """
+        match = re.search(r"graph_(\d+)", file_path)
+        if match:
+            return int(match.group(1))
+        else:
+            raise ValueError(f"Invalid file path format: {file_path}")
 
     def get_image_name(self, file_path: str) -> str:
         """
@@ -379,16 +402,20 @@ class CSVService(ICSVService):
                     return line.split(",")[1]
         return None
 
-def export_idleness_data(graph_number: int, idleness_data_provider, interval: int = 10):
+def export_idleness_data(csv_service: CSVService, idleness_data_provider, interval: int = 10):
     """
     Exports idleness data (average, max, all-time max) to a CSV file every `interval` seconds.
 
     Args:
-        graph_number (int): The graph number used to name the file.
+        csv_service (CSVService): Instance of CSVService to retrieve current graph number.
         idleness_data_provider (callable): A function that provides the idleness data as (average, max, all-time max).
         interval (int): The interval (in seconds) at which the data will be exported.
     """
-    csv_filename = f'graph_{graph_number}_results.csv'
+    current_csv_number = csv_service.current_csv_number
+    if current_csv_number == 0:
+        raise ValueError("Current CSV number is not set. Please ensure a graph is loaded or saved.")
+
+    csv_filename = f'graph_{current_csv_number}_results.csv'
     csv_folder_path = os.path.join(Path(__file__).resolve().parent.parent, "csv_files")
     csv_path = os.path.join(csv_folder_path, csv_filename)
 
