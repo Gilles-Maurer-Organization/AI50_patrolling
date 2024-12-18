@@ -432,7 +432,7 @@ def export_idleness_data(csv_service: CSVService, idleness_data_provider, interv
 
         with open(csv_path, mode='a', newline='') as csvfile:
             writer = csv.writer(csvfile)
-            timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+            timestamp = time.strftime("%H:%M:%S")
             writer.writerow([timestamp, average, max_idleness, all_time_max])
 
         # schedule the next write
