@@ -73,9 +73,6 @@ class EvolutionalAlgorithm(IAlgorithm):
         # maximal number of tries allowed
         max_tries = 10
 
-        # computing the length of a gene using the determined ratio
-        #gene_length = max(1, int(len(self.nodes_idx_list)/self.nb_agents)+1)
-
         indicative_population = []
 
         # For each individual
