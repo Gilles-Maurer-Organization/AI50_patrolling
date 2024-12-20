@@ -74,52 +74,33 @@ class EvolutionalAlgorithm(IAlgorithm):
         max_tries = 10
 
         # computing the length of a gene using the determined ratio
-        gene_length = max(1, int(len(self.nodes_idx_list)/self.nb_agents)+1)
+        #gene_length = max(1, int(len(self.nodes_idx_list)/self.nb_agents)+1)
 
         indicative_population = []
 
         # For each individual
         for _ in range(self.nb_individuals_in_pop):
             
+            #splitting the list of nodes of the Graph
+            graph_sublists = self.split_list()
+
             # while the individual is not covering all nodes, we generate him
             # we generate another one (max 10 tries)
             nb_tries_individual = 0
             while (nb_tries_individual < max_tries):
-                
-                # list of available nodes
-                # used to prevent the agents from beginning at the same node
-                available_nodes = self.nodes_idx_list.tolist()
 
                 individual = []
                 # For each gene of the individual (a gene is a path of an agent)
-                
-                for _  in range(self.nb_agents):
+                for _ ,init_path  in zip(range(self.nb_agents),graph_sublists):
 
-                    # while the generated gene already exists
-                    # we generate another one (max 10 tries)
-                    nb_tries_agent = 0
-                    while (nb_tries_agent < max_tries):
+                    # we shuffle the initial_path (the sublist)
+                    rd.shuffle(init_path) #NOSONAR
 
-                        #randomly choosing the starting node
-                        starting_node = rd.choice(available_nodes) #NOSONAR
-                        # removing the node
-                        available_nodes.remove(starting_node)
-                        
-                        # Generate a random gene of the desired length
-                        random_gene = rd.sample(self.nodes_idx_list.tolist(), gene_length)  # NOSONAR
-                        random_gene.insert(0, starting_node)
-
-                        # Ensure the generated path does not already exist in the individual's genes
-                        if random_gene not in individual:
-                            individual.append(random_gene)
-                            break
-                        else:
-                            # if it's the last attempt, we add the gene (even if he already exists)
-                            if nb_tries_agent == max_tries:
-                                individual.append(random_gene)
-                            nb_tries_agent += 1
-
+                    #adding to the individual
+                    individual.append(init_path)
+                    
                 individual = np.array(individual)
+
                 # verifying of the individual covers all nodes at least once
                 if self.are_all_nodes_visited(individual):
                     # Appending the individual to the population if he's OK
@@ -136,6 +117,54 @@ class EvolutionalAlgorithm(IAlgorithm):
         indicative_population = np.array(indicative_population)
 
         return indicative_population
+
+    def split_list(self)-> list[list]:
+        """
+        Splits the list containing all the nodes of the Graph
+        into a list of sublists having the same length.
+
+        Returns:
+            A list of sublists
+        """
+        if self.nb_agents <= 0:
+            raise ValueError("The number of agents must be greater than 0.")
+
+        # computing the size of the sublists
+        base_size = len(self.nodes_idx_list) // self.nb_agents
+        extra = len(self.nodes_idx_list) % self.nb_agents
+
+        # creating the sublists
+        sublists = []
+        start = 0
+        for i in range(self.nb_agents):
+            #deciding if the sublist needs an extra element added to it or not
+            if i < extra:
+                end = start + base_size + 1
+            else:
+                end = start + base_size
+            
+            #adding the new sublist to the list of sublists
+            sublists.append(self.nodes_idx_list[start:end])
+            start = end
+
+        # the first sublist is always the biggest, 
+        # we take it as a the reference size
+        target_size = len(sublists[0])
+
+        # for all the other sublists (except the 1st one)
+        for idx,sub_list in enumerate(sublists[1:]):
+            
+            # while it hasn't reached the desired length
+            while len(sub_list) < target_size:
+
+                # we choose a random node to add 
+                random_node = rd.choice(self.nodes_idx_list)
+                sub_list = np.append(sub_list,random_node)
+            
+            #updating the sublist with the corrected one
+            sublists[idx+1] = sub_list
+
+        return sublists
 
     def are_all_nodes_visited(self, individual: np.ndarray) -> bool:
         """
