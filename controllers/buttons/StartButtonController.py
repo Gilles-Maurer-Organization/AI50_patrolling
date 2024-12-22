@@ -135,10 +135,13 @@ class StartButtonController(BaseButtonController):
         # Initializing agents with the real paths
         self._simulation_controller.initialize_agents(real_paths)
 
+        # Setting the simulation as started with the selected algorithm
+        algorithm_name = selected_algorithm.name
+        self._simulation_controller.set_simulation_started(
+            started=True,
+            algorithm=algorithm_name
+        )
 
-        # Setting the simulation as started
-        self._simulation_controller.set_simulation_started(True)
-            
     def compute_complete_graph_and_shortest_paths(self):
         """
         Computes the complete graph and shortest paths using the A*

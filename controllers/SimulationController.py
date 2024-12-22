@@ -32,6 +32,7 @@ class SimulationController:
         self._simulation_data_controller = simulation_data_controller
         self._idleness_data = IdlenessData()
         self._csv_service = csv_service
+        self._test_counters = {}
 
     def has_simulation_started(self) -> bool:
         """
@@ -41,22 +42,31 @@ class SimulationController:
             bool: True if the simulation has started, False otherwise.
         """
         return self._simulation_started
-    
-    def set_simulation_started(self, started: bool) -> None:
+
+    def set_simulation_started(self, started: bool, algorithm: str) -> None:
         """
-        Sets the simulation state to started or stopped.
+        Sets the simulation state to started or stopped, and initializes idleness export.
 
         Args:
-            started: A boolean indicating whether the simulation should
-                start or stop.
+            started (bool): Whether to start or stop the simulation.
+            algorithm (str): The name of the algorithm being used.
         """
         self._simulation_started = started
         self._start_time = pygame.time.get_ticks()
         self._graph_controller.is_in_simulation = True
 
-        # Start exporting idleness data
         if started:
-            self.start_idleness_export(graph_number=1)
+            # Get the current graph number
+            graph_number = self._csv_service.current_csv_number
+
+            test_number = self._csv_service.get_next_test_number(algorithm, graph_number)
+
+            # Start the idleness export
+            self.start_idleness_export(
+                algorithm=algorithm,
+                test_number=test_number,
+                start_time=self._start_time
+            )
 
     def initialize_agents(self, paths: list[list[int]]) -> None:
         """
@@ -121,12 +131,24 @@ class SimulationController:
             self._update_nodes_idlenesses()
             self._graph_controller.draw_simulation(self._agents)
 
-    def start_idleness_export(self, graph_number: int):
+    def start_idleness_export(self, algorithm: str, test_number: int, start_time: float):
         """
-        Starts exporting idleness data every 10 seconds.
+        Starts exporting idleness data every 10 seconds with metadata.
+
+        Args:
+            algorithm (str): The name of the algorithm being used in the simulation.
+            test_number (int): The current test number for this simulation.
+            start_time (float): The simulation start time in seconds.
         """
 
         def idleness_data_provider():
             return self._idleness_data.get_idleness_data()
 
-        export_idleness_data(self._csv_service, idleness_data_provider, interval=10)
+        export_idleness_data(
+            self._csv_service,
+            idleness_data_provider=idleness_data_provider,
+            algorithm=algorithm,
+            test_number=test_number,
+            start_time=start_time,
+            interval=10
+        )

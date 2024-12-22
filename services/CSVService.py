@@ -1,9 +1,9 @@
+import ast
 import csv
 import os
-import ast
-import time
-from pathlib import Path
 import re
+import pygame
+from pathlib import Path
 from threading import Timer
 from typing import Union
 
@@ -34,6 +34,11 @@ class CSVService(ICSVService):
             "references",
             "references.csv"
         )
+        self._test_numbers_file_path = os.path.join(
+            Path(__file__).resolve().parent.parent,
+            "references",
+            "test_numbers.csv"
+        )
         self.current_csv_number = 0
 
     def _initialize_directories(self):
@@ -46,6 +51,14 @@ class CSVService(ICSVService):
             os.makedirs(os.path.dirname(self._references_file_path))
         if not os.path.exists(self._references_file_path):
             open(self._references_file_path, "w").close()
+
+    def _initialize_test_numbers_file(self):
+        """
+        Ensures the test numbers file exists.
+        """
+        if not os.path.exists(self._test_numbers_file_path):
+            with open(self._test_numbers_file_path, "w") as f:
+                f.write("Algorithm,TestNumber\n")
 
     def _count_files(self) -> int:
         """
@@ -402,40 +415,105 @@ class CSVService(ICSVService):
                     return line.split(",")[1]
         return None
 
-def export_idleness_data(csv_service: CSVService, idleness_data_provider, interval: int = 10):
+    def get_next_test_number(self, algorithm: str, graph_number: int) -> int:
+        """
+        Retrieves the next test number for the given algorithm and graph.
+
+        Args:
+            algorithm (str): The name of the algorithm.
+            graph_number (int): The graph number associated with the test.
+
+        Returns:
+            int: The next test number for the algorithm and graph.
+        """
+        self._initialize_test_numbers_file()
+
+        test_numbers = {}
+
+        # Read existing test numbers
+        with open(self._test_numbers_file_path, "r") as f:
+            for line in f:
+                if line.strip() and not line.startswith("Algorithm"):
+                    key, test_number = line.strip().split(",")
+                    test_numbers[key] = int(test_number)
+
+        # Construct a composite key for algorithm and graph
+        key = f"{algorithm}_graph_{graph_number}"
+        next_test_number = test_numbers.get(key, 0) + 1
+        test_numbers[key] = next_test_number
+
+        # Write updated test numbers back to the file
+        with open(self._test_numbers_file_path, "w") as f:
+            f.write("Algorithm,TestNumber\n")  # Write header
+            for key, test_number in test_numbers.items():
+                f.write(f"{key},{test_number}\n")
+
+        return next_test_number
+
+
+def export_idleness_data(
+    csv_service: CSVService,
+    idleness_data_provider,
+    algorithm: str,
+    test_number: int,
+    start_time: int,
+    interval: int = 10
+):
     """
-    Exports idleness data (average, max, all-time max) to a CSV file every `interval` seconds.
+    Exports idleness data with additional metadata to a CSV file every `interval` seconds.
+    Appends results if the file already exists.
 
     Args:
         csv_service (CSVService): Instance of CSVService to retrieve current graph number.
         idleness_data_provider (callable): A function that provides the idleness data as (average, max, all-time max).
+        algorithm (str): The name of the algorithm being tested.
+        test_number (int): The test number for the current simulation.
+        start_time (int): The simulation start time in milliseconds (from pygame.time.get_ticks()).
         interval (int): The interval (in seconds) at which the data will be exported.
     """
     current_csv_number = csv_service.current_csv_number
     if current_csv_number == 0:
         raise ValueError("Current CSV number is not set. Please ensure a graph is loaded or saved.")
 
+    # Generate the CSV filename based on the graph number
     csv_filename = f'graph_{current_csv_number}_results.csv'
     csv_folder_path = os.path.join(Path(__file__).resolve().parent.parent, "csv_files")
     csv_path = os.path.join(csv_folder_path, csv_filename)
 
+    # Ensure directory exists
     if not os.path.exists(csv_folder_path):
         os.makedirs(csv_folder_path)
 
-    with open(csv_path, mode='w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(["Timestamp", "Average idleness", "Max idleness", "All-time max idleness"])
+    # Check if the file already exists
+    file_exists = os.path.exists(csv_path)
+
+    # Write headers if the file does not exist
+    if not file_exists:
+        with open(csv_path, mode='w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow([
+                "Algorithm", "Test Number",
+                "Simulation Time (s)", "Average Idleness",
+                "Current Max Idleness", "All-time Max Idleness"
+            ])
 
     def write_data():
-        # retrieve idleness data
+        # Retrieve idleness data
         average, max_idleness, all_time_max = idleness_data_provider()
 
+        # Calculate simulation time in seconds
+        elapsed_time = (pygame.time.get_ticks() - start_time) / 1000.0
+
+        # Write data to the CSV file
         with open(csv_path, mode='a', newline='') as csvfile:
             writer = csv.writer(csvfile)
-            timestamp = time.strftime("%H:%M:%S")
-            writer.writerow([timestamp, average, max_idleness, all_time_max])
+            writer.writerow([
+                algorithm, test_number,
+                round(elapsed_time, 2), average, max_idleness, all_time_max
+            ])
 
-        # schedule the next write
+        # Schedule the next write
         Timer(interval, write_data).start()
 
+    # Start the first data export
     write_data()
