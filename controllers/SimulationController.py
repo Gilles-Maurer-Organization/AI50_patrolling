@@ -38,6 +38,7 @@ class SimulationController:
         self._idleness_data = idleness_data
         self._csv_service = csv_service
         self._test_counters = {}
+        self._test_counters = {}
 
     def has_simulation_started(self) -> bool:
         """
