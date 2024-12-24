@@ -4,8 +4,7 @@ from controllers.GraphController import GraphController
 from models.Agent import Agent
 from models.IdlenessData import IdlenessData
 from models.Node import Node
-from services import CSVService
-from services.CSVService import export_idleness_data
+from services import ICSVService
 
 
 class SimulationController:
@@ -23,10 +22,11 @@ class SimulationController:
         _graph_controller (GraphController): The controller managing
             the graph and its visualization.
     """
-    def __init__(
-        self,
-        graph_controller: GraphController
-    ) -> None:
+    def __init__(self,
+                 graph_controller: GraphController,
+                 simulation_data_controller: SimulationDataController,
+                 csv_service: ICSVService
+                 ) -> None:
         self._agents = None
         self._simulation_started = False
         self._graph_controller = graph_controller
@@ -117,4 +117,23 @@ class SimulationController:
             self._update_nodes_idlenesses()
             self._graph_controller.draw_simulation(self._agents)
 
-    
+    def start_idleness_export(self, algorithm: str, test_number: int, start_time: float):
+        """
+        Starts exporting idleness data every 10 seconds with metadata.
+
+        Args:
+            algorithm (str): The name of the algorithm being used in the simulation.
+            test_number (int): The current test number for this simulation.
+            start_time (float): The simulation start time in seconds.
+        """
+
+        def idleness_data_provider():
+            return self._idleness_data.get_idleness_data()
+
+        self._csv_service.export_idleness_data(
+            idleness_data_provider=idleness_data_provider,
+            algorithm=algorithm,
+            test_number=test_number,
+            start_time=start_time,
+            interval=10
+        )

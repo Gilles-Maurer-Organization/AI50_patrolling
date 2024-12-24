@@ -9,7 +9,7 @@ class IdlenessController:
 
     Attributes:
         _simulation_data_view: the Simulation section of the View
-        idleness: the Idleness Model
+        _idleness: the Idleness Model
         _idleness_view : the Idleness-data visualization
     """
     def __init__(self, simulation_data_view: SimulationDataView)-> None:
