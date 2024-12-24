@@ -19,10 +19,10 @@ class AntColony(IAlgorithmModel):
         self,
         nb_iterations=100,
         alpha=1,
-        beta=1,
-        q=10,
-        evaporation=0.5,
-        nb_colony = 3
+        beta=4,
+        q=100,
+        evaporation=0.1,
+        nb_colony = 5
     ) -> None:
         self._parameters = {
             "Alpha": TextBox(str(alpha)),

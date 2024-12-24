@@ -65,8 +65,8 @@ class AntColonyAlgorithm(IAlgorithm):
         self, 
         parameters: dict[str, TextBox],
         nb_agents: int,
-        graph_object: Graph,
-        active_plot : bool = False
+        graph: Graph,
+        active_plot : bool = True
     ) -> None:
         # Get parameters
         alpha_parameter: float =  float(parameters["Alpha"].text_content)
@@ -99,8 +99,20 @@ class AntColonyAlgorithm(IAlgorithm):
         self.nb_ants : int = nb_agents
         self.nb_colony : int = nb_colony
         self.nb_iterations : int = nb_iterations
-        self.cost_matrix : np.ndarray  = np.array(graph_object.get_complete_adjacency_matrix())
+        
+        # Normaliser la matrice des couts
+        cost_matrix = np.array(graph.get_complete_adjacency_matrix())
+        min_cost = np.min(cost_matrix[np.nonzero(cost_matrix)])
+        cost_matrix = cost_matrix / min_cost
+        self.cost_matrix : np.ndarray  = cost_matrix
         self.active_plot = active_plot
+        
+        self._list_nodes = np.zeros((len(graph.nodes), 2)) 
+        for i in range(len(graph.nodes)): 
+            self._list_nodes[i] = np.array([graph.nodes[i].x, graph.nodes[i].y])
+        
+        self.best_ever_colony_length = float('inf')
+        self.graph = graph
 
     def get_length_path(self, ants_path) -> float:
         """
@@ -118,7 +130,6 @@ class AntColonyAlgorithm(IAlgorithm):
         # Initialize the distance matrix
         distance = np.zeros(len(ants_path))
 
-        
         # For each ant
         for k_ant, ant_path in enumerate(ants_path):
             # For each node, add distance from the node to next node to 
@@ -144,80 +155,93 @@ class AntColonyAlgorithm(IAlgorithm):
         nb_node = len(self.cost_matrix)
 
         # Creating delta_t_pheromone_matrix
-        delta_t_pheromone_matrix = np.zeros((self.nb_colony, self.nb_ants, nb_node, nb_node), dtype=float)
-        for l in range(self.nb_colony):
-            for k in range(self.nb_ants):
-                np.fill_diagonal(delta_t_pheromone_matrix[l][k], 0)
+        delta_t_pheromone_matrix = np.zeros((nb_node, nb_node), dtype=float)
+ 
+        # Initialize variables to track the best colony and its path length
+        best_colony_index = None
+        best_colony_length = float('inf')
 
         # Populate travel_matrix based on ants_path
         for k_colony, ants_path in enumerate(globl_ants_path):
-            length_path = self.get_length_path(ants_path)
+            len_path = self.get_length_path(ants_path)
 
-            for k_ant, ant_path in enumerate(ants_path):
-                # If the ant_path contain only 1 node
-                # (ie there are as many agents as node or more than half), then we pass
-                if len(ant_path) <= 1:
-                    break
-                mask = np.zeros((nb_node, nb_node), dtype=bool)
-                # Create a list of pairs (i_nodes, j_nodes) for each node in the ant's path
-                i_nodes = np.array(ant_path[:-1])
-                j_nodes = np.array(ant_path[1:])
-                
-                # Mark the nodes the ant travels
-                mask[i_nodes, j_nodes] = True
+            # Update the best colony if the current one has a shorter path
+            if len_path < best_colony_length:
+                best_colony_length = len_path
+                best_colony_index = k_colony
 
-                # The matrix is symetrix, if an ant have passed trouth i to j,
-                # that mean it had passed throu j to i
-                mask[j_nodes, i_nodes] = True
+        for _, ant_path in enumerate(globl_ants_path[best_colony_index]):            
+            # If the ant_path contain only 1 node
+            # (ie there are as many agents as node or more than half), then we pass
+            if len(ant_path) <= 1:
+                break
+            mask = np.zeros((nb_node, nb_node), dtype=bool)
+            # Create a list of pairs (i_nodes, j_nodes) for each node in the ant's path
+            i_nodes = np.array(ant_path[:-1])
+            j_nodes = np.array(ant_path[1:])
+            
+            # Mark the nodes the ant travels
+            mask[i_nodes, j_nodes] = True
 
-                # Connect the last node to the first node to handle the loop
-                mask[ant_path[-1], ant_path[0]] = True
-                # Symetrie
-                mask[ant_path[0],  ant_path[-1]] = True
+            # The matrix is symetrix, if an ant have passed trouth i to j,
+            # that mean it had passed throu j to i
+            mask[j_nodes, i_nodes] = True
 
-                # Set delta values where the ant travels using boolean masking, usiing Q
-                delta_t_pheromone_matrix[k_colony][k_ant][mask] += self.pheromone_quantity / length_path
+            # Connect the last node to the first node to handle the loop
+            mask[ant_path[-1], ant_path[0]] = True
+            # Symetrie
+            mask[ant_path[0],  ant_path[-1]] = True
 
+            # Set delta values where the ant travels using boolean masking, usiing Q
+            delta_t_pheromone_matrix[mask] += (self.pheromone_quantity / best_colony_length)
 
         # Sum of delta_pheromone_matrix for each ant, without evaporation np.sum, 
         # what come before is the evaporation term
-        pheromone_matrix = (1 - self.evaporation_rate)*pheromone_matrix + np.sum(delta_t_pheromone_matrix, axis=(0, 1))
+        pheromone_matrix = (1 - self.evaporation_rate)*pheromone_matrix + delta_t_pheromone_matrix
 
         # When evaporation_rate = 0 then it will add the delta pheromone to the old one. 
         # When = 1 the old pheromone_matrix is completly evaporated
         return pheromone_matrix
-
 
     def get_probability(self, pheromone_matrix, current_node, visited):
         """
         Return a probability vector representing the probability that an ant at the current node 
         moves to each possible next node, while ignoring already visited nodes.
         """
-        # Calculation of the pheromone component raised to alpha power
-        pheromone_component = pheromone_matrix ** self.alpha_parameter
+        
+        # Prendre uniquement la ligne correspondant au current_node pour la composante phéromonale
+        pheromone_component = (pheromone_matrix[current_node]) ** self.alpha_parameter
 
-        # Calculation of the high-cost component at beta power
+        # Ajout d'un epsilon pour éviter les zéros dans la matrice des phéromones
+        epsilon = 1e-6
+        pheromone_component = np.where(pheromone_component == 0, epsilon, pheromone_component)
+        
+        # Mise à zéro de la diagonale (aucune boucle)
+        pheromone_component[current_node] = 0
+        
+        # Mise à zéro des nœuds déjà visités
+        pheromone_component[np.array(list(visited))] = 0
+
+        # Set the nodes in visited to 0 to exclude them from normalization
+        cost_matrix = self.cost_matrix[current_node].copy()
+        cost_matrix[np.array(list(visited))] = 0
+
+        # Calcul de la composante des coûts inversés élevée à la puissance beta, uniquement pour la ligne current_node
         with np.errstate(divide='ignore', invalid='ignore'):
-            reverse_cost_matrix = np.where(self.cost_matrix != 0, (1 / self.cost_matrix)** self.beta_parameter, 0)
-        
+            reverse_cost_matrix = np.where(cost_matrix != 0, (1 / cost_matrix) ** self.beta_parameter, 0)
 
-        length_component = reverse_cost_matrix
-        
-        # Calculating the numerator of the probability
-        nominateur = pheromone_component * length_component
+        # Calcul du numérateur des probabilités
+        probability_vector = pheromone_component * reverse_cost_matrix
 
-        # Apply a mask to ignore nodes already visited
-        probability_vector = nominateur[current_node].copy()
-        probability_vector[visited] = 0  # Exclure les nœuds visités
-        
-        # Normalization to obtain the probability
+        # Normalisation pour obtenir une probabilité valide
         total = np.sum(probability_vector)
         if total > 0:
             probability_vector /= total
-        
-        # Return the probability vector
-        return probability_vector
+        else:
+            # Si la somme est nulle, il peut y avoir un problème avec les matrices de phéromones ou de coûts.
+            raise ValueError("La somme des probabilités est nulle. Vérifiez les matrices de phéromones et de coûts.")
 
+        return probability_vector
 
     def roulette_wheel(self, pheromone_matrix, current_node, visited):
         """
@@ -252,74 +276,127 @@ class AntColonyAlgorithm(IAlgorithm):
 
         return next_node
 
-    def get_start_nodes(self): 
-        # Heuristique to find first node
-        nb_nodes = self.cost_matrix.shape[0]
+    def get_start_nodes(self) -> list[int]:
+        """
+        Heuristic to determine the initial starting nodes for ants.
 
-        start_nodes = []
-        # List of nodes where an agent can start, IE : 
-        # 2 agents can't spawn in the same node and an agent can't spawn
-        autorize_nodes = [i for i in range(nb_nodes)]
+        The method selects the first node based on the highest sum of distances to all other nodes. 
+        Subsequent nodes are added iteratively by selecting the farthest possible node from the 
+        already selected nodes, with a probability proportional to the inverse of distances.
 
-        # Create a random generator
-        rng = np.random.default_rng()
+        Returns:
+            list: A list of starting node indices for the ants.
+        """
+        nb_nodes : int= self.cost_matrix.shape[0]
+        start_nodes : list= []
 
-        for _ in range(self.nb_ants):
-            if not start_nodes:
-                # If no start nodes yet, choose randomly
-                random_node = autorize_nodes[rng.integers(len(autorize_nodes))]
-            else:
-                # Calculate distances from already selected nodes
-                distances = np.zeros(len(autorize_nodes))
-                for i, node in enumerate(autorize_nodes):
-                    distances[i] = np.min([self.cost_matrix[node][start_node] for start_node in start_nodes])
-                
-                # Choose the node with the maximum minimum distance
-                random_node = autorize_nodes[np.argmax(distances)]
-            
-            start_nodes.append(random_node)
-            autorize_nodes.remove(random_node)
-        
-        # Return first node of each ant
+        # Select the first node based on the maximum sum of distances to all other nodes
+        first_node = np.argmax(np.sum(self.cost_matrix, axis=1))
+        start_nodes.append(first_node)
+
+        # Select subsequent nodes
+        for _ in range(self.nb_ants - 1):
+            min_distances = []
+
+            # Calculate the minimum distance from each unselected node to the selected nodes
+            for node in range(nb_nodes):
+                if node in start_nodes:
+                    min_distances.append(0)
+                else:
+                    # Compute the minimum distance between this node and all selected nodes
+                    min_distance = min([self.cost_matrix[start_node][node] for start_node in start_nodes])
+                    min_distances.append(min_distance)
+
+            # Convert minimum distances to a numpy array
+            distances = np.array(min_distances)
+
+            # Normalize probabilities using a transformation of distances
+            top_distances = distances ** 8 #power 8
+            probabilities = top_distances / top_distances.sum()
+
+            # Select the next node based on probabilities
+            next_node = np.random.choice(np.arange(nb_nodes), p=probabilities)
+
+            # Add the selected node to the list of starting nodes
+            start_nodes.append(next_node)
+
+        # Return the list of starting nodes
         return start_nodes
-    def colony_path(self, nb_nodes, global_pheromone_matrix, first_nodes):
+
+
+    def colony_path(
+            self,
+            nb_nodes: int,
+            global_pheromone_matrix: np.ndarray,
+            first_nodes: list[int]
+        ) -> tuple[list[list[int]], list[np.ndarray]]:
+        """
+        Simulates the path construction for a colony of ants in the Ant Colony Optimization algorithm.
+        Args:
+            nb_nodes (int): The total number of nodes in the graph.
+            global_pheromone_matrix (list of list of float): The matrix representing the pheromone levels between nodes.
+            first_nodes (list of int): The initial nodes where each ant starts.
+        Returns:
+            list of list of int: A list containing the paths taken by each ant.
+        """
+
         # Each ant builds a path
         ants_path = [[] for _ in range(self.nb_ants)]
 
         # Heuristique to find first node
-        current_nodes = first_nodes
+        current_nodes = first_nodes.copy()
 
         # Initialize tabou list
-        tabou_list = current_nodes.copy()
+        tabou_list : list = current_nodes.copy()
 
         for ant_index in range(self.nb_ants):
             ants_path[ant_index].append(current_nodes[ant_index])
 
+        ant = 0
         # Reapet until list tabou is full IE : All nodes are visited
         while (len(tabou_list) < nb_nodes):
             # Move each ant one at a time to the next node
-            for ant in range(self.nb_ants):
-                # Choose a random starting node for each ant
-                current_node = current_nodes[ant]
-                
-                # Choose the next node based on the roulette wheel
-                next_node = self.roulette_wheel(global_pheromone_matrix, current_node, tabou_list)
-                
-                current_nodes[ant] = next_node
-                
-                ants_path[ant].append(next_node)
-                
-                tabou_list.append(next_node)
+            # Choose a random starting node for each ant
+            current_node = current_nodes[ant]
+            
+            # Choose the next node based on the roulette wheel
+            next_node = self.roulette_wheel(global_pheromone_matrix, current_node, tabou_list)
 
-                # If list taboo complete then no more movement possible
-                if (len(tabou_list) == nb_nodes):
-                    break
+            path = self.graph.get_shortest_paths()[(current_node, next_node)]
+            for node in path:
+                if node not in tabou_list:
+                    ants_path[ant].append(node)
+                    tabou_list.append(node)
+
+            current_nodes[ant] = next_node
+
+            # If list taboo complete then no more movement possible
+            if (len(tabou_list) == nb_nodes):
+                break
+
+            # Choose next ant by getting the one with the shortest path :
+            # Find the ant with the shortest path
+            shortest_path_length = float('inf')
+            shortest_path_ant = None
+            for i, path in enumerate(ants_path):
+                if len(path) == 0:
+                    continue
+                path_length = self.get_length_path([path])
+                if path_length < shortest_path_length:
+                    shortest_path_length = path_length
+                    shortest_path_ant = i
+
+            # If no valid ant found, break the loop
+            if shortest_path_ant is None:
+                break
+
+            # Set the current ant to the one with the shortest path
+            ant = shortest_path_ant
         
         # Return the path for this colony
         return ants_path
-
-        
-    def launch(self):
+    
+    def launch(self) -> list[list[int]]:
         """
         Launch the ant colony algorithm and return the final best path and path length history.
         
@@ -342,22 +419,26 @@ class AntColonyAlgorithm(IAlgorithm):
 
         # Initialize path length history
         path_length_history = []
-
-        first_nodes = self.get_start_nodes()
-
+        colony_start_nodes = [self.get_start_nodes() for _ in range(self.nb_colony)]
+        
         # Stop criteria: nb_iterations
-        for _ in range(self.nb_iterations):
+        for iteration in range(self.nb_iterations):
 
             global_ants_path = [[] for _ in range(self.nb_colony)]
             iteration_path_lengths = []  # Store path lengths for this iteration
 
             # For each colony
             for colony in range(self.nb_colony):
-                ants_path = self.colony_path(nb_nodes, global_pheromone_matrix, first_nodes)
+                
+                ants_path = self.colony_path(nb_nodes, global_pheromone_matrix, colony_start_nodes[colony])
+                
+                # Echange
+                ants_path = self.exchange(ants_path)
                 global_ants_path[colony] = ants_path
 
                 path_length = self.get_length_path(global_ants_path[colony])
                 iteration_path_lengths.append(path_length)
+
 
             # Append the iteration's path lengths to history
             path_length_history.append(iteration_path_lengths)
@@ -366,18 +447,39 @@ class AntColonyAlgorithm(IAlgorithm):
             global_pheromone_matrix = self.get_pheromone_matrix(global_pheromone_matrix, global_ants_path)
 
             #Check for convergence
-            if self.check_convergence(path_length_history):
+            if self.has_converged(path_length_history):
                 break
+
+            # Initialize variables to track the best colony and its path length
+            best_colony_index = None
+            best_colony_length = float('inf')
+            # Populate travel_matrix based on ants_path
+            for k_colony, ants_path in enumerate(global_ants_path):
+                len_path = self.get_length_path(ants_path)
+                
+                # Update the best colony if the current one has a shorter path
+                if len_path < best_colony_length:
+                    best_colony_length = len_path
+                    best_colony_index = k_colony
+            
+            # Update colony start nodes for the next iteration
+            if iteration <= self.nb_colony :
+                for colony in range(self.nb_colony):
+                    if colony <= iteration:
+                        colony_start_nodes[colony] = colony_start_nodes[best_colony_index]
+                    else:
+                        colony_start_nodes[colony] = self.get_start_nodes()
 
         # Get the best path after all iterations
         best_path = self.get_best_path(global_ants_path)
 
         if  self.active_plot:
             self.plot_path_length_history(path_length_history)
+            self._plot_path(best_path)
         
         return best_path
 
-    def check_convergence(self, path_length_history, n=10):
+    def has_converged(self, path_length_history: list[list[float]], n: int = 10) -> bool:
         """
         Check if the algorithm has converged based on the path length history.
         
@@ -398,7 +500,48 @@ class AntColonyAlgorithm(IAlgorithm):
         # Verify if all recent path lengths are close to the most recent one
         return all(np.allclose(last_lengths, lengths, atol=1e-2) for lengths in recent_lengths[:-1])
 
-    def plot_path_length_history(self, path_length_history: list[list[np.ndarray]]):
+    def exchange(self, ants_path: list[list[int]]) -> list[list[int]]:
+        """"
+        Exchange nodes between ants if the distance between nodes is too large.
+        Args:
+            ants_path (list[list[int]]): A list of paths, where each path is a list of
+            node indices representing the path of an ant.
+        Returns:
+            list[list[int]]: The modified list of paths after exchanging nodes between ants.
+        """
+
+        #self._plot_path(ants_path)
+        for _, ant_path in enumerate(ants_path):
+            # Find the node with the largest distance to its next node
+            big_distance = 0
+            big_node_index = 0
+            for k_node, node in enumerate(ant_path):
+                next_node = ant_path[k_node + 1] if k_node != (len(ant_path) - 1) else ant_path[0]
+                distance = self.cost_matrix[node][next_node]
+                if distance > big_distance:
+                    big_distance = distance
+                    big_node_index = k_node
+
+            # Remove the node with the largest distance from the ant's path
+            big_node = ant_path.pop(big_node_index)
+
+            # Find the ant with the closest node to the removed node
+            min_distance = float('inf')
+            closest_ant_index = 0
+            closest_node_index = 0
+            for other_ant_index, other_ant_path in enumerate(ants_path):
+                for k_node, node in enumerate(other_ant_path):
+                    distance = self.cost_matrix[big_node][node]
+                    if distance < min_distance:
+                        min_distance = distance
+                        closest_ant_index = other_ant_index
+                        closest_node_index = k_node
+            # Insert the removed node into the closest ant's path
+            ants_path[closest_ant_index].insert(closest_node_index + 1, big_node)
+
+        return ants_path
+
+    def plot_path_length_history(self, path_length_history: list[list[np.ndarray]]) -> None:
         """
         Plot the path length history for each colony over the iterations.
         
@@ -419,10 +562,48 @@ class AntColonyAlgorithm(IAlgorithm):
         plt.legend()
         plt.show()
 
-    def get_best_path(self, global_ants_path):
+    def _plot_path(self, paths: list[list[int]]) -> None:
         """
-        Returns the path chosen based on the maximum pheromones on the nodes.
+        Display the paths of agents on a 2D plot. Each agent's path is shown 
+        in a different color.
+
+        Args:
+            paths (list of list of int): A list of paths, where each path is 
+            a list of node indices representing the trajectory of an agent.
         """
+        # Liste de couleurs pour différencier les chemins des agents
+        path_colors = ['red', 'blue', 'green', 'purple', 'orange', 'cyan', 'magenta', 'yellow', 'lime', 'brown']
+
+        # Créer le graphique
+        fig, ax = plt.subplots()
+
+        for i, path in enumerate(paths):
+            # Récupérer les coordonnées des nœuds dans le chemin
+            coordinates = self._list_nodes[path]  # `self._list_nodes` contient les coordonnées des nœuds
+            x, y = coordinates[:, 0], coordinates[:, 1]
+
+            # Tracer le chemin avec une couleur différente pour chaque agent
+            ax.plot(x, y, color=path_colors[i % len(path_colors)], label=f'Agent {i+1}')
+            ax.scatter(x, y, color=path_colors[i % len(path_colors)], s=50)  # Marquer les nœuds du chemin
+
+        # Ajouter des étiquettes et une légende
+        ax.set_title('Paths of Agents')
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.legend()
+        plt.show()
+
+    def get_best_path(self, global_ants_path: list[list[int]]) -> list[list[int]]:
+        """
+        Get the best path based on the maximum pheromones on the nodes.
+
+        Args:
+            global_ants_path (List[List[int]]): A list of paths taken by all ants in the colony.
+
+        Returns:
+            List[int]: The best path chosen based on the maximum pheromones on the nodes.
+        """
+        # Implementation of the function
         best_len_path = float('inf')
         best_len_path_num = 0
         for num, ants_path in enumerate(global_ants_path):
