@@ -40,13 +40,12 @@ class IdlenessController:
         """
         Draws the idleness values in the View.
         """
-
-        self._idleness.update_idleness(nodes_list)
+        self.idleness.update_idleness(nodes_list)
 
         # Get the updated idleness values
-        idleness_data = self._idleness.get_idleness_data()
+        idleness_data = self.idleness.get_idleness_data()
 
-        self._simulation_data_controller.idleness_data_provider = self._idleness.get_idleness_data
+        self._simulation_data_controller.idleness_data_provider = self.idleness.get_idleness_data
 
         # Update the view with the new values
         self._idleness_view.update_values(
