@@ -26,14 +26,15 @@ class SimulationController:
     def __init__(self,
                  graph_controller: GraphController,
                  simulation_data_controller: SimulationDataController,
-                 csv_service: ICSVService
+                 csv_service: ICSVService,
+                 idleness_data: IdlenessData
                  ) -> None:
         self._agents = None
         self._simulation_started = False
         self._graph_controller = graph_controller
         self._start_time = None
         self._simulation_data_controller = simulation_data_controller
-        self._idleness_data = IdlenessData()
+        self._idleness_data = idleness_data
         self._csv_service = csv_service
         self._test_counters = {}
 

@@ -52,7 +52,8 @@ class ViewController:
         self._simulation_controller = SimulationController(
             self._graph_controller,
             self._simulation_data_controller,
-            csv_service
+            csv_service,
+            self._simulation_data_controller._idleness_controller.idleness
         )
         self._parameters_controller = ParametersController(
             self._screen,
