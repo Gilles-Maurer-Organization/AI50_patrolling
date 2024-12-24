@@ -39,7 +39,32 @@ class CSVService(ICSVService):
             "references",
             "test_numbers.csv"
         )
-        self.current_csv_number = 0
+        self._current_csv_number = 0
+
+    @property
+    def current_csv_number(self) -> int:
+        """
+        Gets the current CSV number used for exporting data.
+
+        Returns:
+            int: The current CSV number.
+        """
+        return self._current_csv_number
+
+    @current_csv_number.setter
+    def current_csv_number(self, value: int) -> None:
+        """
+        Sets the current CSV number.
+
+        Args:
+            value (int): The new CSV number.
+
+        Raises:
+            ValueError: If the value is not a positive integer.
+        """
+        if not isinstance(value, int) or value < 0:
+            raise ValueError("current_csv_number must be a non-negative integer")
+        self._current_csv_number = value
 
     def _initialize_directories(self):
         """
@@ -451,69 +476,73 @@ class CSVService(ICSVService):
         return next_test_number
 
 
-def export_idleness_data(
-    csv_service: CSVService,
-    idleness_data_provider,
-    algorithm: str,
-    test_number: int,
-    start_time: int,
-    interval: int = 10
-):
-    """
-    Exports idleness data with additional metadata to a CSV file every `interval` seconds.
-    Appends results if the file already exists.
+    def export_idleness_data(
+        self,
+        idleness_data_provider,
+        algorithm: str,
+        test_number: int,
+        start_time: int,
+        interval: int = 10
+    ):
+        """
+        Exports idleness data with additional metadata to a CSV file every
+        `interval` seconds.
+        Appends results if the file already exists.
 
-    Args:
-        csv_service (CSVService): Instance of CSVService to retrieve current graph number.
-        idleness_data_provider (callable): A function that provides the idleness data as (average, max, all-time max).
-        algorithm (str): The name of the algorithm being tested.
-        test_number (int): The test number for the current simulation.
-        start_time (int): The simulation start time in milliseconds (from pygame.time.get_ticks()).
-        interval (int): The interval (in seconds) at which the data will be exported.
-    """
-    current_csv_number = csv_service.current_csv_number
-    if current_csv_number == 0:
-        raise ValueError("Current CSV number is not set. Please ensure a graph is loaded or saved.")
+        Args:
+            csv_service (CSVService): Instance of CSVService to retrieve
+                current graph number.
+            idleness_data_provider (callable): A function that provides
+                the idleness data as (average, max, all-time max).
+            algorithm (str): The name of the algorithm being tested.
+            test_number (int): The test number for the current simulation.
+            start_time (int): The simulation start time in milliseconds
+                (from pygame.time.get_ticks()).
+            interval (int): The interval (in seconds) at which the data will be exported.
+        """
+        current_csv_number = self.current_csv_number
+        if current_csv_number == 0:
+            raise ValueError("Current CSV number is not set. Please ensure a graph is loaded or saved.")
 
-    # Generate the CSV filename based on the graph number
-    csv_filename = f'graph_{current_csv_number}_results.csv'
-    csv_folder_path = os.path.join(Path(__file__).resolve().parent.parent, "csv_files")
-    csv_path = os.path.join(csv_folder_path, csv_filename)
+        # Generate the CSV filename based on the graph number
+        csv_filename = f'graph_{current_csv_number}_results.csv'
+        csv_folder_path = os.path.join(Path(__file__).resolve().parent.parent, "csv_files")
+        csv_path = os.path.join(csv_folder_path, csv_filename)
 
-    # Ensure directory exists
-    if not os.path.exists(csv_folder_path):
-        os.makedirs(csv_folder_path)
+        # Ensure directory exists
+        if not os.path.exists(csv_folder_path):
+            os.makedirs(csv_folder_path)
 
-    # Check if the file already exists
-    file_exists = os.path.exists(csv_path)
+        # Check if the file already exists
+        file_exists = os.path.exists(csv_path)
 
-    # Write headers if the file does not exist
-    if not file_exists:
-        with open(csv_path, mode='w', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow([
-                "Algorithm", "Test Number",
-                "Simulation Time (s)", "Average Idleness",
-                "Current Max Idleness", "All-time Max Idleness"
-            ])
+        # Write headers if the file does not exist
+        if not file_exists:
+            with open(csv_path, mode='w', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow([
+                    "Algorithm", "Test Number",
+                    "Simulation Time (s)", "Average Idleness",
+                    "Current Max Idleness", "All-time Max Idleness"
+                ])
 
-    def write_data():
-        # Retrieve idleness data
-        average, max_idleness, all_time_max = idleness_data_provider()
+        def write_data():
+            # Retrieve idleness data
+            average, max_idleness, all_time_max = idleness_data_provider()
 
-        # Calculate simulation time in seconds
-        elapsed_time = (pygame.time.get_ticks() - start_time) / 1000.0
+            # Calculate simulation time in seconds
+            elapsed_time = (pygame.time.get_ticks() - start_time) / 1000.0
 
-        # Write data to the CSV file
-        with open(csv_path, mode='a', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow([
-                algorithm, test_number,
-                round(elapsed_time, 2), average, max_idleness, all_time_max
-            ])
+            # Write data to the CSV file
+            with open(csv_path, mode='a', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow([
+                    algorithm, test_number,
+                    round(elapsed_time, 2), average, max_idleness, all_time_max
+                ])
 
-        # Schedule the next write
-        Timer(interval, write_data).start()
+            # Schedule the next write
+            Timer(interval, write_data).start()
 
-    # Start the first data export
-    write_data()
+        # Start the first data export
+        write_data()
