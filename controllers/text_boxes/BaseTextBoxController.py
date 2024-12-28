@@ -117,7 +117,7 @@ class BaseTextBoxController:
         Returns:
             bool: True if completed, False otherwise.
         """
-        return model.default_text != model.text_content
+        return model.default_text != model.text_content or not model.first_input
 
     def is_text_box_hovered(self, event, text_box_view) -> bool:
         """

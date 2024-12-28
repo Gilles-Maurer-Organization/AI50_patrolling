@@ -99,11 +99,8 @@ class TextBox:
             bool: Whether the text content is filled and differs from
                 the default text.
         """
-        return (
-            self._default_text != self._text_content
-            and not self.empty
-        )
-    
+        return not self.empty and not self._first_input
+
     def reset(self) -> None:
         """
         Resets the text box to its default text.
@@ -129,10 +126,17 @@ class TextBox:
         Handles the backspace functionality and resets the text if it
         becomes empty.
         """
-        if self._default_text != self._text_content:
+         # Do nothing if the content is already the default text
+        if self._text_content == self._default_text and self._first_input:
+            return
+
+        # Remove the last character if there is any text
+        if not self.empty:
             self.remove_character()
-            if self.empty:
-                self.reset()
+
+        # If the text becomes empty, reset to default text
+        if self.empty:
+            self.reset()
 
     def remove_character(self) -> None:
         """
