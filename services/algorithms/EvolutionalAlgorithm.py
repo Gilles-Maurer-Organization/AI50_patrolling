@@ -1,6 +1,5 @@
 import random as rd
 
-import matplotlib.pyplot as plt
 from models.Graph import Graph
 from models.TextBox import TextBox
 from services.algorithms.IAlgorithm import IAlgorithm
@@ -777,8 +776,6 @@ class EvolutionalAlgorithm(IAlgorithm):
             the optimal individual which should
             in theory guarantee a minimal idleness during the simulation.
         """
-        # List to store fitness values for each generation
-        fitness_history = []
 
         # generating the initial population
         self.indicative_paths_population = self.initial_population_generation()
@@ -792,10 +789,6 @@ class EvolutionalAlgorithm(IAlgorithm):
             
             # evaluating the fitness of the current population
             fitness = self.fitness()
-
-            # Store the best fitness of the current generation
-            best_fitness = max(fitness)
-            fitness_history.append(best_fitness)
 
             # selecting the best individuals to use them as parents
             parents = self.selection_with_pareto(fitness, nbr_parents)
@@ -821,18 +814,9 @@ class EvolutionalAlgorithm(IAlgorithm):
 
         # retrieving the best individual
         res_of_algo = self.indicative_paths_population[best_individual_idx]
-        print(res_of_algo)
-
+  
         # cleaning the individual before returning him
         # also casting the ndarray to a list
         algorithm_output = list(self.clean_output_individual(res_of_algo))
-
-        # Plot the evolution of fitness over generations
-        plt.plot(fitness_history)
-        plt.title("Fitness evolution over Generations")
-        plt.xlabel("Generation")
-        plt.ylabel("Fitness")
-        plt.grid(True)
-        plt.show()
 
         return algorithm_output
