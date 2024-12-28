@@ -17,10 +17,10 @@ class TestAlgorithmParametersController(unittest.TestCase):
         # We check if the value of the parameters are indeed
         # the one by default with the empty constructor 
         self.assertEqual(algorithm.parameters["Alpha"]._text_content, "1")
-        self.assertEqual(algorithm.parameters["Beta"]._text_content, "1")
-        self.assertEqual(algorithm.parameters["Evaporation rate"]._text_content, "0.5")
-        self.assertEqual(algorithm.parameters["Pheromone quantity"]._text_content, "10")
-        self.assertEqual(algorithm.parameters["Nb colony"]._text_content, "3")
+        self.assertEqual(algorithm.parameters["Beta"]._text_content, "4")
+        self.assertEqual(algorithm.parameters["Evaporation rate"]._text_content, "0.1")
+        self.assertEqual(algorithm.parameters["Pheromone quantity"]._text_content, "100")
+        self.assertEqual(algorithm.parameters["Nb colony"]._text_content, "5")
         self.assertEqual(algorithm.parameters["Nb iterations"]._text_content, "100")
 
 
