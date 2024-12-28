@@ -1,12 +1,11 @@
 import random as rd
-import time
 
+import matplotlib.pyplot as plt
 from models.Graph import Graph
 from models.TextBox import TextBox
 from services.algorithms.IAlgorithm import IAlgorithm
 
 import numpy as np
-
 
 class EvolutionalAlgorithm(IAlgorithm):
     """
@@ -75,21 +74,18 @@ class EvolutionalAlgorithm(IAlgorithm):
 
         indicative_population = []
 
+        #splitting the list of nodes of the Graph
+        graph_sublists = self.split_list()
+
         # For each individual
         for _ in range(self.nb_individuals_in_pop):
-            
-            #splitting the list of nodes of the Graph
-            graph_sublists = self.split_list()
-
             # while the individual is not covering all nodes, we generate him
             # we generate another one (max 10 tries)
             nb_tries_individual = 0
             while (nb_tries_individual < max_tries):
-
                 individual = []
                 # For each gene of the individual (a gene is a path of an agent)
-                for _ ,init_path  in zip(range(self.nb_agents),graph_sublists):
-
+                for init_path in graph_sublists:
                     # we shuffle the initial_path (the sublist)
                     rd.shuffle(init_path) #NOSONAR
 
@@ -112,7 +108,6 @@ class EvolutionalAlgorithm(IAlgorithm):
 
         # Transforming into np.array for later use
         indicative_population = np.array(indicative_population)
-
         return indicative_population
 
     def split_list(self)-> list[list]:
@@ -125,6 +120,8 @@ class EvolutionalAlgorithm(IAlgorithm):
         """
         if self.nb_agents <= 0:
             raise ValueError("The number of agents must be greater than 0.")
+        
+        rd.shuffle(self.nodes_idx_list)
 
         # computing the size of the sublists
         base_size = len(self.nodes_idx_list) // self.nb_agents
@@ -523,6 +520,19 @@ class EvolutionalAlgorithm(IAlgorithm):
         second_children = np.hstack(temp_child_2)
 
         return first_children, second_children
+    
+    def enhanced_vertical_crossing_process(
+        self, 
+        parent_1: np.ndarray, 
+        parent_2: np.ndarray, 
+        nb_crossings: int
+    ) -> tuple[np.ndarray, np.ndarray]:
+        child1, child2 = self.vertical_crossing_process(parent_1, parent_2, nb_crossings)
+        
+        child1 = self.swap_nodes_between_agents(child1)
+        child2 = self.swap_nodes_between_agents(child2)
+            
+        return child1, child2
 
     def child_validation_process(self, child: np.ndarray) -> np.ndarray:
 
@@ -592,32 +602,65 @@ class EvolutionalAlgorithm(IAlgorithm):
                 continue
 
             # randomly choosing the 2 individuals to cross together
-            first_individual_to_cross = rd.randint(0, len(parents) - 1)  # NOSONAR
-            second_individual_to_cross = rd.randint(0, len(parents) - 1)  # NOSONAR
-
-            # assuring we don't choose the same individual twice
-            # (no point doing that when crossing)
-            while first_individual_to_cross == second_individual_to_cross:
-                second_individual_to_cross = rd.randint(0, len(parents) - 1)  # NOSONAR
+            first_individual_to_cross, second_individual_to_cross = rd.sample(range(len(parents)), 2)
 
             # getting the parents
             parent1 = parents[first_individual_to_cross]
             parent2 = parents[second_individual_to_cross]
 
             # get the 2 created children
-            created_children = list(self.vertical_crossing_process(parent1, parent2, self.number_of_crossing_points))
+            created_children = list(self.enhanced_vertical_crossing_process(parent1, parent2, self.number_of_crossing_points))
 
             # for each generated children
             # he passes through the validation process
             for new_child in created_children:
                 #if the number of children is hit, we break
-                if i == nb_children:
+                if i >= nb_children:
                     break
-                else:
-                    children[i] = self.child_validation_process(new_child)                
+                children[i] = self.child_validation_process(new_child)                
                 i += 1
 
         return children.astype(int)
+    
+    def swap_nodes_between_agents(self, individual: np.ndarray) -> np.ndarray:
+        """
+        Échange des nœuds entre différents agents d'un même individu.
+        
+        Args:
+            individual: Un individu de la population (matrice 2D où chaque ligne représente le parcours d'un agent)
+        
+        Returns:
+            L'individu modifié avec des nœuds échangés entre agents
+        """
+        modified = individual.copy()
+    
+        nb_swaps = rd.randint(1, modified.shape[1] // 2)
+        
+        for _ in range(nb_swaps):
+            # Sélectionner deux agents différents au hasard
+            agent1, agent2 = rd.sample(range(modified.shape[0]), 2)
+            
+            # Longueur de la sous-séquence à échanger
+            length = rd.randint(1, modified.shape[1] // 2)
+            
+            # Sélectionner les indices de départ pour les sous-séquences
+            start1 = rd.randint(0, modified.shape[1] - length)
+            start2 = rd.randint(0, modified.shape[1] - length)
+            
+            # Sous-séquences à échanger
+            seq1 = modified[agent1][start1:start1+length]
+            seq2 = modified[agent2][start2:start2+length]
+            
+            # Vérifier qu'il n'y a pas de duplication des nœuds
+            if not any(node in modified[agent2] for node in seq1) and not any(node in modified[agent1] for node in seq2):
+                # Effectuer l'échange si aucune duplication n'est trouvée
+                modified[agent1][start1:start1+length] = seq2
+                modified[agent2][start2:start2+length] = seq1
+            else:
+                # Si une duplication est trouvée, recommencer avec de nouveaux indices
+                continue
+        
+        return modified
 
     def mutating(self, children: np.ndarray) -> np.ndarray:
         """
@@ -725,14 +768,17 @@ class EvolutionalAlgorithm(IAlgorithm):
 
         return cleaned_individual
 
+
     def launch(self) -> list:
         """
         Launches the whole Algorithm.
-
+        
         Returns:
             the optimal individual which should
             in theory guarantee a minimal idleness during the simulation.
         """
+        # List to store fitness values for each generation
+        fitness_history = []
 
         # generating the initial population
         self.indicative_paths_population = self.initial_population_generation()
@@ -743,9 +789,13 @@ class EvolutionalAlgorithm(IAlgorithm):
         nbr_enfants = self.nb_individuals_in_pop - nbr_parents
 
         for _ in range(self.nb_generations):
-
+            
             # evaluating the fitness of the current population
             fitness = self.fitness()
+
+            # Store the best fitness of the current generation
+            best_fitness = max(fitness)
+            fitness_history.append(best_fitness)
 
             # selecting the best individuals to use them as parents
             parents = self.selection_with_pareto(fitness, nbr_parents)
@@ -760,7 +810,7 @@ class EvolutionalAlgorithm(IAlgorithm):
             self.indicative_paths_population[0:parents.shape[0], :] = parents
             self.indicative_paths_population[parents.shape[0]:, :] = mutants
 
-            # updating te "real paths" population
+            # updating the "real paths" population
             self.real_paths_population = self.get_real_population_from_indicative_population()
 
         # evaluating the fitness of the final population
@@ -771,9 +821,18 @@ class EvolutionalAlgorithm(IAlgorithm):
 
         # retrieving the best individual
         res_of_algo = self.indicative_paths_population[best_individual_idx]
+        print(res_of_algo)
 
         # cleaning the individual before returning him
         # also casting the ndarray to a list
         algorithm_output = list(self.clean_output_individual(res_of_algo))
+
+        # Plot the evolution of fitness over generations
+        plt.plot(fitness_history)
+        plt.title("Fitness evolution over Generations")
+        plt.xlabel("Generation")
+        plt.ylabel("Fitness")
+        plt.grid(True)
+        plt.show()
 
         return algorithm_output
