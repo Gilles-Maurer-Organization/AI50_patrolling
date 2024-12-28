@@ -1,4 +1,7 @@
+import pygame
+
 from controllers.text_boxes.BaseTextBoxController import BaseTextBoxController
+from models.TextBox import TextBox
 from models.algorithms.IAlgorithmModel import IAlgorithmModel
 from views.ParametersView import ParametersView
 from views.text_boxes.AlgorithmParametersView import AlgorithmParametersView
@@ -66,3 +69,22 @@ class AlgorithmParametersController(BaseTextBoxController):
             )
             
             self.add_text_box(parameter, text_box_view)
+
+    def handle_keyboard(self, event: pygame.event.Event, model: TextBox):
+        """
+        Handles keyboard input when the text box is active for
+        algorithm parameters.
+
+        This override allows handling of decimal points.
+        """
+        # If it is the first time the text box is being written to and
+        # the pressed key is valid (a digit), reset the default text
+        if model.first_input and event.unicode.isdigit():
+            model.reset()
+
+        # If the backspace key is pressed
+        if event.key == pygame.K_BACKSPACE:
+            model.handle_backspace()
+        # Otherwise, handle digits and allow points
+        elif event.unicode.isdigit() or event.unicode == '.':
+            model.add_character(event.unicode)
