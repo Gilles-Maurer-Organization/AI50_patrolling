@@ -155,7 +155,7 @@ class EvolutionalAlgorithm(IAlgorithm):
             while len(sub_list) < target_size:
 
                 # we choose a random node to add 
-                random_node = rd.choice(self.nodes_idx_list) #NOSONAR
+                random_node = rd.choice(list(self.nodes_idx_list)) #NOSONAR
                 sub_list = np.append(sub_list,random_node)
             
             #updating the sublist with the corrected one
