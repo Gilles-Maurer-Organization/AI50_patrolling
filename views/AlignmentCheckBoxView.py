@@ -16,8 +16,8 @@ class AlignmentCheckBoxView:
         self._height = height
         self._rect = pygame.Rect(x, y, width, height)
 
-        self._color = Colors.BUTTON
-        self._clicked_color = Colors.BUTTON_GREEN
+        self._color = Colors.FOG_GRAY
+        self._clicked_color = Colors.GREEN
         self._border_radius = 6
 
         self._tick_image = pygame.image.load("assets/checkbox/tick.png")

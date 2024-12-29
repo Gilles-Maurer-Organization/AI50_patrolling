@@ -48,8 +48,8 @@ class ButtonView:
         width: int,
         height: int,
         icon_path: str = None,
-        color: Colors = Colors.BUTTON,
-        hover_color: Colors = Colors.BUTTON_HOVER
+        color: Colors = Colors.FOG_GRAY,
+        hover_color: Colors = Colors.PEARL_GRAY
     ) -> None:
         self._screen = screen
         self._text = text
@@ -64,9 +64,9 @@ class ButtonView:
         self._normal_color = color
 
         # Color when disabled
-        self._disabled_color = Colors.BUTTON_DISABLED
+        self._disabled_color = Colors.DISABLED
         # Text color when disabled
-        self._text_disabled_color = Colors.GRAY_TEXT 
+        self._text_disabled_color = Colors.SILVER_GRAY 
 
         self._rect = pygame.Rect(x, y, width, height)
         self._font = pygame.font.SysFont("Arial", 16)
