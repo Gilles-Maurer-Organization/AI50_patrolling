@@ -42,6 +42,7 @@ class KMeansAlgorithm(IAlgorithm):
         best_result = math.inf
         best_clusters_attribution = np.zeros(self._nb_clusters)
         best_clusters = {}
+        best_centers = np.zeros((self._nb_clusters, 2))
 
         for _ in range(self._nb_launch_kmeans):
             # Run KMean algorithm to group the nodes
@@ -49,10 +50,13 @@ class KMeansAlgorithm(IAlgorithm):
             result = self._evaluate_kmean()
             if result < best_result: 
                 best_result = result
-                best_clusters = self._clusters
-                best_clusters_attribution = cluster_attribution
+                best_clusters = self._clusters.copy()
+                best_clusters_attribution = cluster_attribution.copy()
+                best_centers = self._centers.copy()
+
 
         self._clusters = best_clusters
+        self._centers = best_centers # only use for the plot
 
         if self._active_plot:
             self._plot(best_clusters_attribution)
@@ -136,7 +140,7 @@ class KMeansAlgorithm(IAlgorithm):
            nodes 3 in cluster 1 ; node 1 in cluster 2.  
         """
         # Define a list of colors for the clusters
-        colors = ['red', 'blue', 'green', 'purple', 'orange']  
+        colors = ['red', 'blue', 'green', 'purple', 'orange', 'yellow', 'pink', 'brown', 'grey', 'black']  
         
         ax = plt.subplots()[1]
 
@@ -202,7 +206,7 @@ class KMeansAlgorithm(IAlgorithm):
 
         # For each cluster
         for i in range(len(self._clusters)):
-            
+
             cluster = self._clusters[i]
 
             cluster_distances = self.create_distance_matrix(cluster)
