@@ -67,7 +67,6 @@ class PopupView:
             popup_rect = popup_surface.get_rect(center=(screen_rect.centerx, self._height // 2 + self._popup_y_offset))
 
             self._screen.blit(popup_surface, popup_rect)
-            pygame.display.flip()
 
     def start_popup(self):
         self._popup_start_time = pygame.time.get_ticks()
