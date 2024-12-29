@@ -382,7 +382,7 @@ class GraphController:
         except Exception as e:
             self.raise_error_message(f"Error clearing graph: {str(e)}")
 
-    def load_graph_from_csv(self, file_number: str) -> None:
+    def load_graph_from_csv(self, file_number: int) -> None:
         """
         Loads a graph's data from a CSV file based on the given file number.
 
@@ -423,7 +423,7 @@ class GraphController:
         match = re.search(r'graph_(\d+)\.csv', csv_path)
         try:
             if match:
-                file_number = match.group(1)
+                file_number = int(match.group(1))
                 self.load_graph_from_csv(file_number)
         except Exception as e:
             self.raise_error_message(f"Error loading graph data: {str(e)}")
