@@ -40,7 +40,7 @@ class IdlenessView:
         """
         padding = 10
         border_radius = 6
-        gray_color = Colors.BUTTON.value
+        gray_color = Colors.FOG_GRAY.value
         text_color = Colors.BLACK.value
         section_height = 50
 
