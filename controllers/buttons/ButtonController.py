@@ -26,7 +26,9 @@ class ButtonController(BaseButtonController):
         graph_controller: GraphController,
         file_explorer_controller: FileExplorerController
     ) -> None:
-        super().__init__(parameters_view, graph_controller)
+        super().__init__()
+        self._parameters_view = parameters_view
+        self._graph_controller = graph_controller
 
         self._file_explorer_controller = file_explorer_controller
         self._file_explorer_controller._on_file_imported = self._enable_buttons  # Set callback
@@ -38,13 +40,13 @@ class ButtonController(BaseButtonController):
         # Creation of the button map and their models/views associated
         self._button_map = {
             self._save_button: ButtonView(
-                parameters_view.screen,
+                self._parameters_view.screen,
                 self._save_button.text,
                 10,
                 10,
                 90,
                 40,
-                icon_path='assets/save.png'
+                icon_path='assets/widgets/save.png'
             ),
             self._import_button: ButtonView(
                 parameters_view.screen,
@@ -53,7 +55,7 @@ class ButtonController(BaseButtonController):
                 10,
                 90,
                 40,
-                icon_path='assets/import.png'
+                icon_path='assets/widgets/import.png'
             ),
             self._clear_button: ButtonView(
                 parameters_view.screen,
@@ -62,8 +64,9 @@ class ButtonController(BaseButtonController):
                 10,
                 90,
                 40,
-                color=Colors.BUTTON_RED,
-                hover_color=Colors.BUTTON_RED_HOVER
+                color=Colors.RED,
+                hover_color=Colors.DARK_RED,
+                icon_path='assets/widgets/clear.png'
             )
         }
 
