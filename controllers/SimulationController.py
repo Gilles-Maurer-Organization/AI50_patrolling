@@ -2,10 +2,7 @@ import pygame
 
 from controllers.GraphController import GraphController
 from models.Agent import Agent
-from models.IdlenessData import IdlenessData
 from models.Node import Node
-from services import ICSVService
-
 
 class SimulationController:
     """
@@ -22,12 +19,10 @@ class SimulationController:
         _graph_controller (GraphController): The controller managing
             the graph and its visualization.
     """
-    def __init__(self,
-                 graph_controller: GraphController,
-                 simulation_data_controller: SimulationDataController,
-                 csv_service: ICSVService,
-                 idleness_data: IdlenessData
-                 ) -> None:
+    def __init__(
+        self,
+        graph_controller: GraphController
+    ) -> None:
         self._agents = None
         self._simulation_started = False
         self._graph_controller = graph_controller

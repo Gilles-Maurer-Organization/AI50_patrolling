@@ -100,8 +100,11 @@ class SimulationDataController:
             test_number (int): The current test number for this simulation.
             start_time (float): The simulation start time in seconds.
         """
+        def idleness_data_provider():
+            return self._idleness_controller.idleness.get_idleness_data()
+        
         self._csv_service.export_idleness_data(
-            idleness_data_provider = self._idleness_controller.idleness.get_idleness_data(),
+            idleness_data_provider = idleness_data_provider,
             algorithm = algorithm_name,
             test_number = test_number,
             start_time = start_time,
