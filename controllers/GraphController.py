@@ -541,14 +541,12 @@ class GraphController:
         This method triggers an error popup with a specific message.
         """
         self._graph_view.show_info_popup(message)
-        pygame.display.update()
     
     def raise_message(self, message: str) -> None:
         """
         This method triggers an error popup with a specific message.
         """
         self._graph_view.show_popup(message)
-        pygame.display.update()
 
     def set_snapping_enabled(self, snapping_enabled) -> None:
         self._snapping_enabled = snapping_enabled
