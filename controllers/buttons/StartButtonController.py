@@ -11,6 +11,7 @@ from models.Error import Error
 from services.AStarService import AStarService
 from services.ICompleteGraphService import ICompleteGraphService
 from services.ICSVService import ICSVService
+from services.algorithms.NaiveAlgorithmRuntime import NaiveAlgorithmRuntime
 from views.ButtonView import ButtonView
 from views.ParametersView import ParametersView
 
@@ -132,14 +133,24 @@ class StartButtonController(BaseButtonController):
 
         graph = self._graph_controller.graph
         _algorithm = selected_algorithm.initialize_algorithm(nb_agents, graph)
-        
+        self._simulation_controller.set_selected_algorithm(_algorithm)
+
         solution: list[list[int]] = _algorithm.launch()
 
-        # Convert the solution paths to use the shortest paths in the real graph
-        real_paths = self._graph_controller.compute_real_paths(solution)
-        # Initializing agents with the real paths
-        self._simulation_controller.initialize_agents(real_paths)
+        if(isinstance(_algorithm,NaiveAlgorithmRuntime)):
 
+            # Convert the solution paths to use the shortest paths in the real graph
+            real_paths = self._graph_controller.compute_real_paths(solution)
+            print(real_paths)
+            # Initializing agents with the real paths
+            self._simulation_controller.initialize_agents(real_paths)
+
+
+        else :
+            # Convert the solution paths to use the shortest paths in the real graph
+            real_paths = self._graph_controller.compute_real_paths(solution)
+            # Initializing agents with the real paths
+            self._simulation_controller.initialize_agents(real_paths)
 
         # Setting the simulation as started
         self._simulation_controller.set_simulation_started(True)
