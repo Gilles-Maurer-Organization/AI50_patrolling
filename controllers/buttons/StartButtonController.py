@@ -158,7 +158,7 @@ class StartButtonController(BaseButtonController):
             )
 
         threading.Thread(target=run_algorithm).start()
-            
+
     def _compute_complete_graph_and_shortest_paths(self):
         """
         Computes the complete graph and shortest paths using the A*
