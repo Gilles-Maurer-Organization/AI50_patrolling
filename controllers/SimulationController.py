@@ -108,11 +108,21 @@ class SimulationController:
             is_agent_on_node, agent, agent_id = self.are_agents_on_node(node, agents_not_on_nodes)
             if is_agent_on_node:
                 
+                # Recompute the path of an agent only in Real Time
                 if(isinstance(self._selected_algorithm,NaiveAlgorithmRuntime) & (node.idleness != 0)):
-                    new_path = self._selected_algorithm.update(agent_id)
-                    real_paths = self._graph_controller.compute_real_paths([new_path])
-                    print(agent_id, " : path : ", real_paths[0])
-                    agent.path = real_paths[0]
+
+                    # Update the path
+                    new_path: list[int] = self._selected_algorithm.update(agent_id, agent.path[1])
+
+                    # Compute the updated path to match the view 
+                    real_paths: list[list[int]] = self._graph_controller.compute_real_paths([new_path])
+
+                    # Keep only the two first elements of the computed path
+                    new_agent_path: list[int] = real_paths[0]
+                    agent.path = [new_agent_path[0],new_agent_path[1]]
+
+                    # Match the view for the agent
+                    agent.reset_path()
                 
                 node.idleness = 0
                 

@@ -146,21 +146,19 @@ class StartButtonController(BaseButtonController):
     
         solution: list[list[int]] = _algorithm.launch()
 
-
+        # Convert the solution paths to use the shortest paths in the real graph
+        real_paths = self._graph_controller.compute_real_paths(solution)
 
         if(isinstance(_algorithm,NaiveAlgorithmRuntime)):
+            # Make the path of an agent a list of two elements
+            agents_paths : list[list[int]] = []
+            for real_path in real_paths:
+                agents_paths.append([real_path[0],real_path[1]])
 
-            # Convert the solution paths to use the shortest paths in the real graph
-            real_paths = self._graph_controller.compute_real_paths(solution)
-            print(real_paths)
-            # Initializing agents with the real paths
-            self._simulation_controller.initialize_agents(real_paths)
-
+            # Initializing agents with the agent paths
+            self._simulation_controller.initialize_agents(agents_paths)
 
         else :
-            # Convert the solution paths to use the shortest paths in the real graph
-            real_paths = self._graph_controller.compute_real_paths(solution)
-    
             # Initializing agents with the real paths
             self._simulation_controller.initialize_agents(real_paths)
             # Setting the simulation as started
