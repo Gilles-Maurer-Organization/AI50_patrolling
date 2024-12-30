@@ -146,6 +146,8 @@ class StartButtonController(BaseButtonController):
     
         solution: list[list[int]] = _algorithm.launch()
 
+
+
         if(isinstance(_algorithm,NaiveAlgorithmRuntime)):
 
             # Convert the solution paths to use the shortest paths in the real graph
