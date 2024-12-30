@@ -153,6 +153,9 @@ class StartButtonController(BaseButtonController):
             # Setting the simulation as started
             self._simulation_controller.set_simulation_started(True)
             self._graph_controller.raise_message("Simulation started!")
+            self._simulation_data_controller.compute_export(
+                selected_algorithm.name
+            )
 
         threading.Thread(target=run_algorithm).start()
             
