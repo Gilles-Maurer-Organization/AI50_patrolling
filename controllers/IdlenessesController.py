@@ -11,8 +11,6 @@ class IdlenessController:
         _simulation_data_view: the Simulation section of the View
         _idleness: the Idleness Model
         _idleness_view : the Idleness-data visualization
-
-
     """
     def __init__(self, simulation_data_view: SimulationDataView)-> None:
         self._simulation_data_view = simulation_data_view

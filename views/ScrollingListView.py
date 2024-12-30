@@ -54,8 +54,8 @@ class ScrollingListView:
         self._width = width
         self._height = height
 
-        self._color = Colors.BUTTON.value
-        self._text_color = Colors.TEXT_BOX_TEXT.value
+        self._color = Colors.FOG_GRAY.value
+        self._text_color = Colors.ASH_GRAY.value
 
         self._font = pygame.font.SysFont("Arial", 16)
         self._scrolling_list_rect = pygame.Rect(
@@ -65,7 +65,7 @@ class ScrollingListView:
             self._height
         )
 
-        self._icon_path = 'assets/scrolling_icon.png'
+        self._icon_path = 'assets/widgets/scrolling_icon.png'
 
         self._icon = pygame.image.load(self._icon_path)
         self._icon = pygame.transform.scale(self._icon, (20, 20))
@@ -161,7 +161,7 @@ class ScrollingListView:
             self._options_rects.append(option_rect)
 
             pygame.draw.rect(self._screen,
-                             Colors.LIGHT_GRAY.value,
+                             Colors.ICE_GRAY.value,
                              option_rect)
             
             text = self._font.render(option_name, True, Colors.BLACK.value)
@@ -209,7 +209,7 @@ class ScrollingListView:
                 (open or closed).
         """
         self._is_active = is_active
-        self._color = Colors.TEXT_BOX_CLICKED.value if is_active else Colors.BUTTON.value
+        self._color = Colors.PLATINUM_GRAY.value if is_active else Colors.FOG_GRAY.value
 
     def set_selected_option(self, option: str) -> None:
         """
@@ -225,13 +225,13 @@ class ScrollingListView:
         """
         Changes the state of the scrolling list to hovered.
         """
-        self._color = Colors.BUTTON_HOVER.value
+        self._color = Colors.PEARL_GRAY.value
 
     def set_clicked(self) -> None:
         """
         Changes the state of the scrolling list to clicked.
         """
-        self._color = Colors.TEXT_BOX_CLICKED.value
+        self._color = Colors.PLATINUM_GRAY.value
         self._stroke_color = Colors.BLACK.value
 
     def set_normal(self) -> None:
@@ -239,8 +239,8 @@ class ScrollingListView:
         Changes the state of the dropdown list to normal
             (neither hovered nor clicked).
         """
-        self._color = Colors.BUTTON.value
-        self._stroke_color = Colors.GRAY_TEXT.value
+        self._color = Colors.FOG_GRAY.value
+        self._stroke_color = Colors.SILVER_GRAY.value
 
     def is_hovered(self, event: pygame.event.Event) -> bool:
         """

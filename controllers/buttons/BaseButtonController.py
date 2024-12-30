@@ -27,13 +27,8 @@ class BaseButtonController:
             Button objects to their corresponding ButtonView objects.
     """
     def __init__(
-        self,
-        parameters_view: ParametersView,
-        graph_controller: GraphController
+        self
     ) -> None:
-        self._parameters_view = parameters_view
-        self._graph_controller = graph_controller
-
         self._button_map: dict[Button, ButtonView] = {}
 
     def draw_buttons(self) -> None:

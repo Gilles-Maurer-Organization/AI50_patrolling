@@ -31,7 +31,6 @@ class StartButtonController(BaseButtonController):
         _start_button (Button): The "Start simulation" button.
         _button_map (dict[Button, ButtonView]): A map of Button objects
             to their corresponding ButtonView objects.
-        agents (List[Agent]): List of agents involved in the simulation.
     """
     def __init__(
         self,
@@ -43,8 +42,10 @@ class StartButtonController(BaseButtonController):
         complete_graph_service: ICompleteGraphService,
         csv_service: ICSVService
     ) -> None:
-        super().__init__(parameters_view, graph_controller)
-
+        super().__init__()
+        self._parameters_view = parameters_view
+        self._graph_controller = graph_controller
+        
         self._complete_graph_service = complete_graph_service
         self._csv_service = csv_service
         self._scrolling_list_controller = scrolling_list_controller
@@ -58,17 +59,17 @@ class StartButtonController(BaseButtonController):
             enabled=False
         )
 
-        # Création de la map des boutons et leurs vues
+        # Creation of button's map and its associated view
         self._button_map = {
             self._start_button: ButtonView(
-                parameters_view.screen,
+                self._parameters_view.screen,
                 self._start_button.text,
                 PARAMETERS_WINDOW_WIDTH - 140 - 10,
                 PARAMETERS_WINDOW_HEIGHT - 40 - 10,
                 140,
                 40,
-                color=Colors.BUTTON_GREEN,
-                hover_color=Colors.BUTTON_GREEN_HOVER
+                color=Colors.GREEN,
+                hover_color=Colors.DARK_GREEN
             )
         }
 
@@ -83,14 +84,18 @@ class StartButtonController(BaseButtonController):
             if success:
                 self._launch_algorithm()
             else:
-                self._graph_controller.raise_error_message('The graph must not have isolated subgraphs')
+                self._graph_controller.raise_error_message(
+                    'The graph must not have isolated subgraphs'
+                )
         
         elif not self._graph_controller.are_complements_saved():
             success = self._compute_store_and_save_graph_data()
             if success:
                 self._launch_algorithm()
             else:
-                self._graph_controller.raise_error_message('The graph must not have isolated subgraphs')
+                self._graph_controller.raise_error_message(
+                    'The graph must not have isolated subgraphs'
+                )
 
         elif self._graph_controller.are_complements_saved():
             self._launch_algorithm()
@@ -99,7 +104,7 @@ class StartButtonController(BaseButtonController):
         """
         Computes, stores, and saves the complete graph and shortest paths.
         """
-        graph_data = self.compute_complete_graph_and_shortest_paths()
+        graph_data = self._compute_complete_graph_and_shortest_paths()
         if not graph_data or not graph_data.adjacency_matrix:
             return False
         if not graph_data.shortest_paths:
@@ -118,7 +123,7 @@ class StartButtonController(BaseButtonController):
         selected_algorithm = self._scrolling_list_controller.get_selected_algorithm()
         
         try:
-            nb_agents =  int(self._text_box_controller.text_content)
+            nb_agents = int(self._text_box_controller.text_content)
         except Error:
             self._graph_controller.raise_error_message(
                 'Invalid number of agents. Please enter a valid integer.'
@@ -142,7 +147,7 @@ class StartButtonController(BaseButtonController):
             algorithm=algorithm_name
         )
 
-    def compute_complete_graph_and_shortest_paths(self):
+    def _compute_complete_graph_and_shortest_paths(self):
         """
         Computes the complete graph and shortest paths using the A*
         algorithm.

@@ -65,6 +65,10 @@ class ViewController:
 
         #used for initializing the SimulationController
         self.is_simulation_process_initialized = False
+        self._simulation_data_controller = SimulationDataController(
+            self._screen,
+            self._simulation_controller
+        )
 
     def handle_actions(self, event: pygame.event.Event) -> None:
         """
@@ -74,10 +78,13 @@ class ViewController:
         Args:
             event: The Pygame event that triggers the actions.
         """
-        if not self._file_explorer_controller.is_file_explorer_opened():
-            self._parameters_controller.handle_events(event)
-            self._graph_controller.handle_event(event)
-        self._file_explorer_controller.handle_event(event)
+        if self._simulation_controller.has_simulation_started():
+            self._simulation_data_controller.handle_events(event)
+        else:
+            if not self._file_explorer_controller.is_file_explorer_opened():
+                self._parameters_controller.handle_events(event)
+                self._graph_controller.handle_event(event)
+            self._file_explorer_controller.handle_event(event)
 
     def draw(self) -> None:
         """

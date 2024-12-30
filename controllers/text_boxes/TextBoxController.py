@@ -27,7 +27,7 @@ class TextBoxController(BaseTextBoxController):
                                     60,
                                     190,
                                     40,
-                                    icon_path='assets/number_agents.png')
+                                    icon_path='assets/widgets/number_agents.png')
         self.add_text_box(self._text_box, text_box_view)
 
     @property

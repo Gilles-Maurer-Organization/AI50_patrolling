@@ -38,9 +38,9 @@ class BaseTextBoxView(ABC):
         self._width = width
         self._height = height
 
-        self._color = Colors.BUTTON.value
-        self._text_color = Colors.TEXT_BOX_TEXT.value
-        self._stroke_color = Colors.GRAY_TEXT.value
+        self._color = Colors.FOG_GRAY.value
+        self._text_color = Colors.ASH_GRAY.value
+        self._stroke_color = Colors.SILVER_GRAY.value
 
         self._font = pygame.font.SysFont("Arial", 16)
         self._text_box_rect = pygame.Rect(self._x,
@@ -115,13 +115,13 @@ class BaseTextBoxView(ABC):
         """
         Changes the text box's appearance to indicate a hovered state.
         """
-        self._color = Colors.BUTTON_HOVER.value
+        self._color = Colors.PEARL_GRAY.value
 
     def set_clicked(self) -> None:
         """
         Changes the text box's appearance to indicate a clicked state.
         """
-        self._color = Colors.TEXT_BOX_CLICKED.value
+        self._color = Colors.PLATINUM_GRAY.value
         self._stroke_color = Colors.BLACK.value
 
     def set_normal(self) -> None:
@@ -129,8 +129,8 @@ class BaseTextBoxView(ABC):
         Resets the text box's appearance to its normal, unhovered, and
         unclicked state.
         """
-        self._color = Colors.BUTTON.value
-        self._stroke_color = Colors.GRAY_TEXT.value
+        self._color = Colors.FOG_GRAY.value
+        self._stroke_color = Colors.SILVER_GRAY.value
 
     def set_text_completed(self, is_completed: bool) -> None:
         """
@@ -141,7 +141,7 @@ class BaseTextBoxView(ABC):
             is_completed (bool): True if the text box content is
                 complete, otherwise False.
         """
-        self._text_color = Colors.BLACK.value if is_completed else Colors.TEXT_BOX_TEXT.value
+        self._text_color = Colors.BLACK.value if is_completed else Colors.ASH_GRAY.value
 
     def is_hovered(self, mouse_pos: tuple[int, int]) -> bool:
         """
