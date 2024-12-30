@@ -69,7 +69,6 @@ class ViewController:
             csv_service
         )
 
-
     def handle_actions(self, event: pygame.event.Event) -> None:
         """
         Handles all user actions, delegating to the appropriate
