@@ -46,6 +46,7 @@ class CSVService(ICSVService):
             "test_numbers.csv"
         )
         self._current_csv_number = 0
+        self._active_timer = None
 
     @property
     def current_csv_number(self) -> int:
@@ -71,6 +72,11 @@ class CSVService(ICSVService):
         if not isinstance(value, int) or value < 0:
             raise ValueError("current_csv_number must be a non-negative integer")
         self._current_csv_number = value
+
+    def stop_timer(self):
+        if self._active_timer and self._active_timer.is_alive():
+            self._active_timer.cancel()
+        self._active_timer = None
 
     def _initialize_directories(self):
         """
@@ -535,6 +541,9 @@ class CSVService(ICSVService):
                 ])
 
         def write_data():
+            if self._active_timer is None or not self._active_timer.is_alive():
+                return
+
             # Retrieve idleness data
             average, max_idleness, all_time_max = idleness_data_provider()
 
@@ -550,7 +559,12 @@ class CSVService(ICSVService):
                 ])
 
             # Schedule the next write
-            Timer(interval, write_data).start()
+            self._active_timer = Timer(interval, write_data)
+            self._active_timer.start()
 
-        # Start the first data export
-        write_data()
+        # Stop the previous timer if it exists
+        self.stop_timer()
+
+        # Plan the first write
+        self._active_timer = Timer(interval, write_data)
+        self._active_timer.start()
