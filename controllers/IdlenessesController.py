@@ -13,8 +13,6 @@ class IdlenessController:
         _idleness_view : the Idleness-data visualization
     """
     def __init__(self, simulation_data_view: SimulationDataView)-> None:
-        from controllers.SimulationDataController import SimulationDataController
-        self._simulation_data_controller = SimulationDataController
         self._simulation_data_view = simulation_data_view
         self._idleness = IdlenessData()
         self._idleness_view = IdlenessView(
