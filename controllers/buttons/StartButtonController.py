@@ -3,6 +3,7 @@ from constants.Config import PARAMETERS_WINDOW_WIDTH, PARAMETERS_WINDOW_HEIGHT
 from controllers.GraphController import GraphController
 from controllers.ScrollingListController import ScrollingListController
 from controllers.SimulationController import SimulationController
+from controllers.SimulationDataController import SimulationDataController
 from controllers.buttons.BaseButtonController import BaseButtonController
 from controllers.text_boxes.TextBoxController import TextBoxController
 from models.Button import Button
@@ -37,6 +38,7 @@ class StartButtonController(BaseButtonController):
         parameters_view: ParametersView,
         graph_controller: GraphController,
         simulation_controller: SimulationController,
+        simulation_data_controller: SimulationDataController,
         scrolling_list_controller: ScrollingListController,
         text_box_controller: TextBoxController,
         complete_graph_service: ICompleteGraphService,
@@ -50,6 +52,7 @@ class StartButtonController(BaseButtonController):
         self._csv_service = csv_service
         self._scrolling_list_controller = scrolling_list_controller
         self._simulation_controller = simulation_controller
+        self._simulation_data_controller = simulation_data_controller
         self._scrolling_list_controller = scrolling_list_controller
         self._text_box_controller = text_box_controller
 
@@ -140,10 +143,15 @@ class StartButtonController(BaseButtonController):
         # Initializing agents with the real paths
         self._simulation_controller.initialize_agents(real_paths)
 
+        # Setting the simulation as started with the selected algorithm
+        self._simulation_controller.set_simulation_started(
+            started=True
+        )
 
-        # Setting the simulation as started
-        self._simulation_controller.set_simulation_started(True)
-            
+        self._simulation_data_controller.compute_export(
+            selected_algorithm.name
+        )
+
     def _compute_complete_graph_and_shortest_paths(self):
         """
         Computes the complete graph and shortest paths using the A*

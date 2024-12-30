@@ -4,6 +4,7 @@ from controllers.SimulationController import SimulationController
 from controllers.buttons.BackButtonController import BackButtonController
 from models.Graph import Graph
 from constants.Config import GRAPH_WINDOW_HEIGHT, GRAPH_WINDOW_WIDTH, PARAMETERS_WINDOW_WIDTH
+from services.ICSVService import ICSVService
 from views.SimulationDataView import SimulationDataView
 from controllers.IdlenessesController import IdlenessController
 
@@ -25,8 +26,10 @@ class SimulationDataController:
         self,
         screen: pygame.Surface,
         simulation_controller: SimulationController,
+        csv_service: ICSVService
     ) -> None:
         self._simulation_controller = simulation_controller
+        self._csv_service = csv_service
 
         self._simulation_data_view = SimulationDataView(
             screen.subsurface(
@@ -68,3 +71,42 @@ class SimulationDataController:
         self._simulation_data_view.draw()
         self._idleness_controller.draw_idlenesses(graph.nodes)
         self._back_button_controller.draw_buttons()
+
+    def compute_export(self, algorithm_name: str) -> None:
+        if self._simulation_controller.has_simulation_started():
+            # Get the current graph number
+            graph_number = self._csv_service.current_csv_number
+
+            test_number = self._csv_service.get_next_test_number(algorithm_name, graph_number)
+
+            # Start the idleness export
+            self._start_idleness_export(
+                algorithm_name = algorithm_name,
+                test_number = test_number,
+                start_time = self._simulation_controller._start_time
+            )
+            
+    def _start_idleness_export(
+        self,
+        algorithm_name: str,
+        test_number: int,
+        start_time: float
+    ) -> None:
+        """
+        Starts exporting idleness data every 10 seconds with metadata.
+
+        Args:
+            algorithm (str): The name of the algorithm being used in the simulation.
+            test_number (int): The current test number for this simulation.
+            start_time (float): The simulation start time in seconds.
+        """
+        def idleness_data_provider():
+            return self._idleness_controller.idleness.get_idleness_data()
+        
+        self._csv_service.export_idleness_data(
+            idleness_data_provider = idleness_data_provider,
+            algorithm = algorithm_name,
+            test_number = test_number,
+            start_time = start_time,
+            interval = 10
+        )
