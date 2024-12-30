@@ -21,6 +21,7 @@ class ICSVService(ABC):
     def are_complements_saved(self, image_name: str) -> bool:
         pass
 
+    @abstractmethod
     def load_from_num_file(
         self,
         num_file: int
@@ -40,4 +41,32 @@ class ICSVService(ABC):
 
     @abstractmethod
     def get_image_name(self, file_path: str) -> str:
+        pass
+
+    @property
+    @abstractmethod
+    def current_csv_number(self) -> int:
+        """
+        Abstract property for the current CSV number.
+        """
+        pass
+
+    @current_csv_number.setter
+    @abstractmethod
+    def current_csv_number(self, value: int) -> None:
+        pass
+
+    @abstractmethod
+    def get_next_test_number(self, algorithm: str, graph_number: int) -> int:
+        pass
+
+    @abstractmethod
+    def export_idleness_data(
+        self,
+        idleness_data_provider,
+        algorithm: str,
+        test_number: int,
+        start_time: int,
+        interval: int = 10
+    ):
         pass

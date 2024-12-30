@@ -31,7 +31,7 @@ class TestCSVService(unittest.TestCase):
         # but he does from the sixth call
         # (in order to check if the open(service.references_file_path, 'w'))
         # and mock_file.assert_any_call(os.path.join(service.csv_folder_path, csv_path), 'w') are called.
-        mock_exists.side_effect = [False, False, False, False, False, True]
+        mock_exists.side_effect = [False, False, False, False, False, False, True]
         
         # We create an instance of the CSVService class.
         service = CSVService()
@@ -44,10 +44,14 @@ class TestCSVService(unittest.TestCase):
         # We call the save method to execute the functionality being tested
         service.save(edges_matrix, nodes, image_path)
 
-        # We assert that makedirs was called two times.
-        # If not, it means that one directory has'nt been created: csv_files or references
-        # or has been created more than two
-        self.assertEqual(mock_makedirs.call_count, 2)
+        # We assert that makedirs was called three times
+        # creation of:
+        # - results folder
+        # - csv folders path
+        # - references path
+        # If not, it means that one directory has'nt been created
+        # or has been created more than three times
+        self.assertEqual(mock_makedirs.call_count, 3)
 
         # We get the number of CSV files.
         nb_files = service._count_files()
@@ -75,7 +79,7 @@ class TestCSVService(unittest.TestCase):
     @patch('os.makedirs')
     @patch('builtins.open', new_callable=mock_open)
     def test_save_existing_csv(self, mock_file, mock_makedirs, mock_exists):
-        mock_exists.side_effect = [True, True, True, False]
+        mock_exists.side_effect = [True, True, True, False, False]
         
         # We create an instance of the CSVService class.
         service = CSVService()

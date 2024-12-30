@@ -17,6 +17,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+            csv_service.stop_timer()
 
         view_controller.handle_actions(event)
 

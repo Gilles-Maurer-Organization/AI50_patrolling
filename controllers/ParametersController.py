@@ -6,6 +6,7 @@ from controllers.FileExplorerController import FileExplorerController
 from controllers.GraphController import GraphController
 from controllers.ScrollingListController import ScrollingListController
 from controllers.SimulationController import SimulationController
+from controllers.SimulationDataController import SimulationDataController
 from controllers.buttons.ButtonController import ButtonController
 from controllers.buttons.StartButtonController import StartButtonController
 from controllers.text_boxes.AlgorithmParametersController import AlgorithmParametersController
@@ -46,9 +47,11 @@ class ParametersController:
         graph_controller: GraphController,
         file_explorer_controller: FileExplorerController,
         simulation_controller: SimulationController,
+        simulation_data_controller: SimulationDataController,
         csv_service: ICSVService
     ) -> None:
         self._simulation_controller = simulation_controller
+        self._simulation_data_controller = simulation_data_controller
 
         # Creating the ParametersView with a specific subsurface
         self._parameters_view = ParametersView(
@@ -74,6 +77,7 @@ class ParametersController:
             self._parameters_view,
             graph_controller,
             simulation_controller,
+            simulation_data_controller,
             self._scrolling_list_controller,
             self._text_box_controller,
             CompleteGraphService,
