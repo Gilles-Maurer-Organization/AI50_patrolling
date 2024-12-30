@@ -3,6 +3,8 @@ import pygame
 from controllers.GraphController import GraphController
 from models.Agent import Agent
 from models.Node import Node
+from services.algorithms.IAlgorithm import IAlgorithm
+from services.algorithms.NaiveAlgorithmRuntime import NaiveAlgorithmRuntime
 
 class SimulationController:
     """
@@ -27,6 +29,7 @@ class SimulationController:
         self._simulation_started = False
         self._graph_controller = graph_controller
         self._start_time = None
+        self._selected_algorithm = None
         self._test_counters = {}
 
     def has_simulation_started(self) -> bool:
@@ -52,7 +55,16 @@ class SimulationController:
         else:
             self._graph_controller.reset_nodes_idleness()
 
-    def initialize_agents(self, paths: list[list[int]]) -> None:
+    def set_selected_algorithm(self, selected_algorithm: IAlgorithm) -> None:
+        """
+        Sets the selected algorithm for the run time Update
+
+        Args:
+            started: The selected Algorithm
+        """
+        self._selected_algorithm = selected_algorithm
+
+    def initialize_agents(self, paths: list[int]) -> None:
         """
         Initializes the agents with their respective paths.
 
@@ -65,42 +77,51 @@ class SimulationController:
                 for path in paths
         ]
     
-    def _are_agents_on_node(self, node: Node, agents_not_on_nodes: set[Agent]) -> bool:
+    def are_agents_on_node(self, node: Node, agents_not_on_nodes: set[Agent]) -> tuple[bool, Agent, int]:
         """
         For each node verify if an agent is on it, and if so put the idleness at 0
         """
         margin: int = 2
-        for agent in list(agents_not_on_nodes):
+        for agent_id, agent in enumerate(self._agents):
             if abs(agent.x - node.x) <= margin and abs(agent.y - node.y) <= margin:
                 agents_not_on_nodes.remove(agent)
-                return True
+                return True,agent,agent_id
         
-        return False
+        return False,None,0
         
-    def _update_simulation(self) -> None:
+    def update_simulation(self) -> None:
         """
         Updates the simulation by moving each agent along its path.
         """
         for _, agent in enumerate(self._agents):
             agent.move()
 
-    def _update_nodes_idlenesses(self) -> None:
+    def update_node_idleness(self) -> None:
         """
         Updates the idleness of each node.
         """
         elapsed_time = pygame.time.get_ticks() - self._start_time
 
         agents_not_on_nodes = set(self._agents)
-                
+
         for node in self._graph_controller.graph.nodes:
-            if self._are_agents_on_node(node, agents_not_on_nodes):
+            is_agent_on_node, agent, agent_id = self.are_agents_on_node(node, agents_not_on_nodes)
+            if is_agent_on_node:
+                
+                if(isinstance(self._selected_algorithm,NaiveAlgorithmRuntime) & (node.idleness != 0)):
+                    new_path = self._selected_algorithm.update(agent_id)
+                    real_paths = self._graph_controller.compute_real_paths([new_path])
+                    print(agent_id, " : path : ", real_paths[0])
+                    agent.path = real_paths[0]
+                
                 node.idleness = 0
+                
             else:
                 if elapsed_time >= 1000:
                     node.idleness += 1
         
         if elapsed_time >= 1000:
-            self._start_time = pygame.time.get_ticks()
+            self._start_time = pygame.time.get_ticks()      
             
     def draw_simulation(self) -> None:
         """
@@ -108,8 +129,8 @@ class SimulationController:
         them on the graph.
         """
         if self._simulation_started:
-            self._update_simulation()
-            self._update_nodes_idlenesses()
+            self.update_simulation()
+            self.update_node_idleness()
             self._graph_controller.draw_simulation(self._agents)
 
     def start_idleness_export(self, algorithm: str, test_number: int, start_time: float):
