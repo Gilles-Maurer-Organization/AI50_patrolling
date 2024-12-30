@@ -20,6 +20,8 @@ class CSVService(ICSVService):
     Attributes:
         _csv_folder_path (str): Path to the directory where CSV files
             are stored.
+        _results_folder_path (str): Path to the directory where results csv
+            files are stored.
         _references_file_path (str): Path to the file where image and
             CSV references are stored.
     """
@@ -28,6 +30,10 @@ class CSVService(ICSVService):
         self._csv_folder_path = os.path.join(
             Path(__file__).resolve().parent.parent,
             "csv_files"
+        )
+        self._results_folder_path = os.path.join(
+            Path(__file__).resolve().parent.parent,
+            "results"
         )
         self._references_file_path = os.path.join(
             Path(__file__).resolve().parent.parent,
@@ -70,6 +76,8 @@ class CSVService(ICSVService):
         """
         Creates directories and reference file if they do not exist.
         """
+        if not os.path.exists(self._results_folder_path):
+            os.makedirs(self._results_folder_path)
         if not os.path.exists(self._csv_folder_path):
             os.makedirs(self._csv_folder_path)
         if not os.path.exists(os.path.dirname(self._references_file_path)):
@@ -506,12 +514,12 @@ class CSVService(ICSVService):
 
         # Generate the CSV filename based on the graph number
         csv_filename = f'graph_{current_csv_number}_results.csv'
-        csv_folder_path = os.path.join(Path(__file__).resolve().parent.parent, "csv_files")
-        csv_path = os.path.join(csv_folder_path, csv_filename)
+        results_folder_path = self._results_folder_path
+        csv_path = os.path.join(results_folder_path, csv_filename)
 
         # Ensure directory exists
-        if not os.path.exists(csv_folder_path):
-            os.makedirs(csv_folder_path)
+        if not os.path.exists(results_folder_path):
+            os.makedirs(results_folder_path)
 
         # Check if the file already exists
         file_exists = os.path.exists(csv_path)
