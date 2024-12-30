@@ -46,29 +46,27 @@ class ViewController:
             self._screen,
             self._graph_controller
         )
-        self._simulation_data_controller = SimulationDataController(
-            self._screen
-        )
         self._simulation_controller = SimulationController(
-            self._graph_controller,
-            self._simulation_data_controller,
-            csv_service,
-            self._simulation_data_controller._idleness_controller.idleness
-        )
-        self._parameters_controller = ParametersController(
-            self._screen,
-            self._graph_controller,
-            self._file_explorer_controller,
-            self._simulation_controller,
-            csv_service
+            self._graph_controller
         )
 
         #used for initializing the SimulationController
         self.is_simulation_process_initialized = False
         self._simulation_data_controller = SimulationDataController(
             self._screen,
-            self._simulation_controller
+            self._simulation_controller,
+            csv_service
         )
+
+        self._parameters_controller = ParametersController(
+            self._screen,
+            self._graph_controller,
+            self._file_explorer_controller,
+            self._simulation_controller,
+            self._simulation_data_controller,
+            csv_service
+        )
+
 
     def handle_actions(self, event: pygame.event.Event) -> None:
         """

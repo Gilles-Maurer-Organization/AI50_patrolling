@@ -1,13 +1,8 @@
 import pygame
 
-from controllers.SimulationDataController import SimulationDataController
 from controllers.GraphController import GraphController
-from controllers.SimulationDataController import SimulationDataController
 from models.Agent import Agent
-from models.IdlenessData import IdlenessData
 from models.Node import Node
-from services import ICSVService
-
 
 class SimulationController:
     """
@@ -24,20 +19,14 @@ class SimulationController:
         _graph_controller (GraphController): The controller managing
             the graph and its visualization.
     """
-    def __init__(self,
-                 graph_controller: GraphController,
-                 simulation_data_controller: SimulationDataController,
-                 csv_service: ICSVService,
-                 idleness_data: IdlenessData
-                 ) -> None:
+    def __init__(
+        self,
+        graph_controller: GraphController
+    ) -> None:
         self._agents = None
         self._simulation_started = False
         self._graph_controller = graph_controller
         self._start_time = None
-        self._simulation_data_controller = simulation_data_controller
-        self._idleness_data = idleness_data
-        self._csv_service = csv_service
-        self._test_counters = {}
         self._test_counters = {}
 
     def has_simulation_started(self) -> bool:
@@ -49,7 +38,7 @@ class SimulationController:
         """
         return self._simulation_started
 
-    def set_simulation_started(self, started: bool, algorithm: str) -> None:
+    def set_simulation_started(self, started: bool) -> None:
         """
         Sets the simulation state to started or stopped, and initializes idleness export.
 
@@ -57,22 +46,10 @@ class SimulationController:
             started (bool): Whether to start or stop the simulation.
             algorithm (str): The name of the algorithm being used.
         """
-        self._simulation_started = started
-        self._start_time = pygame.time.get_ticks()
-        self._graph_controller.is_in_simulation = True
-
+        self._simulation_started = self._graph_controller.is_in_simulation = started
         if started:
-            # Get the current graph number
-            graph_number = self._csv_service.current_csv_number
+            self._start_time = pygame.time.get_ticks()
 
-            test_number = self._csv_service.get_next_test_number(algorithm, graph_number)
-
-            # Start the idleness export
-            self.start_idleness_export(
-                algorithm=algorithm,
-                test_number=test_number,
-                start_time=self._start_time
-            )
 
     def initialize_agents(self, paths: list[list[int]]) -> None:
         """
@@ -134,23 +111,4 @@ class SimulationController:
             self._update_nodes_idlenesses()
             self._graph_controller.draw_simulation(self._agents)
 
-    def start_idleness_export(self, algorithm: str, test_number: int, start_time: float):
-        """
-        Starts exporting idleness data every 10 seconds with metadata.
-
-        Args:
-            algorithm (str): The name of the algorithm being used in the simulation.
-            test_number (int): The current test number for this simulation.
-            start_time (float): The simulation start time in seconds.
-        """
-
-        def idleness_data_provider():
-            return self._idleness_data.get_idleness_data()
-
-        self._csv_service.export_idleness_data(
-            idleness_data_provider=idleness_data_provider,
-            algorithm=algorithm,
-            test_number=test_number,
-            start_time=start_time,
-            interval=10
-        )
+    

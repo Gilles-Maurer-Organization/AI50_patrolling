@@ -1,6 +1,5 @@
 from constants.Colors import Colors
 from constants.Config import PARAMETERS_WINDOW_HEIGHT, PARAMETERS_WINDOW_WIDTH
-from controllers.GraphController import GraphController
 from controllers.SimulationController import SimulationController
 from controllers.buttons.BaseButtonController import BaseButtonController
 from models.Button import Button
