@@ -25,7 +25,7 @@ class NaiveAlgorithmRuntime(IAlgorithm):
         self.nb_agents = nb_agents
         self.graph = graph_object
         self.path = []
-        self.paths = [[]] * nb_agents
+        self.paths = [None] * nb_agents 
         self.positions = [0] * nb_agents  # Actual position of each Agent
         self.targets = [None] * nb_agents  # Next node of each agent
     
@@ -50,7 +50,7 @@ class NaiveAlgorithmRuntime(IAlgorithm):
         for i in range(self.nb_nodes):
             if i not in self.targets and i not in self.positions:  #  Éviter nodes already visited and reserved as targets
                 distance = self.distance_matrix[current_node][i]
-                if self.graph.nodes[i].idleness > max_oisivete:
+                if (distance < min_distance) and (self.graph.nodes[i].idleness > max_oisivete):
                     nearest_node = i
                     min_distance = distance
                     max_oisivete = self.graph.nodes[i].idleness
@@ -59,10 +59,9 @@ class NaiveAlgorithmRuntime(IAlgorithm):
                     if self.graph.nodes[i].idleness > max_oisivete:
                         nearest_node = i
                         max_oisivete = self.graph.nodes[i].idleness
-        
         return nearest_node
 
-    def update_target(self, agent_id: int) -> None:
+    def update_target(self,agent_id: int) -> None:
         """
         Update the target node for the agent to move
 
@@ -99,9 +98,7 @@ class NaiveAlgorithmRuntime(IAlgorithm):
                     self.targets[i] = None
                     self.update_target(i)
 
-
-
-    def step(self, agent_id: int) -> None:
+    def first_step(self,agent_id: int,node_start : int) -> None:
         """
         Make a step for the agent to move
 
@@ -110,19 +107,36 @@ class NaiveAlgorithmRuntime(IAlgorithm):
 
         """
         #Initialize all variables
-        self.positions[agent_id] = self.targets[agent_id]
-        self.targets[agent_id] = None
-        self.path = []
+        self.positions[agent_id] = node_start
 
-        # Mise à jour des cibles pour chaque agent
+         # Mise à jour des cibles pour chaque agent
         self.update_target(agent_id)
-        
         # Résoudre les conflits de cibles
         self.resolve_conflicts()
 
-        self.path = [self.positions[agent_id],self.targets[agent_id]]
+        self.paths[agent_id] = [self.positions[agent_id],self.targets[agent_id]]
 
-        self.paths[agent_id] = self.path
+    def step(self,agent_id: int,node_start : int) -> None:
+        """
+        Make a step for the agent to move
+
+        Attributes:
+            agent_id : The agent to move
+
+        """
+        #Initialize all variables
+        self.positions[agent_id] = node_start
+        target_node = self.targets[agent_id]
+
+        if ((node_start == self.targets[agent_id]) or (self.graph.nodes[target_node].idleness == 0)):
+            self.targets[agent_id] = None
+
+            # Mise à jour des cibles pour chaque agent
+            self.update_target(agent_id)
+            # Résoudre les conflits de cibles
+            self.resolve_conflicts()
+        
+        self.paths[agent_id] = [self.positions[agent_id],self.targets[agent_id]]
 
     def launch(self) -> list[list[int]]:
         """
@@ -133,26 +147,24 @@ class NaiveAlgorithmRuntime(IAlgorithm):
         """
         
         for agent_id in range(self.nb_agents):
-            self.positions[agent_id] = rd.randint(0,self.nb_nodes-1) 
-            self.targets[agent_id] = self.positions[agent_id]
-            
-            self.step(agent_id)
-        
-        for id,path in zip(range(self.nb_agents),self.paths):
-            print(id," : path : ",path)
+            self.first_step(agent_id,rd.randint(0,self.nb_nodes-1))
 
         return self.paths
     
-    def update(self, agent_id: int) -> list[int]:
+    def update(self,agent_id: int,start_node: int) -> list[int]:
         """
-        Update the whole Algorithm.
+        Update the path of the agent
 
         Attributes:
             agent_id : The agent to move
+            start_node : the node the agent will start
 
         Returns:
-            path : The new path for the agent
+            agent_path : The path of the selected agent
         """
-        self.step(agent_id)
+        
+        self.step(agent_id,start_node)
 
-        return self.paths[agent_id]
+        agent_path = self.paths[agent_id]
+
+        return agent_path
