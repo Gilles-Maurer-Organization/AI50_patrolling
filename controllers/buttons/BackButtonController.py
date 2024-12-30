@@ -8,6 +8,24 @@ from views.SimulationDataView import SimulationDataView
 
 
 class BackButtonController(BaseButtonController):
+    """
+    Controller for the "Back to configuration" button in the simulation
+    view.
+
+    This class handles the interaction logic for the "Back to configuration"
+    button, which allows users to navigate back to the configuration screen
+    from the simulation view.
+
+    Attributes:
+        _simulation_data_view (SimulationDataView): 
+            The view where the simulation data is displayed.
+        _simulation_controller (SimulationController): 
+            The controller managing the simulation state.
+        _back_button (Button): 
+            The model for the "Back to configuration" button.
+        _button_map (dict): 
+            A mapping of button models to their corresponding views.
+    """
     def __init__(
         self,
         simulation_data_view: SimulationDataView,
@@ -37,4 +55,12 @@ class BackButtonController(BaseButtonController):
         }
 
     def back_action(self) -> None:
+        """
+        Handles the action performed when the "Back to configuration" button is
+        clicked.
+
+        This method updates the simulation controller to indicate that the
+        simulation is no longer running, allowing the user to return to the
+        configuration screen.
+        """
         self._simulation_controller.set_simulation_started(False)

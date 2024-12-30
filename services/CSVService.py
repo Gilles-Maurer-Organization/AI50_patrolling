@@ -489,7 +489,6 @@ class CSVService(ICSVService):
 
         return next_test_number
 
-
     def export_idleness_data(
         self,
         idleness_data_provider,

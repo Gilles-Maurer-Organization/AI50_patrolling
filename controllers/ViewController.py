@@ -26,6 +26,8 @@ class ViewController:
             The controller responsible for managing the file explorer.
         _simulation_controller (SimulationController): The controller
             responsible for managing the simulation.
+        _simulation_data_controller (SimulationDataController): The controller
+            responsible for managing the simulation data.
         _parameters_controller (ParametersController): The controller
             responsible for managing the parameters interface.
     """
