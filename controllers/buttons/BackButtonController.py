@@ -1,5 +1,6 @@
 from constants.Colors import Colors
 from constants.Config import PARAMETERS_WINDOW_HEIGHT, PARAMETERS_WINDOW_WIDTH
+from controllers.IdlenessesController import IdlenessController
 from controllers.SimulationController import SimulationController
 from controllers.buttons.BaseButtonController import BaseButtonController
 from models.Button import Button
@@ -21,6 +22,8 @@ class BackButtonController(BaseButtonController):
             The view where the simulation data is displayed.
         _simulation_controller (SimulationController): 
             The controller managing the simulation state.
+        _idleness_controller (IdlenessController):
+            The controller mananing the idlenesses.
         _back_button (Button): 
             The model for the "Back to configuration" button.
         _button_map (dict): 
@@ -29,11 +32,13 @@ class BackButtonController(BaseButtonController):
     def __init__(
         self,
         simulation_data_view: SimulationDataView,
-        simulation_controller: SimulationController
+        simulation_controller: SimulationController,
+        idleness_controller: IdlenessController
     ) -> None:
         super().__init__()
         self._simulation_data_view = simulation_data_view
         self._simulation_controller = simulation_controller
+        self._idleness_controller = idleness_controller
 
         self._back_button = Button(
             "Back to configuration",
@@ -64,3 +69,4 @@ class BackButtonController(BaseButtonController):
         configuration screen.
         """
         self._simulation_controller.set_simulation_started(False)
+        self._idleness_controller.reset_idleness_data()

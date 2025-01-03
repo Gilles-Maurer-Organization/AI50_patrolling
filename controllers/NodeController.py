@@ -248,5 +248,10 @@ class NodeController:
         node.x, node.y = new_x, new_y
 
         return candidates
+    
+    def reset_nodes_idleness(self) -> None:
+        for node in self._graph.nodes:
+            node.idleness = 0
+            print(node.idleness)
 
 

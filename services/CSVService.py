@@ -492,6 +492,7 @@ class CSVService(ICSVService):
     def export_idleness_data(
         self,
         idleness_data_provider,
+        simulation_running_provider,
         algorithm: str,
         test_number: int,
         start_time: int,
@@ -540,7 +541,11 @@ class CSVService(ICSVService):
                 ])
 
         def write_data():
-            if self._active_timer is None or not self._active_timer.is_alive():
+            if (
+                self._active_timer is None
+                or not self._active_timer.is_alive()
+                or not simulation_running_provider()
+            ):
                 return
 
             # Retrieve idleness data

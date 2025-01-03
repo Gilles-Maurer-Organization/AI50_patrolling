@@ -39,7 +39,8 @@ class SimulationDataController:
 
         self._back_button_controller = BackButtonController(
             self._simulation_data_view,
-            self._simulation_controller
+            self._simulation_controller,
+            self._idleness_controller
         )
 
     def handle_events(self, event: pygame.event.Event) -> None:
@@ -103,8 +104,12 @@ class SimulationDataController:
         def idleness_data_provider():
             return self._idleness_controller.idleness.get_idleness_data()
         
+        def simulation_running_provider():
+            return self._simulation_controller.has_simulation_started()
+        
         self._csv_service.export_idleness_data(
             idleness_data_provider = idleness_data_provider,
+            simulation_running_provider = simulation_running_provider,
             algorithm = algorithm_name,
             test_number = test_number,
             start_time = start_time,

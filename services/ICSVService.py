@@ -64,6 +64,7 @@ class ICSVService(ABC):
     def export_idleness_data(
         self,
         idleness_data_provider,
+        simulation_running_provider,
         algorithm: str,
         test_number: int,
         start_time: int,

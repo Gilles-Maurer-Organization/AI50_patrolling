@@ -14,25 +14,22 @@ class IdlenessController:
     """
     def __init__(self, simulation_data_view: SimulationDataView)-> None:
         self._simulation_data_view = simulation_data_view
-        self._idleness = IdlenessData()
+        self._idleness_data = IdlenessData()
         self._idleness_view = IdlenessView(
-                self._simulation_data_view.screen,
-                label_average_idleness_value = 0,
-                label_max_idleness_value = 0,
-                label_ath_idleness_value = 0
-            )
+            self._simulation_data_view.screen
+        )
 
     @property
     def idleness(self) -> IdlenessData:
         """Getter for the idleness attribute."""
-        return self._idleness
+        return self._idleness_data
 
     @idleness.setter
     def idleness(self, value: IdlenessData) -> None:
         """Setter for the idleness attribute with validation."""
         if not isinstance(value, IdlenessData):
             raise ValueError("idleness must be an instance of IdlenessData")
-        self._idleness = value
+        self._idleness_data = value
     
     def draw_idlenesses(self, nodes_list : list[Node])-> None:
         """
@@ -41,7 +38,7 @@ class IdlenessController:
         self.idleness.update_idleness(nodes_list)
 
         # Get the updated idleness values
-        idleness_data = self._idleness.get_idleness_data()
+        idleness_data = self._idleness_data.get_idleness_data()
 
         # Update the view with the new values
         self._idleness_view.update_values(
@@ -51,3 +48,6 @@ class IdlenessController:
         )
         # Update the idleness display
         self._idleness_view.draw_text()
+
+    def reset_idleness_data(self) -> None:
+        self._idleness_data.reset()
