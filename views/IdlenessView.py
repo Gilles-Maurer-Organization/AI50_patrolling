@@ -7,16 +7,13 @@ class IdlenessView:
     
     def __init__(
         self,
-        screen: pygame.Surface,
-        label_average_idleness_value : float,
-        label_max_idleness_value : float,
-        label_ath_idleness_value : float
+        screen: pygame.Surface
         
     ) -> None:
         self._screen = screen
-        self._label_average_idleness_value = label_average_idleness_value
-        self._label_max_idleness_value = label_max_idleness_value
-        self._label_ath_idleness_value = label_ath_idleness_value
+        self._label_average_idleness_value = 0
+        self._label_max_idleness_value = 0
+        self._label_ath_idleness_value = 0
         self._title_font = pygame.font.SysFont("Arial", 20)
         self._name_font = pygame.font.SysFont("Arial", 14)
         self._value_font = pygame.font.SysFont("Arial", 16)

@@ -3,7 +3,6 @@ from controllers.ViewController import ViewController
 from services.CSVService import CSVService
 from services.ImageService import ImageService
 
-# Initialisation de Pygame
 pygame.init()
 pygame.display.set_caption("AI50 patrolling problem")
 clock = pygame.time.Clock()
@@ -21,8 +20,7 @@ while running:
 
         view_controller.handle_actions(event)
 
-    # Redessine tous les éléments de l'interface et de la simulation
-    view_controller.draw()  # Dessine les éléments statiques de l'interface
+    view_controller.draw()
 
     pygame.display.flip()
     clock.tick(30)

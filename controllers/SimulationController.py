@@ -49,6 +49,8 @@ class SimulationController:
         self._simulation_started = self._graph_controller.is_in_simulation = started
         if started:
             self._start_time = pygame.time.get_ticks()
+        else:
+            self._graph_controller.reset_nodes_idleness()
 
     def initialize_agents(self, paths: list[list[int]]) -> None:
         """

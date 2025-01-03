@@ -41,11 +41,12 @@ class GraphController:
             as modified.
     """
 
-    def __init__(self,
-                 screen: pygame.Surface,
-                 csv_service: ICSVService,
-                 image_service: IImageService
-                 ) -> None:
+    def __init__(
+        self,
+        screen: pygame.Surface,
+        csv_service: ICSVService,
+        image_service: IImageService
+    ) -> None:
         self._graph = Graph()
         self._csv_service = csv_service
         self._image_service = image_service
@@ -90,6 +91,9 @@ class GraphController:
         if not isinstance(value, bool):
             raise ValueError("is_in_simulation must be a boolean")
         self._is_in_simulation = value
+
+    def reset_nodes_idleness(self) -> None:
+        self._node_controller.reset_nodes_idleness()
 
     def mark_graph_as_modified(func):
         """
