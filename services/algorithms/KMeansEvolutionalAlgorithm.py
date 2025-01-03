@@ -235,7 +235,7 @@ class KMeansEvolutionalAlgorithm:
         nbr_children : int
     ) -> np.ndarray[np.ndarray[int]]:
         """
-        Apply the crossover to the parents by using the PMX crossover.
+        Apply the crossover to the parents by using the OX crossover.
 
         Args:
             parents : np.ndarray[np.ndarray[int]] : the parents
