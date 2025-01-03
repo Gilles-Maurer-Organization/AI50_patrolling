@@ -10,7 +10,7 @@ class NaiveAlgorithmRuntime(IAlgorithm):
 
     Attributes:
         nb_agents : The number of agents
-        distance_matrix : the "complete_adjacency_matrix" attribute from the Graph Class.
+        graph_object : the object of the Graph Class.
 
     """
 
@@ -38,7 +38,7 @@ class NaiveAlgorithmRuntime(IAlgorithm):
             agent_id : The agent to move
 
         Returns:
-            nearest_node : The nearest node and with the most idleness
+            nearest_node : The nearest node with the most idleness
         """
 
         current_node = self.positions[agent_id]
@@ -48,7 +48,7 @@ class NaiveAlgorithmRuntime(IAlgorithm):
 
         # Search the node non visited (and not reserved) with the highest idelness
         for i in range(self.nb_nodes):
-            if i not in self.targets and i not in self.positions:  #  Éviter nodes already visited and reserved as targets
+            if i not in self.targets and i not in self.positions:  # Avoid nodes already visited and reserved as targets
                 distance = self.distance_matrix[current_node][i]
                 if (distance < min_distance) and (self.graph.nodes[i].idleness > max_oisivete):
                     nearest_node = i
@@ -61,7 +61,7 @@ class NaiveAlgorithmRuntime(IAlgorithm):
                         max_oisivete = self.graph.nodes[i].idleness
         return nearest_node
 
-    def update_target(self,agent_id: int) -> None:
+    def update_target(self, agent_id: int) -> None:
         """
         Update the target node for the agent to move
 
@@ -70,7 +70,8 @@ class NaiveAlgorithmRuntime(IAlgorithm):
 
         """
         if self.targets[agent_id] is None:
-            # Recalculer le prochain nœud uniquement si l'agent n'a pas encore de cible ou que sa cible est déjà visitée
+            # Recompute the next node if the agent don't have a target
+            # or the target is already a target
             next_node = self.find_next_node(agent_id)
             self.targets[agent_id] = next_node
 
@@ -91,14 +92,14 @@ class NaiveAlgorithmRuntime(IAlgorithm):
         
         for target, count in target_count.items():
             if count > 1:
-                # If more than one agent focus the same node, force the other agents to re... recalculer
+                # If more than one agent focus the same node, force the other agents to recompute
                 conflicted_agents = [i for i in range(self.nb_agents) if self.targets[i] == target]
-                # The first agent keep the target, the other re... recalculer
+                # The first agent keep the target, the other recompute
                 for i in conflicted_agents[1:]:
                     self.targets[i] = None
                     self.update_target(i)
 
-    def first_step(self,agent_id: int,node_start : int) -> None:
+    def first_step(self, agent_id: int, node_start : int) -> None:
         """
         Make a step for the agent to move
 
@@ -106,17 +107,18 @@ class NaiveAlgorithmRuntime(IAlgorithm):
             agent_id : The agent to move
 
         """
-        #Initialize all variables
+        # Initialize all variables
         self.positions[agent_id] = node_start
 
-         # Mise à jour des cibles pour chaque agent
+        # Update the targets of each agents
         self.update_target(agent_id)
-        # Résoudre les conflits de cibles
+        
+        # Resolve conflicts
         self.resolve_conflicts()
 
         self.paths[agent_id] = [self.positions[agent_id],self.targets[agent_id]]
 
-    def step(self,agent_id: int,node_start : int) -> None:
+    def step(self, agent_id: int, node_start : int) -> None:
         """
         Make a step for the agent to move
 
@@ -124,16 +126,17 @@ class NaiveAlgorithmRuntime(IAlgorithm):
             agent_id : The agent to move
 
         """
-        #Initialize all variables
+        # Initialize all variables
         self.positions[agent_id] = node_start
         target_node = self.targets[agent_id]
 
         if ((node_start == self.targets[agent_id]) or (self.graph.nodes[target_node].idleness == 0)):
             self.targets[agent_id] = None
 
-            # Mise à jour des cibles pour chaque agent
+            # Update the targets of each agents
             self.update_target(agent_id)
-            # Résoudre les conflits de cibles
+        
+            # Resolve conflicts
             self.resolve_conflicts()
         
         self.paths[agent_id] = [self.positions[agent_id],self.targets[agent_id]]
@@ -151,7 +154,7 @@ class NaiveAlgorithmRuntime(IAlgorithm):
 
         return self.paths
     
-    def update(self,agent_id: int,start_node: int) -> list[int]:
+    def update(self, agent_id: int, start_node: int) -> list[int]:
         """
         Update the path of the agent
 

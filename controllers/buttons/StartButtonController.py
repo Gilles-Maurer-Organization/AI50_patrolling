@@ -16,7 +16,6 @@ from services.AStarService import AStarService
 from services.ICompleteGraphService import ICompleteGraphService
 from services.ICSVService import ICSVService
 from services.algorithms.NaiveAlgorithmRuntime import NaiveAlgorithmRuntime
-from services.algorithms.NaiveAlgorithmRuntime import NaiveAlgorithmRuntime
 from views.ButtonView import ButtonView
 from views.ParametersView import ParametersView
 
@@ -141,33 +140,34 @@ class StartButtonController(BaseButtonController):
                 )
                 return
 
-        graph = self._graph_controller.graph
-        _algorithm = selected_algorithm.initialize_algorithm(nb_agents, graph)
-        self._simulation_controller.set_selected_algorithm(_algorithm)
-    
-        solution: list[list[int]] = _algorithm.launch()
+            graph = self._graph_controller.graph
+            _algorithm = selected_algorithm.initialize_algorithm(nb_agents, graph)
+            self._simulation_controller.set_selected_algorithm(_algorithm)
+        
+            solution: list[list[int]] = _algorithm.launch()
 
-        # Convert the solution paths to use the shortest paths in the real graph
-        real_paths = self._graph_controller.compute_real_paths(solution)
+            # Convert the solution paths to use the shortest paths in the real graph
+            real_paths = self._graph_controller.compute_real_paths(solution)
 
-        if(isinstance(_algorithm,NaiveAlgorithmRuntime)):
-            # Make the path of an agent a list of two elements
-            agents_paths : list[list[int]] = []
-            for real_path in real_paths:
-                agents_paths.append([real_path[0],real_path[1]])
+            if(isinstance(_algorithm,NaiveAlgorithmRuntime)):
+                # Make the path of an agent a list of two elements
+                agents_paths : list[list[int]] = []
+                for real_path in real_paths:
+                    agents_paths.append([real_path[0],real_path[1]])
 
-            # Initializing agents with the agent paths
-            self._simulation_controller.initialize_agents(agents_paths)
+                # Initializing agents with the agent paths (2 elements)
+                self._simulation_controller.initialize_agents(agents_paths)
 
-        else :
-            # Initializing agents with the real paths
-            self._simulation_controller.initialize_agents(real_paths)
+            else :
+                # Initializing agents with the real paths
+                self._simulation_controller.initialize_agents(real_paths)
+
             # Setting the simulation as started
             self._simulation_controller.set_simulation_started(True)
             self._graph_controller.raise_message("Simulation started!")
             self._simulation_data_controller.compute_export(
                 selected_algorithm.name
-            )
+            )   
 
         threading.Thread(target=run_algorithm).start()
 
