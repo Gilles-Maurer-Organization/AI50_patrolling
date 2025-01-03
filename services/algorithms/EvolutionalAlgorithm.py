@@ -123,6 +123,7 @@ class EvolutionalAlgorithm(IAlgorithm):
         Returns:
             A list of sublists
         """
+
         if self.nb_agents <= 0:
             raise ValueError("The number of agents must be greater than 0.")
 
@@ -506,6 +507,16 @@ class EvolutionalAlgorithm(IAlgorithm):
         # according to the number of crossing we have to get
         sub_matrices_second_individual = np.array_split(parent_2, nb_crossings, axis=1)
 
+        # before applying the crossing method,
+        # we shuffle the sub_matrices of the 2nd parent
+        shuffled_sub_matrices = []
+        for sub_matrix in sub_matrices_second_individual:
+            #shuffling the lines of the matrices 
+            shuffled_matrix = sub_matrix[np.random.permutation(sub_matrix.shape[0]), :] 
+            shuffled_sub_matrices.append(shuffled_matrix)
+
+        sub_matrices_second_individual = shuffled_sub_matrices
+
         temp_child_1 = []
         temp_child_2 = []
 
@@ -523,6 +534,54 @@ class EvolutionalAlgorithm(IAlgorithm):
         second_children = np.hstack(temp_child_2)
 
         return first_children, second_children
+
+    def optimize_child(self, child: np.ndarray) -> np.ndarray:
+
+        """
+        Optimizes a child by rearranging each path's nodes
+        to get the shortest possible paths.
+
+        Args:
+           child : The child that has to be optimized.
+           
+        Returns:
+            the optimized child.
+        """
+         
+        optimized_child = []
+        
+        for path in child:
+            # initializing hte optimal path with the first node of the path
+            optimized_path = [path[0]]
+            #keeping all the nodes expect the 1st one
+            remaining_nodes = path[1:].tolist() 
+            
+            # Initialiser la distance minimale à l'infini
+            while remaining_nodes:
+                #getting the last node that has been added to the optimal path
+                last_node = optimized_path[-1]
+                
+                #the current best node 
+                optimal_node = None
+                optimal_distance = float('inf')  
+                
+                # finding the nearest node
+                for node in remaining_nodes:
+                    distance_to_next_node = self.distance_matrix[last_node][node]
+                    #if the distance is lower, we update the best node
+                    if distance_to_next_node < optimal_distance:
+                        optimal_node = node
+                        optimal_distance = distance_to_next_node
+                
+                # then, we add the optimal node to the path
+                optimized_path.append(optimal_node)
+                # we remove it from the remaining choices
+                remaining_nodes.remove(optimal_node) 
+
+            # we add the optimal path
+            optimized_child.append(optimized_path)
+        
+        return np.array(optimized_child)
 
     def child_validation_process(self, child: np.ndarray) -> np.ndarray:
 
@@ -614,7 +673,10 @@ class EvolutionalAlgorithm(IAlgorithm):
                 if i == nb_children:
                     break
                 else:
-                    children[i] = self.child_validation_process(new_child)                
+                    #we verify the child's validity
+                    valid_child = self.child_validation_process(new_child) 
+                    #then we optimize him   
+                    children[i] = self.optimize_child(valid_child)            
                 i += 1
 
         return children.astype(int)
@@ -673,9 +735,9 @@ class EvolutionalAlgorithm(IAlgorithm):
         for tuple in tuples_list:
             
             #checking if actual individual is better than the actual best 
-            if (tuple[0] > best_solution[0]) and (tuple[1] < best_solution[1] ):
+           if (tuple[0] > best_solution[0]) and (tuple[1] < best_solution[1] ):
                 best_solution = tuple
-    
+
         # looping over the elements of the list until we find the "best individual"
         for list_idx, list_tuple in enumerate(tuples_list):
             if list_tuple == best_solution:
@@ -688,7 +750,7 @@ class EvolutionalAlgorithm(IAlgorithm):
         Sometimes he can also contain the same node as the first one at the end.
         EG:
             input: [37, 1, 3, 9, 6, 49, 49, 6, 9, 3, 1, 37]
-            will become : [37, 1, 3, 9, 6, 49, 6, 9, 3, 1]
+            will become: [37, 1, 3, 9, 6, 49, 6, 9, 3, 1]
 
         Args:
             individual: The individual which has to be cleaned.
@@ -697,30 +759,30 @@ class EvolutionalAlgorithm(IAlgorithm):
             ndarray: the cleaned individual
         """
 
-        # new array for storing the cleaned output
+        # New array for storing the cleaned output
         cleaned_individual = []
 
         for path in individual:
-
+            # Check if the first and last nodes are the same
+            # If yes, remove the last node to ensure the path is valid
             if path[0] == path[-1]:
                 path = np.delete(path, -1)
 
-            for i in range(len(path) - 1):
-                # we verify if a node is repeating itself right
-                # after the first occurrence of the node
-                # example:
-                #   ->  1,2,3 is OK
-                #   ->  1,2,2,3 is NOT OK
+            # Create a new path without consecutive duplicates
+            cleaned_path = []
+            for node in path:
+                # Verify if a node is repeating itself right after the first occurrence
+                # Example:
+                #   -> 1, 2, 3 is OK
+                #   -> 1, 2, 2, 3 is NOT OK
+                # If the current node is not equal to the last added node, add it
+                if not cleaned_path or cleaned_path[-1] != node:
+                    cleaned_path.append(node)
 
-                if path[i] == path[i + 1]:
-                    # if it is indeed repeating, we delete the second occurrence
-                    path = np.delete(path, i + 1)
-                    break
+            # Store the "cleaned" path
+            cleaned_individual.append(cleaned_path)
 
-                    # storing the "cleaned" path
-            cleaned_individual.append(list(path))
-
-        # casting it to a ndarray
+        # Cast the result to an ndarray
         cleaned_individual = np.array(cleaned_individual, dtype=object)
 
         return cleaned_individual
