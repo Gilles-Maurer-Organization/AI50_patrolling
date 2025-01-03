@@ -5,6 +5,8 @@ from models.Agent import Agent
 from models.Node import Node
 from services.algorithms.IAlgorithm import IAlgorithm
 from services.algorithms.NaiveAlgorithmRuntime import NaiveAlgorithmRuntime
+from services.algorithms.IAlgorithm import IAlgorithm
+from services.algorithms.NaiveAlgorithmRuntime import NaiveAlgorithmRuntime
 
 class SimulationController:
     """
@@ -83,12 +85,15 @@ class SimulationController:
         """
         margin: int = 2
         for agent_id, agent in enumerate(self._agents):
+        for agent_id, agent in enumerate(self._agents):
             if abs(agent.x - node.x) <= margin and abs(agent.y - node.y) <= margin:
                 agents_not_on_nodes.remove(agent)
                 return True,agent,agent_id
         
         return False,None,0
+        return False,None,0
         
+    def update_simulation(self) -> None:
     def update_simulation(self) -> None:
         """
         Updates the simulation by moving each agent along its path.
@@ -96,6 +101,7 @@ class SimulationController:
         for _, agent in enumerate(self._agents):
             agent.move()
 
+    def update_node_idleness(self) -> None:
     def update_node_idleness(self) -> None:
         """
         Updates the idleness of each node.
@@ -127,11 +133,13 @@ class SimulationController:
                 
                 node.idleness = 0
                 
+                
             else:
                 if elapsed_time >= 1000:
                     node.idleness += 1
         
         if elapsed_time >= 1000:
+            self._start_time = pygame.time.get_ticks()      
             self._start_time = pygame.time.get_ticks()      
             
     def draw_simulation(self) -> None:

@@ -16,6 +16,7 @@ from services.AStarService import AStarService
 from services.ICompleteGraphService import ICompleteGraphService
 from services.ICSVService import ICSVService
 from services.algorithms.NaiveAlgorithmRuntime import NaiveAlgorithmRuntime
+from services.algorithms.NaiveAlgorithmRuntime import NaiveAlgorithmRuntime
 from views.ButtonView import ButtonView
 from views.ParametersView import ParametersView
 
