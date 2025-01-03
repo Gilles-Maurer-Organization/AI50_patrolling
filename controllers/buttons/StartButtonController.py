@@ -1,3 +1,6 @@
+
+import threading
+
 from constants.Colors import Colors
 from constants.Config import PARAMETERS_WINDOW_WIDTH, PARAMETERS_WINDOW_HEIGHT
 from controllers.GraphController import GraphController
@@ -123,34 +126,38 @@ class StartButtonController(BaseButtonController):
         Launches the selected algorithm and starts the simulation.
         """
         self._graph_controller.raise_info('Algorithm launched')
-        selected_algorithm = self._scrolling_list_controller.get_selected_algorithm()
-        
-        try:
-            nb_agents = int(self._text_box_controller.text_content)
-        except Error:
-            self._graph_controller.raise_error_message(
-                'Invalid number of agents. Please enter a valid integer.'
+
+        # Using threading to launch the algorithm computation parallely with the UI.
+        def run_algorithm():
+            selected_algorithm = self._scrolling_list_controller.get_selected_algorithm()
+
+            try:
+                nb_agents = int(self._text_box_controller.text_content)
+            except ValueError:
+                self._graph_controller.raise_error_message(
+                    'Invalid number of agents. Please enter a valid integer.'
+                )
+                return
+
+            graph = self._graph_controller.graph
+            _algorithm = selected_algorithm.initialize_algorithm(nb_agents, graph)
+            
+            solution: list[list[int]] = _algorithm.launch()
+
+            # Convert the solution paths to use the shortest paths in the real graph
+            real_paths = self._graph_controller.compute_real_paths(solution)
+
+            # Initializing agents with the real paths
+            self._simulation_controller.initialize_agents(real_paths)
+
+            # Setting the simulation as started
+            self._simulation_controller.set_simulation_started(True)
+            self._graph_controller.raise_message("Simulation started!")
+            self._simulation_data_controller.compute_export(
+                selected_algorithm.name
             )
-            return
 
-        graph = self._graph_controller.graph
-        _algorithm = selected_algorithm.initialize_algorithm(nb_agents, graph)
-        
-        solution: list[list[int]] = _algorithm.launch()
-
-        # Convert the solution paths to use the shortest paths in the real graph
-        real_paths = self._graph_controller.compute_real_paths(solution)
-        # Initializing agents with the real paths
-        self._simulation_controller.initialize_agents(real_paths)
-
-        # Setting the simulation as started with the selected algorithm
-        self._simulation_controller.set_simulation_started(
-            started=True
-        )
-
-        self._simulation_data_controller.compute_export(
-            selected_algorithm.name
-        )
+        threading.Thread(target=run_algorithm).start()
 
     def _compute_complete_graph_and_shortest_paths(self):
         """
