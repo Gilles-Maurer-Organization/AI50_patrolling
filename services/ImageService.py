@@ -2,6 +2,7 @@ import os
 import shutil
 from pathlib import Path
 
+from models.Info import Info
 from services.IImageService import IImageService
 
 
@@ -54,8 +55,4 @@ class ImageService(IImageService):
         if not self.check_if_image_exists(image_path):
             if not os.path.exists(image_path):
                 return
-            print(f"Image '{image_name}' not found in the backgrounds folder,\
-                   copying...")
             shutil.copy(image_path, project_image_path)
-        else:
-            print(f"Image '{image_name}' found in the backgrounds folder.")

@@ -68,7 +68,6 @@ class Graph:
         Marks the graph as modified if it has not been marked already.
         """
         if not self._modified:
-            print("Graph Modified")
             self._modified = True
 
     def update_distances(self, dragged_node: Node) -> None:
@@ -89,7 +88,6 @@ class Graph:
                 neighbors.add(n1)
         
         for neighbor in neighbors:
-            print("modifying distance")
             distance = self.distance(neighbor, dragged_node)
             self._edges[neighbor, dragged_node] = self._edges[dragged_node, neighbor] = distance
 

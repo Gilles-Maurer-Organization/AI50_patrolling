@@ -1,8 +1,9 @@
 import pygame
 
-
 from constants.Config import GRAPH_WINDOW_WIDTH
 from constants.Colors import Colors
+
+from utils.utils import resource_path
 
 class ButtonView:
     """
@@ -70,8 +71,9 @@ class ButtonView:
 
         self._rect = pygame.Rect(x, y, width, height)
         self._font = pygame.font.SysFont("Arial", 16)
-
+        
         if icon_path:
+            icon_path = resource_path(icon_path)
             self._icon = pygame.image.load(icon_path)
             self._icon = pygame.transform.scale(self._icon, (20, 20))
         else:

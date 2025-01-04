@@ -1,6 +1,7 @@
 import pygame
 from constants.Colors import Colors
 from constants.Config import GRAPH_WINDOW_WIDTH
+from utils.utils import resource_path
 
 class AlignmentCheckBoxView:
     def __init__(
@@ -20,8 +21,11 @@ class AlignmentCheckBoxView:
         self._clicked_color = Colors.GREEN
         self._border_radius = 6
 
-        self._tick_image = pygame.image.load("assets/checkbox/tick.png")
-        self._tick_image = pygame.transform.scale(self._tick_image, (int(self._width * 0.5), int(self._height * 0.5)))  # Ajuster la taille du tick à la taille de la checkbox
+        self._tick_image = pygame.image.load(resource_path("assets/checkbox/tick.png"))
+        self._tick_image = pygame.transform.scale(
+            self._tick_image,
+            (int(self._width * 0.5), int(self._height * 0.5))
+        )
 
 
     def draw(self, alignment_enabled: bool) -> None:

@@ -1,6 +1,7 @@
 import pygame
 
 from constants.Colors import Colors
+from utils.utils import resource_path
 
 class PopupView:
     def __init__(self, screen, message: str) -> None:
@@ -25,6 +26,8 @@ class PopupView:
         self._active = False
 
     def _load_icon(self) -> None:
+        self._icon_path = resource_path(self._icon_path)
+        
         self._icon = pygame.image.load(self._icon_path)
         self._icon = pygame.transform.scale(self._icon, (20, 20))
 

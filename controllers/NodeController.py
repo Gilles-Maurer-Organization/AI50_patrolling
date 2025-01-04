@@ -252,6 +252,5 @@ class NodeController:
     def reset_nodes_idleness(self) -> None:
         for node in self._graph.nodes:
             node.idleness = 0
-            print(node.idleness)
 
 

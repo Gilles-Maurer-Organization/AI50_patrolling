@@ -2,6 +2,7 @@ import ast
 import csv
 import os
 import re
+import sys
 import pygame
 from pathlib import Path
 from threading import Timer
@@ -31,10 +32,15 @@ class CSVService(ICSVService):
             Path(__file__).resolve().parent.parent,
             "csv_files"
         )
-        self._results_folder_path = os.path.join(
-            Path(__file__).resolve().parent.parent,
-            "results"
-        )
+        
+        if hasattr(sys, '_MEIPASS'):
+            base_path = os.path.dirname(sys.executable)
+            self._results_folder_path = os.path.join(base_path, 'results')
+        else:
+            self._results_folder_path = os.path.join(
+                Path(__file__).resolve().parent.parent,
+                "results"
+            )
         self._references_file_path = os.path.join(
             Path(__file__).resolve().parent.parent,
             "references",
