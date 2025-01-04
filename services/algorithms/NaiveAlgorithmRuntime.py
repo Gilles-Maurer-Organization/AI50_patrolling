@@ -130,7 +130,7 @@ class NaiveAlgorithmRuntime(IAlgorithm):
         self.positions[agent_id] = node_start
         target_node = self.targets[agent_id]
 
-        if ((node_start == self.targets[agent_id]) or (self.graph.nodes[target_node].idleness == 0)):
+        if ((node_start == target_node) or (self.graph.nodes[target_node].idleness == 0)):
             self.targets[agent_id] = None
 
             # Update the targets of each agents

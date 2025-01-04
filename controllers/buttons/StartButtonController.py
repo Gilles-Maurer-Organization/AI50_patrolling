@@ -156,7 +156,7 @@ class StartButtonController(BaseButtonController):
                     agents_paths.append([real_path[0],real_path[1]])
 
                 # Initializing agents with the agent paths (2 elements)
-                self._simulation_controller.initialize_agents(agents_paths)
+                self._simulation_controller.initialize_agents_runtime(agents_paths)
 
             else :
                 # Initializing agents with the real paths

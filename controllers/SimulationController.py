@@ -2,6 +2,7 @@ import pygame
 
 from controllers.GraphController import GraphController
 from models.Agent import Agent
+from models.AgentRuntime import AgentRuntime
 from models.Node import Node
 from services.algorithms.IAlgorithm import IAlgorithm
 from services.algorithms.NaiveAlgorithmRuntime import NaiveAlgorithmRuntime
@@ -77,7 +78,20 @@ class SimulationController:
                 for path in paths
         ]
     
-    def are_agents_on_node(self, node: Node) -> tuple[bool, Agent, int]:
+    def initialize_agents_runtime(self, paths: list[int]) -> None:
+        """
+        Initializes the agents with their respective paths.
+
+        Args:
+            paths: A list of integers representing the initial paths
+                for each agent.
+        """
+        self._agents = [
+            AgentRuntime(path, self._graph_controller.graph)
+                for path in paths
+        ]
+    
+    def are_agents_on_node(self, node: Node) -> tuple[bool, Agent | AgentRuntime, int]:
         """
         For each node verify if an agent is on it, and if so put the idleness at 0
         """
@@ -88,14 +102,14 @@ class SimulationController:
         
         return False,None,0
         
-    def update_simulation(self) -> None:
+    def _update_simulation(self) -> None:
         """
         Updates the simulation by moving each agent along its path.
         """
         for _, agent in enumerate(self._agents):
             agent.move()
 
-    def update_node_idleness(self) -> None:
+    def _update_node_idleness(self) -> None:
         """
         Updates the idleness of each node.
         """
@@ -104,13 +118,8 @@ class SimulationController:
         for node in self._graph_controller.graph.nodes:
             is_agent_on_node, agent, agent_id = self.are_agents_on_node(node)
             if is_agent_on_node:
-                
                 # Recompute the path of an agent only in Real Time
-                if(isinstance(self._selected_algorithm,NaiveAlgorithmRuntime) & (node.idleness != 0)):
-                    # The agent will stay at his end_node until he gets a new path 
-                    agent.path[0] = agent.path[1]
-                    agent.reset_path()
-
+                if(isinstance(self._selected_algorithm,NaiveAlgorithmRuntime) & (agent.current_index == 1)):
                     # Update the path
                     new_path: list[int] = self._selected_algorithm.update(agent_id, agent.path[1])
 
@@ -120,9 +129,10 @@ class SimulationController:
                     # Keep only the two first elements of the computed path
                     new_agent_path: list[int] = real_paths[0]
                     agent.path = [new_agent_path[0],new_agent_path[1]]
-                
+
+                    agent.reset_path()
+
                 node.idleness = 0
-                
                 
             else:
                 if elapsed_time >= 1000:
@@ -137,8 +147,8 @@ class SimulationController:
         them on the graph.
         """
         if self._simulation_started:
-            self.update_simulation()
-            self.update_node_idleness()
+            self._update_simulation()
+            self._update_node_idleness()
             self._graph_controller.draw_simulation(self._agents)
 
     def start_idleness_export(self, algorithm: str, test_number: int, start_time: float):
