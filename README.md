@@ -15,7 +15,7 @@ The system also features a graphical interface to visualize the museum map, crea
 ## Installation
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Gilles-Maurer-Organization/AI50_patrolling.git.  
+git clone https://github.com/Gilles-Maurer-Organization/AI50_patrolling.git  
 cd AI50_patrolling
 ```
 
