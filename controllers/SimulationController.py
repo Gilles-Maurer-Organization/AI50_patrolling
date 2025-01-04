@@ -2,7 +2,6 @@ import pygame
 
 from controllers.GraphController import GraphController
 from models.Agent import Agent
-from models.AgentRuntime import AgentRuntime
 from models.Node import Node
 from services.algorithms.IAlgorithm import IAlgorithm
 from services.algorithms.NaiveAlgorithmRuntime import NaiveAlgorithmRuntime
@@ -78,20 +77,7 @@ class SimulationController:
                 for path in paths
         ]
     
-    def initialize_agents_runtime(self, paths: list[int]) -> None:
-        """
-        Initializes the agents with their respective paths.
-
-        Args:
-            paths: A list of integers representing the initial paths
-                for each agent.
-        """
-        self._agents = [
-            AgentRuntime(path, self._graph_controller.graph)
-                for path in paths
-        ]
-    
-    def are_agents_on_node(self, node: Node) -> tuple[bool, Agent | AgentRuntime, int]:
+    def are_agents_on_node(self, node: Node) -> tuple[bool, Agent, int]:
         """
         For each node verify if an agent is on it, and if so put the idleness at 0
         """
@@ -108,6 +94,8 @@ class SimulationController:
         """
         for _, agent in enumerate(self._agents):
             agent.move()
+            if (not(isinstance(self._selected_algorithm,NaiveAlgorithmRuntime)) and (agent.current_index >= len(agent.path) - 1)):
+                agent.reset_path()
 
     def _update_node_idleness(self) -> None:
         """

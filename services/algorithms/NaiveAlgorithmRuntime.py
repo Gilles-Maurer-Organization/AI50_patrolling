@@ -46,7 +46,7 @@ class NaiveAlgorithmRuntime(IAlgorithm):
         nearest_node = None
         max_oisivete = -1  # Keep track of the max idleness in case of same distance
 
-        # Search the node non visited (and not reserved) with the highest idelness
+        # Search the node non visited (and not reserved) with the highest idleness
         for i in range(self.nb_nodes):
             if i not in self.targets and i not in self.positions:  # Avoid nodes already visited and reserved as targets
                 distance = self.distance_matrix[current_node][i]
