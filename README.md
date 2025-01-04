@@ -29,7 +29,7 @@ source .venv/bin/activate
 ```
 On Windows:
 ```bash 
-venv\Scripts\activate
+.venv\Scripts\activate
 ```
 
 ### 3. Install Dependencies
@@ -79,6 +79,24 @@ AI50_patrolling/
 ├── sonar-project.properties  # Configuration for SonarQube, for code quality analysis
 └── tox.ini              # Configuration file for Tox
 ```
+
+## Creating an Executable with PyInstaller
+If you want to package this project into a standalone executable, you can use **PyInstaller**. Follow these steps to generate an executable for your platform:
+
+### 1. Install PyInstaller
+First, make sure PyInstaller is installed in your virtual environment:
+```bash
+pip install pyinstaller
+```
+### 2. Create the Executable
+Once PyInstaller is installed, navigate to the root of the project directory and run the following command:
+```bash
+pyinstaller --onefile --add-data "assets;assets" --add-data "backgrounds;backgrounds" --add-data "csv_files;csv_files" --add-data "references;references" --noconsole main.py
+```
+This will generate a single executable file. By default, the executable will be located in the dist/ folder.
+
+### 3. Run the Executable
+To run the executable, simply go to the dist/ folder and execute the main file. The application should work just like when running from the Python script.
 
 ## Acknowledgements
 This project makes use of the following libraries and tools:
