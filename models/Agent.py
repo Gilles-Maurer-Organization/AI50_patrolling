@@ -31,9 +31,6 @@ class Agent:
             # Vérifier si l'agent a atteint le nœud cible
             if distance < self.speed:
                 self.current_index += 1
-        else:
-            # Si l'agent est à la fin du chemin, recommencer au début
-            self.reset_path()
     def reset_path(self):
         '''
         Réinitialise le chemin de l'agent pour recommencer depuis le premier nœud.
