@@ -90,6 +90,7 @@ pip install pyinstaller
 ```
 ### 2. Create the Executable
 Once PyInstaller is installed, navigate to the root of the project directory and run the following command:  
+  
 On MacOS and Linux:
 ```bash
 pyinstaller --onefile --add-data "assets:assets" --noconsole main.py
