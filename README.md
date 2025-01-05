@@ -89,9 +89,14 @@ First, make sure PyInstaller is installed in your virtual environment:
 pip install pyinstaller
 ```
 ### 2. Create the Executable
-Once PyInstaller is installed, navigate to the root of the project directory and run the following command:
+Once PyInstaller is installed, navigate to the root of the project directory and run the following command:  
+On MacOS and Linux:
 ```bash
-pyinstaller --onefile --add-data "assets;assets" --add-data "backgrounds;backgrounds" --add-data "csv_files;csv_files" --add-data "references;references" --noconsole main.py
+pyinstaller --onefile --add-data "assets:assets" --noconsole main.py
+```
+On Windows:
+```bash
+pyinstaller --onefile --add-data "assets;assets" --noconsole main.py
 ```
 This will generate a single executable file. By default, the executable will be located in the dist/ folder.
 
