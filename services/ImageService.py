@@ -1,19 +1,16 @@
 import os
 import shutil
-from pathlib import Path
 
-from models.Info import Info
+from utils.utils import get_data_path
 from services.IImageService import IImageService
-
 
 class ImageService(IImageService):
     def __init__(self) -> None:
         # folder to store background images
-        self.backgrounds_folder = (
-            Path(__file__).resolve().parent.parent / "backgrounds"
-        )
-        if not self.backgrounds_folder.exists():
-            os.makedirs(self.backgrounds_folder)
+        self._backgrounds_folder = get_data_path('backgrounds')
+        
+        if not self._backgrounds_folder.exists():
+            os.makedirs(self._backgrounds_folder)
 
     def is_an_image(self, image_name: str) -> bool:
         """
@@ -39,7 +36,7 @@ class ImageService(IImageService):
             bool: True if the image exists, False otherwise.
         """
         image_name = os.path.basename(image_path)
-        project_image_path = self.backgrounds_folder / image_name
+        project_image_path = self._backgrounds_folder / image_name
         return project_image_path.exists()
 
     def ensure_image_exists_and_copy(self, image_path: str) -> None:
@@ -51,7 +48,7 @@ class ImageService(IImageService):
             image_path (str): Path to the image to ensure and copy.
         """
         image_name = os.path.basename(image_path)
-        project_image_path = self.backgrounds_folder / image_name
+        project_image_path = self._backgrounds_folder / image_name
         if not self.check_if_image_exists(image_path):
             if not os.path.exists(image_path):
                 return

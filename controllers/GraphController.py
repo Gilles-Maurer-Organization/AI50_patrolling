@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 
 import pygame
 
@@ -15,7 +16,7 @@ from models.Info import Info
 from models.Error import Error
 from services import IImageService
 from services.ICSVService import ICSVService
-from utils.utils import resource_path
+from utils.utils import get_data_path, resource_path
 from views.GraphView import GraphView
 
 class GraphController:
@@ -221,7 +222,9 @@ class GraphController:
 
         # Check if the image exists in the folder
         if self._image_service.check_if_image_exists(image_path):
-            background_image = pygame.image.load(resource_path(image_path))
+            image_path = get_data_path(f"backgrounds/{image_name}")
+            
+            background_image = pygame.image.load(image_path)
             self._graph_view.set_background_image(background_image)
         else:
             self.raise_error_message(f"Image {image_name} not found or could not be copied.")
