@@ -145,6 +145,8 @@ class FileExplorerController:
             self._graph_controller.raise_error_message(str(e))
         except Info as e:
             self._graph_controller.raise_info(str(e))
+            if self._on_file_imported:
+                self._on_file_imported()
         else:
             self._graph_controller.raise_message(success_message)
             if self._on_file_imported:  # Call the callback if it's defined
