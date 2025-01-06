@@ -44,21 +44,23 @@ class NaiveAlgorithmRuntime(IAlgorithm):
         current_node = self.positions[agent_id]
         min_distance = float('inf')
         nearest_node = None
-        max_oisivete = -1  # Keep track of the max idleness in case of same distance
+        max_idleness = -1  # Keep track of the highest idleness
 
         # Search the node non visited (and not reserved) with the highest idleness
         for i in range(self.nb_nodes):
             if i not in self.targets and i not in self.positions:  # Avoid nodes already visited and reserved as targets
                 distance = self.distance_matrix[current_node][i]
-                if (distance < min_distance) and (self.graph.nodes[i].idleness > max_oisivete):
+                idleness = self.graph.nodes[i].idleness
+                if idleness > max_idleness:
                     nearest_node = i
                     min_distance = distance
-                    max_oisivete = self.graph.nodes[i].idleness
-                elif distance == min_distance:
-                    # If two nodes have the same distance, choose the one with the highest idleness
-                    if self.graph.nodes[i].idleness > max_oisivete:
+                    max_idleness = self.graph.nodes[i].idleness
+                elif idleness == max_idleness:
+                    # If two nodes have the same highest idleness, choose the one with the shorter distance
+                    if distance < min_distance:
                         nearest_node = i
-                        max_oisivete = self.graph.nodes[i].idleness
+                        min_distance = distance
+                        max_idleness = self.graph.nodes[i].idleness
         return nearest_node
 
     def update_target(self, agent_id: int) -> None:
