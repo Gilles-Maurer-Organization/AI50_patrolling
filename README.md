@@ -6,6 +6,9 @@ This project simulates a multi-agent patrolling system for museums. The agents m
 
 The system also features a graphical interface to visualize the museum map, create nodes and edges representing rooms and paths, and dynamically configure parameters.
 
+Link to the YouTube video showcasing the project:  
+https://youtu.be/NvPAJv8h5M0
+
 ## Features
 * **Graph Creation**: Generate a graph from an image of the museum layout, where nodes represent an area and edges represent paths between them.
 * **Interactive Interface**: Modify simulation parameters dynamically through the user interface.
