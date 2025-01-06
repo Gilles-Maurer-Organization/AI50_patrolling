@@ -30,13 +30,13 @@ jobs:
           pip install pyinstaller
           
       - name: Build executable with PyInstaller
-        run: pyinstaller --onefile --name main main.py
+        run: pyinstaller --onefile --add-data "assets:assets" --noconsole main.py
         
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.CONTINUOUS_DEPLOYMENT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CONTINUOUS_DELIVERY_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
@@ -50,7 +50,7 @@ jobs:
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.CONTINUOUS_DEPLOYMENT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CONTINUOUS_DELIVERY_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./dist/main
