@@ -1,0 +1,15 @@
+csv_files/*
+references/*
+.venv
+.tox/
+__pycache__/
+coverage.xml
+.coverage
+/.idea
+.DS_Store
+backgrounds/*
+/results
+build/
+dist/
+main.spec
+analyse.spec
