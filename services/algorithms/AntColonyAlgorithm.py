@@ -8,10 +8,6 @@ The class includes functionalities for pheromone management, probability-based p
 Usage example:
 --------------
 To use this module, instantiate the AntColony class with the desired parameters, and call the `launch` method with a cost matrix and starting node.
-
-Example:
-    >>> colony = AntColony(evaporation_rate=0.5, alpha_parameter=1, beta_parameter=2, nb_ants=10, nb_iterations=100, Q = 10, self.cost_matrix=self.cost_matrix)
-    >>> best_path = colony.launch()
 """
 
 from matplotlib import pyplot as plt
@@ -20,6 +16,7 @@ import time as time
 from models.Graph import Graph
 from models.TextBox import TextBox
 from services.algorithms.IAlgorithm import IAlgorithm
+from models.Error import Error
 
 class AntColonyAlgorithm(IAlgorithm):
     """
@@ -78,19 +75,23 @@ class AntColonyAlgorithm(IAlgorithm):
 
         # Validation of the parameters
         if not (0 < evaporation_rate <= 1):
-            raise ValueError("The evaporation rate must be between 0 and 1 (exclusive for 0).")
+            raise Error("The evaporation rate must be between 0 and 1 (exclusive for 0).")
         if alpha_parameter <= 0:
-            raise ValueError("The alpha parameter must be greater than 0.")
+            raise Error("The alpha parameter must be greater than 0.")
         if beta_parameter <= 0:
-            raise ValueError("The beta parameter must be greater than 0.")
+            raise Error("The beta parameter must be greater than 0.")
         if nb_agents <= 0:
-            raise ValueError("The number of agents must be greater than 0.")
+            raise Error("The number of agents must be greater than 0.")
         if nb_colony <= 0:
-            raise ValueError("The number of colonies must be greater than 0.")
+            raise Error("The number of colonies must be greater than 0.")
         if nb_iterations <= 0:
-            raise ValueError("The number of iterations must be greater than 0.")
+            raise Error("The number of iterations must be greater than 0.")
         if pheromone_quantity <= 0:
-            raise ValueError("The pheromone quantity must be greater than 0.")
+            raise Error("The pheromone quantity must be greater than 0.")
+
+        if nb_agents > len(graph.nodes):
+            raise Error(f"The number of agents ({nb_agents}) cannot exceed the number of nodes ({len(graph.nodes)}).")
+    
             
         self.evaporation_rate: float = evaporation_rate
         self.alpha_parameter: float = alpha_parameter
@@ -266,7 +267,7 @@ class AntColonyAlgorithm(IAlgorithm):
             probability_vector /= total
         else:
             # Si la somme est nulle, il peut y avoir un problème avec les matrices de phéromones ou de coûts.
-            raise ValueError("La somme des probabilités est nulle. Vérifiez les matrices de phéromones et de coûts.")
+            raise Error("La somme des probabilités est nulle. Vérifiez les matrices de phéromones et de coûts.")
 
         return probability_vector
 
@@ -474,8 +475,8 @@ class AntColonyAlgorithm(IAlgorithm):
                 
                 ants_path = self.colony_path(nb_nodes, global_pheromone_matrix, colony_start_nodes[colony])
                 
-                # negotiaition
-                ants_path = self.negotiaition(ants_path)
+                # negotiation
+                ants_path = self.negotiation(ants_path)
                 global_ants_path[colony] = ants_path
 
                 path_length = self.get_length_path(global_ants_path[colony])
@@ -536,7 +537,7 @@ class AntColonyAlgorithm(IAlgorithm):
         # Verify if all recent path lengths are close to the most recent one
         return all(np.allclose(last_lengths, lengths, atol=1e-2) for lengths in recent_lengths[:-1])
 
-    def negotiaition(self, ants_path: list[list[int]]) -> list[list[int]]:
+    def negotiation(self, ants_path: list[list[int]]) -> list[list[int]]:
         """"
         Exchange nodes between ants if the distance between nodes is too large.
         Args:
