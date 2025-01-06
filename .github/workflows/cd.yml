@@ -30,7 +30,7 @@ jobs:
           pip install pyinstaller
           
       - name: Build executable with PyInstaller
-        run: pyinstaller --onefile --name main main.py
+        run: pyinstaller --onefile --add-data "assets:assets" --noconsole main.py
         
       - name: Create Release
         id: create_release

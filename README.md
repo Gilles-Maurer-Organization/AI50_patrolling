@@ -20,6 +20,7 @@ cd AI50_patrolling
 ```
 
 ### 2. Set up the Virtual Environment
+Please use **Python 3.11** for compatibility with the libraries and features.
 ```bash
 python -m venv .venv
 ```
