@@ -9,3 +9,6 @@ coverage.xml
 .DS_Store
 backgrounds/*
 /results
+build/
+dist/
+main.spec

@@ -1,5 +1,6 @@
 import pygame
 
+from utils.utils import resource_path
 from views.text_boxes.BaseTextBoxView import BaseTextBoxView
 
 class TextBoxView(BaseTextBoxView):
@@ -23,6 +24,7 @@ class TextBoxView(BaseTextBoxView):
         super().__init__(screen, x, y, width, height)
         
         if icon_path:
+            icon_path = resource_path(icon_path)
             self._icon = pygame.image.load(icon_path)
             self._icon = pygame.transform.scale(self._icon, (20, 20))
         else:

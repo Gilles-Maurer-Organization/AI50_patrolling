@@ -2,6 +2,8 @@ import os
 
 import pygame
 
+from utils.utils import resource_path
+
 class AgentView:
     """
     This class draws an agent on the view of the graph.
@@ -14,7 +16,7 @@ class AgentView:
     """
     def __init__(self, screen: pygame.Surface) -> None:
         self._screen = screen
-        self._image_path = "assets/agent/agent.png"
+        self._image_path = resource_path("assets/agent/agent.png")
 
         if os.path.exists(self._image_path):
             self._image = pygame.image.load(self._image_path)

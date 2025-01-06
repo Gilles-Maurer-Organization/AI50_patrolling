@@ -20,14 +20,16 @@ class TextBoxController(BaseTextBoxController):
     """
     def __init__(self, parameters_view):
         super().__init__(parameters_view)
-        
+
         self._text_box = TextBox(default_text="Number of Agents")
-        text_box_view = TextBoxView(parameters_view.screen,
-                                    10,
-                                    60,
-                                    190,
-                                    40,
-                                    icon_path='assets/widgets/number_agents.png')
+        text_box_view = TextBoxView(
+            parameters_view.screen,
+            10,
+            60,
+            190,
+            40,
+            icon_path='assets/widgets/number_agents.png'
+        )
         self.add_text_box(self._text_box, text_box_view)
 
     @property

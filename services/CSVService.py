@@ -2,8 +2,10 @@ import ast
 import csv
 import os
 import re
+from utils.utils import get_data_path
+
 import pygame
-from pathlib import Path
+
 from threading import Timer
 from typing import Union
 
@@ -27,24 +29,11 @@ class CSVService(ICSVService):
     """
 
     def __init__(self) -> None:
-        self._csv_folder_path = os.path.join(
-            Path(__file__).resolve().parent.parent,
-            "csv_files"
-        )
-        self._results_folder_path = os.path.join(
-            Path(__file__).resolve().parent.parent,
-            "results"
-        )
-        self._references_file_path = os.path.join(
-            Path(__file__).resolve().parent.parent,
-            "references",
-            "references.csv"
-        )
-        self._test_numbers_file_path = os.path.join(
-            Path(__file__).resolve().parent.parent,
-            "references",
-            "test_numbers.csv"
-        )
+        self._csv_folder_path = get_data_path('csv_files')
+        self._references_file_path = get_data_path('references/references.csv')
+        self._test_numbers_file_path = get_data_path('references/test_numbers.csv')
+        self._results_folder_path = get_data_path('results')
+        
         self._current_csv_number = 0
         self._active_timer = None
 

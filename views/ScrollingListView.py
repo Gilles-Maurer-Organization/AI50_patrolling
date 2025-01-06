@@ -4,6 +4,7 @@ import pygame
 from constants.Colors import Colors
 from constants.Config import GRAPH_WINDOW_WIDTH
 from models.algorithms.IAlgorithmModel import IAlgorithmModel
+from utils.utils import resource_path
 
 class ScrollingListView:
     """
@@ -64,9 +65,9 @@ class ScrollingListView:
             self._width,
             self._height
         )
-
-        self._icon_path = 'assets/widgets/scrolling_icon.png'
-
+        
+        self._icon_path = resource_path('assets/widgets/scrolling_icon.png')
+        
         self._icon = pygame.image.load(self._icon_path)
         self._icon = pygame.transform.scale(self._icon, (20, 20))
         self._flipped_icon = pygame.transform.flip(self._icon, False, True)
