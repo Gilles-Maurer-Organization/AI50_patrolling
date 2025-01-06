@@ -14,7 +14,7 @@ class KMeansAlgorithm(IAlgorithm):
         parameters: dict[str, TextBox],
         nb_agents : int, 
         graph: Graph,
-        active_plot : bool = True
+        active_plot : bool = False
     ) -> None:
 
         self._nb_clusters = nb_agents  
