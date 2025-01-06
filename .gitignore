@@ -12,3 +12,4 @@ backgrounds/*
 build/
 dist/
 main.spec
+analyse.spec
