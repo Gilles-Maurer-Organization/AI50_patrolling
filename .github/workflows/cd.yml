@@ -29,8 +29,11 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
           
-      - name: Build executable with PyInstaller
+      - name: Build executable with PyInstaller (main)
         run: pyinstaller --onefile --add-data "assets:assets" --noconsole main.py
+        
+      - name: Build executable with PyInstaller (analyse)
+        run: pyinstaller --onefile --noconsole analyse.py
         
       - name: Create Release
         id: create_release
@@ -47,7 +50,7 @@ jobs:
           draft: false
           prerelease: false
           
-      - name: Upload Release Asset
+      - name: Upload Release Asset (main)
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.CONTINUOUS_DELIVERY_TOKEN }}
@@ -55,4 +58,14 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./dist/main
           asset_name: main
+          asset_content_type: application/octet-stream
+      
+      - name: Upload Release Asset (analyse)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.CONTINUOUS_DELIVERY_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/analyse
+          asset_name: analyse
           asset_content_type: application/octet-stream
