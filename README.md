@@ -92,7 +92,7 @@ First, make sure PyInstaller is installed in your virtual environment:
 ```bash
 pip install pyinstaller
 ```
-### 2. Create the Executable
+### 2. Create the Main Executable
 Once PyInstaller is installed, navigate to the root of the project directory and run the following command:  
   
 On MacOS and Linux:
@@ -105,8 +105,19 @@ pyinstaller --onefile --add-data "assets;assets" --noconsole main.py
 ```
 This will generate a single executable file. By default, the executable will be located in the dist/ folder.
 
-### 3. Run the Executable
-To run the executable, simply go to the dist/ folder and execute the main file. The application should work just like when running from the Python script.
+### 3. Create the Analysis Executable
+An executable version of the python script designed for analyzing results (analyse.py) can also be built:  
+  
+On MacOS, Linux and Windows:
+```bash
+pyinstaller --onefile --noconsole analyse.py
+```
+This will also generate a single executable file. By default, the executable will be located in the dist/ folder.  
+  
+**Note:** This executable is intended to be used only after results have been saved in the data/results folder.
+
+### 3. Run the Executables
+To run the executables, simply go to the dist/ folder and execute the main or analyse files. The application should work just like when running from the Python script.
 
 ## Acknowledgements
 This project makes use of the following libraries and tools:
