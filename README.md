@@ -116,8 +116,8 @@ This will also generate a single executable file. By default, the executable wil
   
 **Note:** This executable is intended to be used only after results have been saved in the data/results folder.
 
-### 3. Run the Executable
-To run the executable, simply go to the dist/ folder and execute the main file. The application should work just like when running from the Python script.
+### 3. Run the Executables
+To run the executables, simply go to the dist/ folder and execute the main or analyse files. The application should work just like when running from the Python script.
 
 ## Acknowledgements
 This project makes use of the following libraries and tools:
