@@ -33,7 +33,7 @@ jobs:
         run: pyinstaller --onefile --add-data "assets:assets" --noconsole main.py
         
       - name: Build executable with PyInstaller (analyse)
-        run: pyinstaller --onefile --noconsole Analyse.py
+        run: pyinstaller --onefile --noconsole analyse.py
         
       - name: Create Release
         id: create_release
